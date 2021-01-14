@@ -1,0 +1,121 @@
+{% extends "base.html" %} {% load static %}
+{% block content %}
+
+<div class="row p-2">
+    <div class="col-10 col-sm-10 col-xl-10">
+        <h2 class="text-left">
+            APROBAR Y RECHAZAR <span class="darkgreen-text"> DISEÑOS </span>
+        </h2>
+    </div>
+
+
+</div>
+
+<div class="container-fluid">
+    <div class="row mt-4">
+        <div class="col-16 col-xl-16 table-container">
+            <table class="table table-responsive table-bordered" id="tablaDisenos">
+                <thead class="white-text darkgreen-bg">
+                    <tr>
+                        <th scope="col">Codigo</th>
+                        <th scope="col">Versión</th>
+                        <th scope="col">Nombre</th>
+                        <th scope="col">Tipo</th>
+                        <th scope="col">Modalidad</th>
+                        <th scope="col">Duración</th>
+                        <th scope="col">Area de Capacitacion</th>
+                        <th scope="col">Fecha emisión</th>
+                        <th scope="col">Estado</th>
+                        <th scope="col">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if designs %} {% for design in designs %}
+                    {% if design.estado == "En espera de aprobación" %}
+                    <tr class="text-center">
+                        <td scope="rol">{{design.codigo}}</td>
+                        <td scope="rol">{{design.version}}</td>
+                        <td scope="rol">{{design.nombre}}</td>
+                        <td scope="rol">{{design.tipo_evento}}</td>
+                        <td scope="rol">{{design.modalidad}}</td>
+                        <td scope="rol">{{design.horas_totales}} horas</td>
+                        <td scope="rol">{{design.area}}</td>
+                        <td scope="rol">{{design.fecha}}</td>
+                        <td scope="rol">{{design.estado}}</td>
+                        <td class="text-center" scope="rol">
+                            <a href="{% url 'verDesign' design.id %}"><span class="text-primary">Revisar</span></a>
+                            <a href="" onclick="Aprobar('{{design.id}}')" data-toggle="modal"
+                                data-target="#aprobacion"><span class="text-success">Aprobar</span></a>
+                            <a href="" data-toggle="modal"
+                            data-target="#rechazo"><span class="text-danger">Rechazar</span></a>
+                        </td>
+                    </tr>
+                    <div class="modal fade" id="rechazo" tabindex="-1" role="dialog">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <!-- CUSTOM TITLE -->
+                                    <h5 class="modal-title"> Rechazo de diseño </h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
+                                </div>
+                                <div class="modal-body">
+                                    <!-- CUSTOM FORM -->
+                                    <label>Motivo de rechazo: </label>
+                                    <textarea value="rechazo" class="form-control" name="editor1" id="motivo_rechazo" required></textarea>
+                                </div>
+                                <div class="modal-footer"><a href="" onclick="Rechazar('{{design.id}}')">Rechazar</a> </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% endfor %} {% else %}
+                    <h3>No hay registros de diseño para presentar</h3>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="aprobacion" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <!-- CUSTOM TITLE -->
+                <h5 class="modal-title"> Notificación </h5>
+            </div>
+            <div class="modal-body">
+                <!-- CUSTOM FORM -->
+                <label>Se ha aprobado el diseño</label>
+            </div>
+            <div class="modal-footer"><a href="">Aceptar</a> </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %} {% block specific_scripts %}
+<script src="{% static  'js\tablesFiltro.js' %}"></script>
+<script>
+    function Aprobar(id) {
+        axios.defaults.xsrfCookieName = 'csrftoken'
+        axios.defaults.xsrfHeaderName = "X-CSRFTOKEN"
+        axios.patch('/academico/api/design/' + id + '/',
+            { estado: "Aprobado" }).then((response) => {
+            }).catch((err) => {
+                console.log(err.response)
+            })
+    }
+    function Rechazar(id) {
+        axios.defaults.xsrfCookieName = 'csrftoken'
+        axios.defaults.xsrfHeaderName = "X-CSRFTOKEN"
+        motivo = document.getElementById('motivo_rechazo').value
+        axios.patch('/academico/api/design/' + id + '/',
+            { estado: "Rechazado", motivo_rechazo: motivo}).then((response) => {
+            }).catch((err) => {
+                console.log(err.response)
+            })
+        
+    }
+</script>
+
+{% endblock %}

@@ -1,0 +1,220 @@
+{% extends "base_financiero.html" %}
+{% load crispy_forms_tags %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+{% load humanize %}
+{% load my_tags %}
+{% load l10n %}
+{% block title %}{{ "EC - Orden de pago" }}{% endblock title %}
+
+{% block content %}
+<div class="row mb-2 d-flex white-bg">
+	<div class="col-9 col-xl-9 v-align">
+		<h2 class="text-uppercase">consultas <span class="darkgreen-text">Orden de Pago</span></h2>
+	</div>
+	<div class="col-3 col-xl-3 v-align">
+		<a class="btn btn-secondary green-bg float-right" href="{% url 'orden_pago_nuevo' %}"><i
+				class="fas fa-plus"></i> Agregar Nuevo</a>
+	</div>
+</div>
+<div class="row darkwhite-bg py-2">
+	<div class="col-12 col-xl-12">
+		<form method="GET">
+			<div class="form-row">
+				<div class="col-3">
+					{{filter.form.evento__codigo_evento|as_crispy_field}}
+				</div>
+				<div class="col-7">
+					{{filter.form.evento__nombre|as_crispy_field}}
+				</div>
+			</div>
+			<div class="form-row">
+				<div class="col-3">
+					{{ filter.form.proveedor_id|as_crispy_field }}
+				</div>
+				<div class="col-7">
+					{{ filter.form.proveedor_nom|as_crispy_field }}				
+				</div>
+			</div>
+			<div class="form-row">
+				<div class="col-3">
+					{{ filter.form.cod_ord_pago|as_crispy_field }}
+				</div>
+				<div class="col-3">
+					{{ filter.form.estado|as_crispy_field }}
+				</div>
+				<div class="col-3">
+					{{ filter.form.n_tramite|as_crispy_field }}
+				</div>
+			</div>
+			<div class="form-row">
+				<div class="col-3">
+					{{ filter.form.egreso__codigo|as_crispy_field }}
+				</div>
+				<div class="col-7">
+					{{ filter.form.egreso__nombre|as_crispy_field }}
+				</div>
+			</div>
+			<div class="form-row">
+				<div class="col-3">
+					{{ filter.form.fecha__gte|as_crispy_field }}
+				</div>
+				<div class="col-3">
+					{{ filter.form.fecha__lte|as_crispy_field }}
+				</div>
+				<div class="col-3">
+					{{ filter.form.fecha_tramite|as_crispy_field }}
+				</div>
+			</div>
+			<div>
+				<button type="submit" class="btn btn-secondary green-bg float-right">
+					<span class="fas fa-search"></span> Buscar</button>
+			</div>
+		</form>
+	</div>
+</div>
+<br>
+<div class="row">
+	<div class="col-12 col-xl-12">
+		<a class="btn btn-lg float-right btn-light" href="#"><i class="fas fa-file-pdf" data-toggle="tooltip"
+				data-placement="top" title="Exportar a pdf"></i></a>
+		<a class="btn btn-lg float-right btn-light" href="#"><i class="fas fa-file-excel" data-toggle="tooltip"
+				data-placement="top" title="Exportar a excel"></i></a>
+		<table id="dtBasicExample" class="table table-responsive  border-bottom">
+			<thead class="white-text darkgreen-bg">
+				
+				<tr>
+					<th scope="col">Código</th>
+					<th scope="col">Fecha Elaboración</th>
+					<th scope="col">Código Evento</th>
+					<th scope="col">Nombre Evento</th>
+					<th scope="col">RUC/CI</th>
+					<th scope="col">Beneficiario</th>
+					<th scope="col">Centro de Costos</th>
+					<th scope="col">Partida Presupuestaria</th>
+					<th scope="col">Fecha Comprobante</th>
+					<th scope="col">Tipo Comprobante</th>
+					<th scope="col">N° Comprobante</th>
+					<th scope="col">Subtotal</th>
+					<th scope="col">IVA</th>
+					<th scope="col">Otros Cargos</th>
+					<th scope="col">Valor Total</th>
+					<th scope="col">Estado</th>
+					<th scope="col">Fecha Aprobación</th>
+					<th scope="col">N° de Trámite</th>
+					<th scope="col">Fecha Trámite</th>
+					<th scope="col">Fecha Pago</th>
+					<th scope="col">Acciones</th>
+				</tr>
+			</thead>
+			{% if filter.qs %}
+			<tbody>
+				{% for p in filter.qs %}
+				<tr class="text-center">
+					<td scope="row">{{p.cod_ord_pago}}</td>
+					<td scope="row">{{p.fecha}}</td>
+					<td scope="row">{{p.evento.codigo_evento}}</td>
+					<td scope="row">{{p.evento.nombre}}</td>
+					<td scope="row">{{p.proveedor.ruc}}</td>
+					<td scope="row">{{p.proveedor.razon | upper}}</td>
+					<td scope="row">{{p.centro_costos}}</td>
+					<td scope="row">{{p.egreso.nombre}}</td>
+					<td scope="row">{{p.fecha_comprobante}}</td>
+					<td scope="row">{{p.forma_pago}}</td>
+					<td scope="row">{{p.n_comprobante}}</td>
+					<td scope="row">${{p.subtotal|floatformat:2|intcomma}}</td>
+					<td scope="row">${{p.valor_iva|floatformat:2|intcomma}}</td>
+					<td scope="row">${{p.otros_cargos|floatformat:2|intcomma}}</td>
+					<td scope="row">${{p.total|floatformat:2|intcomma}}</td>
+					<td scope="row">{{p.estado}}</td>
+					<td scope="row">{{p.fecha_aprobacion|default_if_none:""}}</td>
+					<td scope="row">{{p.n_tramite|default_if_none:""}}</td>
+					<td scope="row">{{p.fecha_tramite|default_if_none:""}}</td>
+					<td scope="row">{{p.fecha_pago|default_if_none:""}}</td>
+					<td scope="row">
+						<div class="col-auto text-truncate text-center">
+						{% if p.estado == 'Grabado' %}
+							<a class="btn btn-secondary btn-sm" href="{% url 'orden_pago_editar' p.id %}"><i class="fas fa-edit"></i></a>
+						{% elif p.estado == 'Enviado' %}
+							<a class="btn btn-secondary btn-sm" href="{% url 'orden_pago_editar_enviado' p.id %}"><i class="fas fa-edit"></i></a>
+						{% elif p.estado == 'Autorizado'%}
+							<a class="btn  btn-secondary btn-sm" href="{% url 'orden_pago_editar_autorizado' p.id %}"><i class="fas fa-edit"></i></a>
+						{% elif p.estado == 'Pagado'%}
+							<a class="btn  btn-secondary btn-sm" href="{% url 'orden_pago_editar_pagado' p.id %}"><i class="fas fa-edit"></i></a>
+						{% else %}
+							<a class="btn  btn-secondary btn-sm" href="{% url 'orden_pago_editar_enviado' p.id %}"><i class="fas fa-edit"></i></a>
+						{% endif %}
+
+						{% if p.estado == 'Grabado' %}
+						<a href='javascript:;' onclick='eliminar({{ p.id }});' class="btn btn-danger btn-sm "
+							data-toggle='modal' data-target="#ordenPagoEliminarCenter"><i class="fas fa-trash"></i></a>
+						{% endif %}
+						<a class="btn btn-secondary btn-sm " href="#" data-toggle="tooltip"
+							data-placement="top" title="Imprimir">
+							<i class="fas fa-print"></i></a>
+						</div>
+					</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+			{% else %}
+			<h2>No hay elementos que mostrar</h2>
+			{% endif %}
+		</table>
+	</div>
+	<div class="modal fade" id="ordenPagoEliminarCenter" tabindex="-1" role="dialog" aria-labelledby="ordenpagoTitle"
+		aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+			</div>
+		</div>
+	</div>
+</div>
+
+{% endblock %}
+
+{% block extrafooter %}
+<script src="{% static 'js/table.js' %}"></script>
+<script src="{% static 'js/date-filter.js' %}"></script>
+<script>
+
+	function GetCurrentDate() {
+		var today = new Date();
+		var dd = String(today.getDate()).padStart(2, '0');
+		var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+		var yyyy = today.getFullYear();
+
+		today = yyyy + '-' + mm + '-' + dd;
+		return today;
+	}
+
+	function eliminar(id) {
+		$.ajax({
+			url: "{% url 'ordenpago_confirmar_eliminar' %}",
+			data: {
+				'pk': id
+			},
+			success: function (data) {
+				$(".modal-content").html(data)
+			}
+		});
+	};
+
+	$(document).on("change", '#id_motivo_anular', function () {
+		if ($(this).val().length > 20) {
+			$('#anular').attr('disabled', false);
+			$('#id_fecha_anulado').val(GetCurrentDate());
+		}
+		else {
+			$('#anular').attr('disabled', true);
+			$('#id_fecha_anulado').val(null);
+		}
+	})
+
+	$(document).ready(function (e) {
+		$(".fecha").each(function (e) {
+			TextToDate($(this));
+		})
+	});
+</script>
+{% endblock extrafooter%}

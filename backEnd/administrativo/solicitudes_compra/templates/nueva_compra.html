@@ -1,0 +1,316 @@
+{% extends 'base_administrativo.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% load staticfiles %}
+{% block title %}{{ "EC - ANALISIS COTIZACIONES" }}{% endblock title %}
+
+{% block content %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" />
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/select2-bootstrap-theme/0.1.0-beta.10/select2-bootstrap.css" />
+<div class="row mb-2">
+	<div class="col-xl-5 col-12 v-align">
+		<h2 class="text-uppercase darkgreen-text">
+			{% block regedit %}
+			Nueva Solicitud de Compra
+			{% endblock regedit %}
+		</h2>
+	</div>
+
+	<div class="col-12 col-xl-7">
+		<div class="form-row">
+			<div class="col-6">
+				{{ form.cod_solicitud |as_crispy_field}}
+			</div>
+			<div class="col-6">
+				{{ form.fecha |as_crispy_field}}
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="row">
+	<div class="campo col-12 mt-2 p-2 pl-3">
+		<h5 class="black-text mb-0 text-uppercase">Información Ingreso</h5>
+	</div>
+</div>
+
+<form method="post" id="Calificacion_proveedorForm"  
+	data-evento-url="{% url 'ajax_load_eventos_presupuestos' %}" data-tipo-url="{% url 'ajax_load_partida'%}"
+	data-producto-url="{% url 'load_productosS'%}" data-productoInd-url="{% url 'load_producto_datalleS'%}"
+	enctype="multipart/form-data" novalidate  >
+	{% csrf_token %}
+
+	{% if error %}
+		<h2>{{error}}</h2>
+
+	{% else %}
+		<div class="row darkwhite-bg py-2">
+			<div class="col-12">
+				<div class="form-row">
+					<div class="col-4">
+						{{ form.tipo_proceso|as_crispy_field }}
+					</div>
+					<div class="col-4">
+					{{ form.procedimiento_sugerido|as_crispy_field }}					
+					</div>
+					<div class="col-4">
+						{{ form.estado|as_crispy_field }}
+					</div>
+				</div>
+
+				<div class="form-row">
+					<div class="col-4">
+						{{ form.periodo_compra|as_crispy_field }}
+					</div>				
+					<div class="col-4">
+						{{ form.centro_costos|as_crispy_field }}
+					</div>
+					<div class="col-4">
+						{{ form.tipo_compra|as_crispy_field }}
+					</div>								
+				</div>	
+
+				<div class="form-row">
+					<div class="col-4">
+						{{ form.nombre_requirente|as_crispy_field }}
+					</div>				
+					<div class="col-4">
+						{{ form.fecha_requerimiento|as_crispy_field}}
+					</div>							
+				</div>	
+
+				<div class="form-row">
+					<div class="col-12">
+						{{ form.observaciones|as_crispy_field }}
+					</div>						
+				</div>	
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-6">
+				<div class="row pl-3 pr-3">
+					<div class="campo col-12 mt-2 p-2 pl-3">
+						<h5 class="darkgreen-text mb-0 text-uppercase">PARA RECEPCIÓN DEL BIEN/SERVICIO</h5>
+					</div>        
+				</div>
+			</div>
+
+			<div class="col-6">
+				<div class="row pl-3 pr-3">
+					<div class="campo col-12 mt-2 p-2 pl-3">
+						<h5 class="darkgreen-text mb-0 text-uppercase">DATOS ADICIONALES</h5>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="row darkwhite-bg py-2">
+			<div class="col-6">
+				<div class="form-row">
+					<div class="col-12">
+						{{ form.nombre_recibe|as_crispy_field }}
+					</div>
+					<div class="col-12">
+						{{ form.email_recibe|as_crispy_field }}
+					</div>
+					<div class="col-12">
+						{{ form.direccion_recibe|as_crispy_field }}
+					</div>
+					<div class="col-6">
+						{{ form.telefono_recibe|as_crispy_field }}
+					</div>
+					<div class="col-6">
+						{{ form.celular_recibe|as_crispy_field }}
+					</div>
+				</div>
+			</div>
+
+			<div class="col-6">
+				<div class="form-row">
+					<div class="col-12">
+						{{ form.nombre_custodio|as_crispy_field }}
+					</div>
+					<div class="col-12">
+						{{ form.cargo_recibe|as_crispy_field }}
+					</div>
+					<div class="col-12">
+						{{ form.nombre_responsable|as_crispy_field }}
+					</div>
+					<div class="col-12">
+						{{ form.cargo_responsable|as_crispy_field }}
+					</div>
+					<div class="col-12">
+						{{ form.sede_responsable|as_crispy_field }}
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="container">
+			<div class="form-group col-6">
+				{{ form.anexo|as_crispy_field}}
+			</div>
+
+			<div class="row mb-2">
+				<div class="col">
+					<div class="form-row float-right">
+						<div class="col-auto v-align ml-auto">
+					<a id="add" class="text-white btn btn-secondary green-bg btn-sm"><i
+						class="fas fa-plus"></i>   Agregar Ítem</a>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="form-row">
+			<div id="tabla" class="col-12">
+				<table id="productos-table" class="table table-responsive-md border-bottom">
+					<thead class="darkgreen-bg white-text">
+						<tr>
+							<th>Tipo Ítem</th>
+							<th>Ítem</th>
+							<th>Unidad de medida</th>
+							<th>Partida Presupuestaria</th>
+							<th>Características*</th>
+							<th>Stock Actual</th>
+							<th>Punto de Reorden</th>
+							<th>Stock requerido</th>
+							<th>Cantidad a comprar</th>
+							<th>Precio referencial</th>
+							<th>IVA</th>
+							<th>TOTAL</th>
+							<th>Acciones</th>
+						</tr>
+					</thead>
+					
+					<tbody id="productoTableBody">
+						
+					</tbody>
+				</table>
+			</div>
+		</div>
+
+		<div class="col-12 mt-2 p-2 pl-3">
+			<h5 class="darkgreen-text mb-3">*Especificar: marca, modelo, peso, capacidad, código, volumen, color, según corresponda.</h5>
+		</div>  
+
+		<div class="form-row">
+			<div class="col-6 col-md-3">
+				{{ form.subtotal_0}}
+				<label for="sub_total" class="col-form-label">Sub total 0%</label>
+				<div class="currency-wrap">
+					<span class="currency-code">$</span>
+					<input type="text" id="sub_total_0" class="form-control-plaintext text-right form-control" readonly>
+				</div>
+			</div>
+			<div class="col-6 col-md-3">
+				{{ form.subtotal_iva}}
+				<label for="sub_total" class="col-form-label">Sub total IVA</label>
+				<div class="currency-wrap">
+					<span class="currency-code">$</span>
+					<input type="text" id="sub_total_iva" class="form-control-plaintext text-right form-control" readonly>
+				</div>
+			</div>
+			<div class="col-6 col-md-3">
+				{{ form.valor_iva}}
+				<label for="iva" class="col-form-label">IVA</label>
+				<div class="currency-wrap">
+					<span class="currency-code">$</span>
+					<input type="text" id="iva" class="form-control-plaintext text-right form-control" readonly>
+				</div>
+			</div>
+			<div class="col-6 col-md-3">
+				{{ form.total}}
+				<label for="valor_total" class="col-form-label">Total</label>
+				<div class="currency-wrap">
+					<span class="currency-code">$</span>
+					<input type="text" id="valor_total" class="form-control-plaintext text-right form-control" readonly>
+				</div>
+			</div>
+		</div>
+
+		<table id="tableProSum" class="table table-responsive-md border-bottom " hidden>
+			{{ formset.management_form|crispy }}
+
+			{% for form in formset.forms %}
+			<tr class="{% cycle 'row1' 'row2' %} form-control pt form-row formset_row-{{ formset.prefix }}">
+				{% for field in form.visible_fields %}
+				<td scope="row">
+					{# Include the hidden fields in the form #}
+					{% if forloop.first %}
+					{% for hidden in form.hidden_fields %}
+					{{ hidden }}
+					{% endfor %}
+					{% endif %}
+					{{ field.errors.as_ul }}
+					{{ field|as_crispy_field }}
+				</td>
+				{% endfor %}
+			</tr>
+			{% endfor %}
+
+		</table>
+	
+	{% endif %}
+
+    {{ form.media }}
+    {% if form.errors %}
+    <ul>
+        {% for error in form.errors %}
+        <li>{{ error }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    <br>
+    <br>
+
+	<div class="row mt-3 crear">
+		<div class="col-12">
+		<a class="btn btn-secondary green-bg" data-toggle='modal' data-target="#solicitud_confirmar"
+		href='#'>Siguiente</a>
+		<a class="btn btn-secondary" href="{% url 'solicitudes_compra' %}"> Cancelar </a>
+		</div>
+	</div>
+
+
+
+	<div class="modal fade" id="solicitud_confirmar" tabindex="-1" role="dialog" aria-labelledby="ordenTitle"
+				aria-hidden="true">
+					<div class="modal-dialog modal-dialog-centered" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title" id="reporteTitle">Confirmación</h5>
+									<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+										<span aria-hidden="true">&times;</span>
+								</button>
+							</div>
+							<div class="modal-body" id="modal-confirmacion">
+								¿Está seguro/a que desea continuar? Verifíque los datos ingresados antes de proceder.
+							</div>
+							<div class="modal-footer">
+								<button class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+								<button type="submit" class="btn btn-secondary green-bg mr-3 hack">Confirmar</button>
+							</div>
+						</div>
+					</div>
+				</div>
+</form>
+
+ {% endblock content %}
+
+{% block extrafooter %}
+    <script type="text/javascript">
+        window.onload = function () {
+        document.getElementById("id_fecha").readOnly = true;
+        };
+    </script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
+<script src="{% static 'js/listaItems.js' %}"></script>
+
+<script src="{% static 'js/tabla_solicitudes.js' %}"></script>
+<script src="{% static 'js/solicitudes_form.js' %}"></script>
+{% endblock extrafooter %}
+

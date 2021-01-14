@@ -1,0 +1,232 @@
+{% extends 'base_ventas.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% load staticfiles %}
+
+{% block content %}
+<form method="post" novalidate id="form-fact" enctype="multipart/form-data" ,
+data-persona-url="{% url 'ajax_load_personas' %}" data-confirmacion-url="{% url 'ajax_verificar_campos' %}"
+data-natural-url="{% url 'natural_nuevo'%}" data-juridica-url="{% url 'juridicas_view' %}"
+data-info-url="{% url 'ajax_info_id' %}">
+	{% csrf_token %}
+	<div class="row mb-2">
+		<div class="col-12 col-xl-12">
+			<h2 class="text-uppercase darkgreen-text">
+				{% block regedit %}
+				Registro Proformas de Eventos
+				{% endblock regedit %}
+			</h2>
+		</div>
+		<input type="hidden" id='rc' value="{{form.ruc_ci.value}}">
+		<input type="hidden" id='rn' value="{{form.razon_nombres.value}}">
+		<input type="hidden" id='ac' value="{{form.active.value}}">
+	</div>
+	<div class="row darkwhite-bg py-2">
+		<div class="col-12">
+			<div class="form-row">
+				<div class="col-6 col-md-2 mb-0 ">
+					{{form.codigo|as_crispy_field}}
+				</div>
+				<div class="col-6 col-md-2 mb-0 ">
+					{{form.version|as_crispy_field}}
+				</div>
+				
+			
+			<div class="col-6 col-md-2 mb-0">
+
+				{{form.tipo_cliente|as_crispy_field}}
+				<small class="form-text text-muted">Seleccione el tipo de cliente</small>
+	  
+			  </div>
+			  <div class="col-6 col-md-2 mb-0 " id="field-ruc-ci">
+				<div id="div_id_ruc_ci" class="form-group">
+				  <label for="{{ form.ruc_ci.id_for_label}}" class="col-form-label requiredField"
+					id="ruc_ci">RUC/CI</label><span class="asteriskField">*</span>
+				  <div>
+					{{ form.ruc_ci}}
+					{% if form.ruc_ci.errors %}
+					{% for error in form.ruc_ci.errors %}
+					<p class="invalid-feedback d-block">
+					  <strong>{{ error }}</strong>
+					</p>
+					{% endfor %}
+					{% endif %}
+	  
+				  </div>
+				</div>
+			  </div>
+	  
+			  <div class="col-6 col-md-2 mb-0" id="field-razon">
+				<div id="div_id_razon_nombres" class="form-group">
+				  <label for="{{ form.razon_nombres.id_for_label}}" class="col-form-label requiredField" id="ra_nom">Razón
+					Social/Nombres</label><span class="asteriskField">*</span>
+				  <div>
+					{{ form.razon_nombres}}
+					{% if form.razon_nombres.errors %}
+					{% for error in form.razon_nombres.errors %}
+					<p class="invalid-feedback d-block">
+					  <strong>{{ error }}</strong>
+					</p>
+					{% endfor %}
+					{% endif %}
+	  
+				  </div>
+				</div>
+			  </div>
+			
+			  <div class="col-6 col-md-2 mb-0">
+				
+			</div>
+				<div class="col-6 col-md-2 mb-0">
+					{{form.tipoEmpresa|as_crispy_field}}
+				</div>
+			
+			
+				<div class="col-6 col-md-2 mb-0">
+					{{form.sector|as_crispy_field}}
+				</div>
+				<div class="col-6 col-md-2 mb-0 ">
+					{{form.asesor|as_crispy_field}}
+				</div>
+				<div class="col-6 col-md-2 mb-0">
+					{{form.fechaSolicitud|as_crispy_field}}
+				</div>
+				<div class="col-6 col-md-2 mb-0">
+					{{form.fechaEnvio|as_crispy_field}}
+				</div>
+			
+				<div class="col-6 col-md-2 mb-0">
+					{{form.numeroParticipantes|as_crispy_field}}
+				</div>
+				<div class="col-6 col-md-2 mb-0">
+					{{form.horas|as_crispy_field}}
+				</div>
+				<div class="col-6 col-md-2 mb-0">
+					{{form.cantidadCursos|as_crispy_field}}
+				</div>
+				<div class="col-6 col-md-2 mb-0">
+					{{form.montoProforma|as_crispy_field}}
+				</div>
+			
+				<div class="col-6 col-md-2 mb-0">
+                    {{form.porcentExito|as_crispy_field}}
+                </div>
+                <div class="col-6 col-md-2 mb-0">
+                    {{form.porcentDesc|as_crispy_field}}
+                </div>
+                <div class="col-6 col-md-2 mb-0">
+                    {{form.montoDesc|as_crispy_field}}
+                </div>
+           
+                <div class="col-12 mb-0">
+                    {{form.observacion|as_crispy_field}}
+                </div>
+            
+            <table class="table table-responsive-md border-bottom">
+				{{ formset.management_form|crispy }}
+				
+					{% for form in formset.forms %}
+							<tr class="{% cycle 'row1' 'row2' %} form-control form-row formset_row-{{ formset.prefix }}">
+								{% for field in form.visible_fields %}
+								<td scope="row">
+									{# Include the hidden fields in the form #}
+									{% if forloop.first %}
+										{% for hidden in form.hidden_fields %}
+											{{ hidden }}
+										{% endfor %}
+									{% endif %}
+									{{ field.errors.as_ul }}
+									{{ field|as_crispy_field }}
+								</td>
+								{% endfor %}
+							</tr>
+					{% endfor %}
+				
+				</table>
+            <br>
+            
+                
+                <div class="col-0.5">
+                    <font color="green"><h6><b> Estado: </b></h6></font>
+                </div>
+                <div class="col-xl-3">
+                    {{form.estado|as_crispy_field}}
+                </div>
+            
+
+			
+				<div class="mt-2 campo p-2 pl-3 col-12">
+					<h5 class="black-text text-uppercase mb-0">Aceptación Proforma</h5>
+				</div>
+			
+			
+				<div class="col-xl-3">
+					{{form.fechaRespuesta|as_crispy_field}}
+				</div>
+				<div class="col-xl-3">
+					{{form.montoAceptado|as_crispy_field}}
+				</div>
+				<div class="col-xl-6"></div>
+				<div class="col-xl-3">
+					{{form.montoEjecutado|as_crispy_field}}
+				</div>
+				<div class="col-xl-3">
+					{{form.montoPorEjecutarse|as_crispy_field}}
+				</div>
+			</div>
+		</div>
+	
+	</div>
+
+	<div class="row mt-3 editar">
+		<div class="col-12">
+			<button type="submit" class="btn btn-secondary green-bg hack">Guardar</button>
+			<a class="btn btn-secondary" href="{% url 'proforma_lista' %}"> Cancelar </a>
+		</div>
+	</div>
+
+
+	{{ form.media }}
+    <div class="row mt-3 crear">
+		<div class="col-12">
+		  <a class="btn btn-secondary green-bg" data-toggle='modal' data-target="#proforma_confirmar"
+		  href='#'>Siguiente</a>
+		  <a class="btn btn-secondary" href="{% url 'proforma_lista' %}"> Cancelar </a>
+		 </div>
+	   </div>
+	
+	  <div class="modal fade" id="proforma_confirmar" tabindex="-1" role="dialog" aria-labelledby="ordenTitle"
+					aria-hidden="true">
+						<div class="modal-dialog modal-dialog-centered" role="document">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="reporteTitle">Confirmación</h5>
+										<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+											<span aria-hidden="true">&times;</span>
+									</button>
+								</div>
+								<div class="modal-body" id="modal-confirmacion">
+									¿Está seguro/a que desea continuar? Verifíque los datos ingresados antes de proceder.
+								</div>
+								<div class="modal-footer">
+									<button class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+									<button type="submit" class="btn btn-secondary green-bg mr-3 hack">Confirmar</button>
+								</div>
+							</div>
+						</div>
+					</div>
+</form>
+
+
+{% endblock %}
+
+{% block extrafooter %}
+
+{{ form.numbers }}
+<script src="{% static 'js/proforma_nuevo.js' %}"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
+<script src="{% static 'js/proforma_form.js' %}"></script>
+<script src="{% static 'js/proforma_money.js' %}"></script>
+<script src="{% static 'js/proforma_files.js' %}"></script>
+{% endblock extrafooter %}

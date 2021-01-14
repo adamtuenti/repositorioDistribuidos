@@ -1,0 +1,183 @@
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% load index %}
+<div class="modal-header">
+    <h2 class="modal-title" id="ordenTitle"> Cambio de Evento </h2>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<form method="post" novalidate id="form-event" enctype="multipart/form-data"
+                action="{% url 'cambiarEventoCreate'%}"
+                data-participantes-url="{% url 'ajax_load_participantesTodosPE' %}"
+                data-partEvento-url="{% url 'ajax_load_partEventoPE' %}"
+                data-nopartEvento-url="{% url 'ajax_load_nopartEventoPE' %}"
+                data-eventosInd-url="{% url 'ajax_load_eventosIndPE' %}">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="row darkwhite-bg py-2 pb-3">
+                                <div class="col-12">
+                                    <div class="form-row">
+                                        <div class="col-6 col-md-4 mb-0 ">
+                                            {{form.participante_cedula|as_crispy_field}}
+                                        </div>
+                                        <div class="col-6 col-md-8 mb-0 ">
+                                            {{form.participante_nombre|as_crispy_field}}
+                                        </div>
+                                    </div>
+                                    {{form.evento_origen_codigo}}
+                                    {{form.evento_origen_nombre}}
+                                    {{form.evento_origen_valor}}
+
+                                </div>
+                            </div>
+                            <h4>Origen</h3>
+                                <div class="form-row">
+                                    <div class="col-12 col-md-4">
+                                        <label for="codigoO" class="col-form-label">Código Evento</label>
+                                        <select type="text" id="codigoO" class="form-control select4" disabled></select>
+                                        {% if form.evento_origen_nombre.errors %}
+                                        {% for error in form.evento_origen_nombre.errors %}
+                                        <p class="invalid-feedback d-block">
+                                            <strong>{{ error }}</strong>
+                                        </p>
+                                        {% endfor %}
+                                        {% endif %}
+                                    </div>
+                                    <div class="col-12 col-md-8">
+                                        <label for="nombreEO" class="col-form-label">Nombre</label>
+                                        <select type="text" id="nombreEO" class="form-control select4" disabled></select>
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="form-row">
+                                    <div id="tabla" class="col-12">
+                                        <table id="evento-origen" class="table table-responsive-md border-bottom">
+                                            <thead class="darkgreen-bg white-text">
+                                                <tr>
+                                                    <th>Código evento</th>
+                                                    <th>Nombre del evento</th>
+                                                    <th>Fecha inicio</th>
+                                                    <th>Fecha fin</th>
+                                                    <th>Valor</th>
+                                                    <th>Accion</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr class="text-center">
+                                                    <td id="codtEO"></td>
+                                                    <td id="nomtEO"></td>
+                                                    <td id="fitEO"></td>
+                                                    <td id="fftEO"></td>
+                                                    <td id="evtEO"></td>
+                                                    <td></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+
+                                    </div>
+                                </div>
+                                <h4>Destino</h3>
+                                    <div class="form-row">
+                                        <div class="col-12 col-md-4">
+                                            <label for="codigoD" class="col-form-label">Código Evento</label>
+                                            <select type="text" id="codigoD" class="form-control select4" disabled></select>
+                                            {% for form in eventoFS %}
+                                                {% if form.evento_destino_codigo.errors %}
+                                                {% for error in form.evento_destino_codigo.errors %}
+                                                    <p class="invalid-feedback d-block">
+                                                    <strong>{{ error }}</strong>
+                                                    </p>
+                                                {% endfor %}
+                                                {% endif %}
+                                            {% endfor %}
+                                        </div>
+                                        <div class="col-12 col-md-8">
+                                            <label for="nombreED" class="col-form-label">Nombre</label>
+                                            <select type="text" id="nombreED" class="form-control select4" disabled></select>
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <div class="form-row">
+                                        <div id="tabla" class="col-12">
+                                            <table id="evento-destino" class="table table-responsive-md border-bottom">
+                                                <thead class="darkgreen-bg white-text">
+                                                    <tr>
+                                                        <th>Código evento</th>
+                                                        <th>Nombre del evento</th>
+                                                        <th>Fecha inicio</th>
+                                                        <th>Fecha fin</th>
+                                                        <th>Valor</th>
+                                                        <th>Accion</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="EventoDestinoTablaBody" class="text-center">
+
+                                                </tbody>
+                                            </table>
+
+                                        </div>
+                                    </div>
+                                    {{eventoFS.management_form }}
+                                    {% for form in eventoFS %}
+                                    <div class="row latruept form-row spacer " hidden>
+
+
+                                        <div class="input-group">
+                                            {{form.evento_destino_codigo}}
+                                            {{form.evento_destino_nombre}}
+                                            {{form.evento_destino_valor}}
+
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+
+                        </div>
+                        <div class="modal-footer">
+                            <!-- <button id="hack2" name="evento" value="" class="btn btn-secondary green-bg mr-3" form="form-event"
+                                type="submit"> Guardar </button> -->
+                            <a id="AbrirModalContato"   class="btn btn-secondary green-bg" data-toggle='modal' data-target="#camEvent_MC"
+                                href='#'>Siguiente</a>
+                            <!-- <a id="AbrirModalContato"  class="btn btn-secondary green-bg" 
+                                href='#'>Siguiente</a> -->
+                            <button class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                        </div>
+
+                        {{ form.media }}
+
+                        <div class="modal fade" id="camEvent_MC" role="dialog" aria-labelledby="ordenTitle" aria-hidden="true">
+                          <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h5 class="modal-title" >Confirmación</h5>
+                                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                              </div>
+                              <div class="modal-body" >
+                                ¿Está seguro/a que desea continuar? Verifíque los datos ingresados antes de proceder.
+                              </div>
+                              <div class="modal-footer">
+                                <button class="btn btn-secondary" data-number="2">Cerrar</button>
+                                <button id="hack2" name="evento" form="form-event" type="submit" class="btn btn-secondary green-bg mr-3">Confirmar</button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                    </form>
+
+<!-- <script src="{% static 'js/cambio_event.js' %}"></script>
+<script src="{% static 'js/modal_errores_procesp.js' %}"></script> -->
+<script>
+    $.getScript( "{% static 'js/modal_errores_procesp.js' %}" );
+</script>    
+<script>
+    $('#AbrirModalContato').click(function(){
+        $('#camEvent_MC').appendTo("body");
+    });
+    $("button[data-number=2]").click(function(event){
+            event.preventDefault();
+        $('#camEvent_MC').modal('hide');
+    });
+</script>

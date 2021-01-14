@@ -1,0 +1,122 @@
+{% extends "base.html" %} {% load static %}  {% load staticfiles %}
+{% block content %}
+
+  <div class="row p-2">
+    <div class="col-10 col-sm-10 col-xl-10">
+      <h2 class="text-left">
+        CONSULTAR <span class="darkgreen-text"> USUARIO </span>
+      </h2>
+    </div>
+
+    <div class="col-2 col-sm-2 col-xl-2">
+      <a href="{% url 'crearUsuario' %}" class="btn btn-success m-1 text-left"
+        >Nuevo <span class="fas fa-plus-circle"></span
+      ></a>
+    </div>
+  </div>
+  
+<div class="container-fluid">
+  <div class="row mt-4">
+    <div class="col-16 col-xl-16 table-container">
+      <table class="table table-responsive table-bordered" id="tablaUsuarios">
+        <thead class="white-text darkgreen-bg">
+          <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Cédula</th>
+            <th scope="col">Nombre</th>
+            <th scope="col">Mail</th>
+            <th scope="col">Área</th>
+            <th scope="col">Cargo</th>
+            <th scope="col">Teléfono</th>
+            <th scope="col">Estado</th>
+            <th scope="col">Privilegios</th>
+            <th scope="col">Fecha de creación</th>
+            <th scope="col">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% if usuarios %} {% for usuario in usuarios %}
+          
+          <tr class="text-center">
+            <td scope="rol">{{usuario.id}}</td>
+            <!-- <td scope="rol">
+                <img src="{{usuario.imagen}}" width="50%">
+                <img src="{% static 'img/user.png' %}" width="50%">
+            </td> -->
+            <td scope="rol">{{usuario.cedula}}</td>
+            <td scope="rol">{{usuario}}</td>
+            <td scope="rol">{{usuario.email}}</td>
+            <td scope="rol">{{usuario.area}}</td>
+            <td scope="rol">{{usuario.cargo}}</td>
+            <td scope="rol">{{usuario.telefono}}</td>
+            <td scope="rol">{{usuario.estado}}</td>
+            {% if usuario.get_privilegios %}
+            <td scope="rol">
+            {% for priv in usuario.get_privilegios %}
+              {% if priv.modulo %}
+                <span>{{priv.rol}} - {{priv.modulo}}</span>
+              {% else %}
+                <span>{{priv.rol}}</span>
+              {% endif %}
+            {% endfor %}
+            </td>
+            {% else %}
+            <td scope="rol">Sin privilegios</td>
+            {% endif %}
+            <td scope="rol">{{usuario.fecha_creacion}}</td>
+            <td class="text-center" scope="rol">
+              <a href="{% url 'verUsuario' usuario.id %}"><span class="fas fa-search text-warning"></span></a>
+              <a href=""><span class="fas fa-edit text-primary"></span></a>
+              <!-- <a href="" onclick="mandarAprobar('{{design.id}}')"><span class="text-success">Mandar a aprobación</span></a> -->
+    
+            </td>
+          </tr>
+          
+          {% endfor %} {% else %}
+          <h3>No hay registros de usuarios para presentar</h3>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+{% endblock %} {% block specific_scripts %} 
+<script>
+$(document).ready(function () {
+    // Setup - add a text input to each footer cell
+    $('#tablaUsuarios thead tr').clone(true).appendTo('#tablaUsuarios thead');
+    $('#tablaUsuarios thead tr:eq(1) th').each(function (i) {
+        var title = $(this).text();
+        $(this).html('<input type="text" placeholder="Buscar" / style="width:100%">');
+
+        $('input', this).on('keyup change', function () {
+            if (table.column(i).search() !== this.value) {
+                table
+                    .column(i)
+                    .search(this.value)
+                    .draw();
+            }
+        });
+    });
+
+    var table = $('#tablaUsuarios').DataTable({
+        orderCellsTop: true,
+        fixedHeader: true
+    });
+});
+
+</script>
+<!-- <script src="{% static  'js\tables.js' %}"></script> -->
+<!-- <script>
+  function mandarAprobar(id){
+    axios.patch('/academico/api/design/'+id+'/',
+                    {estado:"En espera de aprobación"}).then((response)=>{
+                      console.log(response.data)
+                }).catch((err)=>{
+                    console.log(err.response)
+                })
+  }
+</script> -->
+
+{% endblock %}

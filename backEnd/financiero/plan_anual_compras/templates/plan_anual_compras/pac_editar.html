@@ -1,0 +1,197 @@
+{% extends 'plan_anual_compras/pac_nuevo.html' %}
+{% load my_tags %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% load staticfiles %}
+{% load humanize %}
+{% load l10n %}
+{% block regedit %}
+Edición Plan Anual de Compras
+{% endblock regedit %}
+
+{% block tablas %}
+
+<div class="row">
+	<div class=" campo p-2 pl-3 col-12">
+		<h5 class="black-text text-uppercase mb-0">Producto/Servicio</h5>
+	</div>
+</div>
+<div class="row mt-4">
+	<div id="tabla" class="col-12">
+		<table id="dtBasicExample" class="table table-responsive-sm border-bottom">
+			<thead class="white-text darkgreen-bg">
+				<tr>
+					<th>#</th>
+					<th>Código</th>
+					<th>Partida Presupuestaria</th>
+					<th>Tipo de Compra</th>
+					<th>Detalle del Producto</th>
+					<th>Cantidad Anual</th>
+					<th>Unidad de Medida</th>
+					<th>Costo Unitario</th>
+					<th>Subtotal</th>
+					<th>Valor Total</th>
+					<th>Periodo</th>
+					{% if form.estado.value == "Grabado" %}
+					<th>Acciones</th>
+					{%endif%}
+				</tr>
+			</thead>
+
+			{% if partidas %}
+			<tbody>
+				{% for p in partidas %}
+				<tr class="text-center">
+					<td>{{forloop.counter}}</td>
+					<td>{{ p.egreso.codigo }}</td>
+					<td>{{ p.egreso.nombre }}</td>
+					<td>{{ p.tipo_compra }}</td>
+					<td>{{ p.producto.nombre |default:p.descripcion}}</td>
+					<td>{{ p.cantidad_anual }}</td>
+					<td>{{ p.producto.unidad_medida |default:p.unidad_medida}}</td>
+					<td>${{ p.producto.costo_unitario|floatformat:2|intcomma|default:p.costo_unitario}}</td>
+					<td>${{ p.subtotal |floatformat:2|intcomma}}</td>
+					<td>${{ p.total |floatformat:2|intcomma}}</td>
+					<td>{{ p.periodo }}</td>
+					{% if form.estado.value == "Grabado" %}
+					<td>
+						<div class="col-auto text-truncate text-center">
+							<a class="btn btn-secondary btn-sm" href='javascript:;'
+								onclick='update({{ p.id }},{{pac_id}});' data-toggle='modal'
+								data-target="#productoModalCenter"><i class="fas fa-edit"></i></a>
+
+							<a class="btn btn-danger btn-sm" href='javascript:;'
+								onclick='eliminar({{ p.id }},{{pac_id}});' data-toggle='modal'
+								data-target="#productoDeleteModalCenter"><i class="fas fa-trash"></i></a>
+						</div>
+					</td>
+					{%endif%}
+				</tr>
+				{% endfor%}
+			</tbody>
+			{% endif %}
+		</table>
+		{% if form.estado.value == "Grabado" %}
+		<a class="btn btn-secondary green-bg" data-toggle="modal" href='javascript:;' onclick='update(-1,{{pac_id}});'
+			data-target="#productoModalCenter"><i class="fas fa-plus"></i> Agregar Nuevo</a>
+		{%endif%}
+		<div class="row">
+			<div class="col-3"></div>
+			<div class="col-6">
+				{% if form.estado.value == "Anulada" %}
+				{{form.motivo_anular|as_crispy_field}}
+				{% endif %}
+			</div>
+			<div class="col-3"></div>
+		</div>
+	</div>
+</div>
+<div class="row mt-3">
+	<div class="col-12">
+		<a class="btn btn-secondary green-bg" data-toggle='modal' data-target="#pacAgregarCenter" href='#'>Guardar</a>
+		<a class="btn btn-secondary" href="{% url 'pac_index' %}">Cancelar</a>
+		{% if form.estado.value == "Grabado" %}
+		<button id="env-sol" class="btn btn-success darkgreen-bg float-right">Enviar solicitud</button>
+		{%endif%}
+	</div>
+</div>
+<div class="modal fade" id="pacAgregarCenter" tabindex="-1" role="dialog" aria-labelledby="pacTitle" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="pacTitle">Confirmación</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body" id="modal-confirmacion">
+				¿Está seguro/a que desea continuar? Verifíque los datos ingresados antes de proceder.
+			</div>
+			<div class="modal-footer">
+				<button class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+				<button type="submit" class="btn btn-secondary green-bg mr-3">Confirmar</button>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock tablas %}
+
+{%block forms%}
+
+<div class="modal fade" id="productoModalCenter" tabindex="-1" role="dialog"
+	aria-labelledby="productoUpdateModalCenterTitle" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+		<div class="modal-content" id="contenido">
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="productoDeleteModalCenter" tabindex="-1" role="dialog"
+	aria-labelledby="productoDeleteModalCenterTitle" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered" role="document">
+		<div class="modal-content" id="contenidoDel">
+		</div>
+	</div>
+</div>
+{%endblock forms%}
+
+{%block extrafooter%}
+<script src="{% static 'js/select2.min.js' %}"></script>
+<script src="{% static 'js/dynamic-formset.js' %}"></script>
+<script src="{% static 'js/money_formater.js' %}"></script>
+
+<script>
+
+	$(document).on('click', '#enviar', function (e) {
+		e.preventDefault();
+		$(".currency-wrap input").each(function (e) {
+			$(this).val(unformatNumber($(this).val()));
+		})
+		$("#form-partida").trigger("submit");
+	});
+
+	$('#env-sol').click(function (e) {
+		e.preventDefault();
+		$("#id_estado").val("Solicitud Enviada");
+		$('#id_fecha_envio').val(GetCurrentDate());
+		$("#form").trigger("submit");
+	});
+
+
+	if ("{{form.estado.value}}" == "Anulada") {
+		$("#id_motivo_anular").attr("readonly", true);
+	}
+
+	function update(id, fk) {
+		$.ajax({
+			url: "{% url 'partida_editar' %}",
+			data: {
+				'pk': id,
+				'fk': fk
+			},
+			success: function (data) {
+				$("#contenido").html(data);
+				initSelect2();
+				load_data_descripcion();
+				load_data_producto();
+				$("#id_subtotal").val(formatNumber($("#id_subtotal").val()));
+				$("#id_total").val(formatNumber($("#id_total").val()));
+				$("#id_costo_unitario").val(formatNumber($("#id_costo_unitario").val()));
+			}
+		});
+	};
+
+	function eliminar(id, fk) {
+		$.ajax({
+			url: "{% url 'partida_eliminar' %}",
+			data: {
+				'pk': id,
+				'fk': fk
+			},
+			success: function (data) {
+				$("#contenidoDel").html(data);
+			}
+		});
+	};
+</script>
+{%endblock extrafooter%}

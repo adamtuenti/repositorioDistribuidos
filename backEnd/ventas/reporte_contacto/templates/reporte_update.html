@@ -1,0 +1,154 @@
+{% extends 'reporte_form.html' %}
+
+{% block regedit %}
+Edición Reporte de contacto
+{% endblock regedit %}
+
+{% block tablas %}
+<div class="row">
+  <div class=" campo p-2 pl-3 col-12">
+    <h5 class="black-text text-uppercase mb-0">Capacitación</h5>
+  </div>
+</div>
+<div class="row my-3">
+  <div id="tabla" class="table-container col-12">
+    <table class="table border-bottom table-responsive table-sm">
+      <thead class="white-text darkgreen-bg">
+        <tr>
+          <th>Tema de capacitación sugerido</th>
+          <th>Tipo de capacitación sugerido</th>
+          <th>Modalidad</th>
+          <th>Área(s) del evento</th>
+          <th>Nivel organizacional de los participantes</th>
+          <th>Número de participantes</th>
+          <th>Horario normales de trabajo</th>
+          <th>Nivel de educación</th>
+          <th>Edad promedio de los participantes</th>
+          <th>Lugar para la capacitación</th>
+          <th>Ciudad</th>
+          <th>Fechas estimadas para el evento</th>
+          <th>Hora de inicio</th>
+          <th>Hora de fin</th>
+          <th>Observaciones</th>
+          <th>Acuerdos</th>
+          <th>Para uso exclusivo del área acedémica</th>
+          <th></th>
+
+        </tr>
+      </thead>
+      {% if capacitaciones %}
+
+      <tbody>
+
+        {% for c in capacitaciones %}
+        <tr class="text-center">
+
+          <td>{{ c.tema }}</td>
+          <td>{{ c.get_tipo_display }}</td>
+          <td>{{ c.get_modalidad_display }}</td>
+          <td>{{ c.get_area_display }}</td>
+          <td>{{ c.get_nivel_organizacion_display }}</td>
+          <td>{{ c.numero_participantes }}</td>
+          <td>{{ c.horario_trabajo }}</td>
+          <td>{{ c.get_nivel_educacion_display }}</td>
+          <td>{{ c.get_edad_promedio_display }}</td>
+          <td>{{ c.lugar }}</td>
+          <td>{{ c.get_ciudad_display }}</td>
+          <td>{{ c.fecha_evento }}</td>
+          <td>{{ c.horario_evento_inicio }}</td>
+          <td>{{ c.horario_evento_fin }}</td>
+          <td>{{ c.observaciones }}</td>
+          <td>{{ c.acuerdos }}</td>
+          <td>{{ c.exclusivo_acad }}</td>
+          <td>
+						<div class="col-auto text-truncate text-center">
+
+            <a class="btn btn-secondary btn-sm" href="{% url 'capacitacion_editar' c.id reporte_id %}"><i
+                class="fas fa-edit"></i></a>
+                <br>
+                <a onclick='eliminarCap({{ c.pk }},{{reporte_id}});' class="btn btn-danger btn-sm"
+                data-toggle='modal' data-target="#capacitacionEliminarCenter" href='#'><i
+                    class="fas fa-trash"></i></a>
+						</div>
+          </td>
+        </tr>
+        {% endfor%}
+      </tbody>
+      {% endif %}
+    </table>
+    <a class="btn btn-secondary green-bg" href="{% url 'capacitacion_nuevo' reporte_id%}">Agregar capacitación</a>
+  </div>
+</div>
+
+<div class="row">
+  <div class="mt-2 campo p-2 pl-3 col-12">
+    <h5 class="black-text text-uppercase mb-0">Asesorias/Consultoría/Otros</h5>
+  </div>
+</div>
+<div class="row my-3">
+  <div id="tabla" class="table-container col-12">
+    <table class="table border-bottom table-responsive table-sm">
+      <thead class="white-text darkgreen-bg">
+        <tr>
+          <th>Tipo de servicio</th>
+          <th>Descripción</th>
+          <th>Alcance</th>
+          <th>Con/Sin Implementación</th>
+          <th>Fecha de inicio</th>
+          <th>Fecha de fin</th>
+          <th>Proveedor de la información</th>
+          <th>Entregables</th>
+          <th>Observaciones</th>
+          <th>Acuerdos</th>
+          <th>Para uso exclusivo del área acedémica</th>
+          <th></th>
+
+        </tr>
+      </thead>
+      {% if asesorias %}
+
+      <tbody>
+        {% for a in asesorias %}
+        <tr class="text-center">
+
+          <td>{{ a.tipo_servicio }}</td>
+          <td>{{ a.descripcion }}</td>
+          <td>{{ a.alcance }}</td>
+          <td>{{ a.con_sin_imple }}</td>
+          <td>{{ a.fecha_inicio }}</td>
+          <td>{{ a.fecha_fin }}</td>
+          <td>{{ a.proveedor }}</td>
+          <td>{{ a.entregables }}</td>
+          <td>{{ a.observaciones }}</td>
+          <td>{{ a.acuerdos }}</td>
+          <td>{{ a.exclusivo_acad }}</td>
+          <td>
+						<div class="col-auto text-truncate text-center">
+
+            <a class="btn btn-secondary btn-sm" href="{% url 'asesoria_editar' a.id reporte_id %}"><i
+                class="fas fa-edit "></i></a>
+                <br>
+                <a onclick='eliminarAs({{ a.pk }},{{reporte_id}});' class="btn btn-danger btn-sm"
+                data-toggle='modal' data-target="#asesoriaEliminarCenter" href='#'><i
+                    class="fas fa-trash"></i></a>
+           </div>
+          </td>
+        </tr>
+        {% endfor%}
+      </tbody>
+      {% endif %}
+
+    </table>
+    <a class="btn btn-secondary green-bg" href="{% url 'asesoria_nuevo' reporte_id%}">Agregar asesoría</a>
+  </div>
+</div>
+<div class="row mt-5">
+  <div class="col-12">
+    <button type="submit" class="btn btn-secondary green-bg">Guardar</button>
+    <a class="btn btn-secondary" href="{% url 'reporte_contacto' %}"> Cancelar </a>
+  </div>
+</div>
+
+
+{% endblock tablas %}
+

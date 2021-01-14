@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<div class="row">
+    <div class="col-9 col-sm-9 col-xl-9">
+        <h3>DETALLE DE <span class="darkgreen-text">USUARIO</span></h3>
+    </div>
+</div>
+
+<h4><span class="darkgreen-text">Datos personales:</span></h4>
+<!-- Nombre del usuario -->
+<div class="form-group row">
+    <label for="nombre" class="col-sm-1 col-form-label">Nombres:</label>
+    <div class="col-sm-5">
+        <input id="nombre" value="{{usuario.first_name}}" name="nombre" type="text" class="form-control"
+            oninvalid="this.setCustomValidity('Ingrese un nombre válido')" oninput="this.setCustomValidity('')" disabled required>
+    </div>
+    <label for="apellido" class="col-sm-1 col-form-label">Apellidos:</label>
+    <div class="col-sm-5">
+        <input id="apellido" name="apellido" value="{{usuario.last_name}}" type="text" class="form-control"
+            oninvalid="this.setCustomValidity('Ingrese un apellido válido')" oninput="this.setCustomValidity('')" disabled required>
+    </div>
+</div>
+<div class="form-group row">
+    <label for="user" class="col-sm-1 col-form-label">Usuario:</label>
+    <div class="col-sm-3">
+        <input id="user" value="{{usuario.username}}" type="text" class="form-control"
+            oninvalid="this.setCustomValidity('Ingrese un username válido')" oninput="this.setCustomValidity('')" disabled required>
+    </div>
+    <label for="email" class="col-sm-2 col-form-label">Correo electrónico:</label>
+    <div class="col-sm-6">
+        <input id="email" value="{{usuario.email}}" name="email" type="email" class="form-control"
+            oninvalid="this.setCustomValidity('Ingrese una direccion válida')" oninput="this.setCustomValidity('')" disabled required>
+    </div>
+</div>
+<div class="form-group row">
+    <label for="cedula" class="col-sm-1 col-form-label">Cédula:</label>
+    <div class="col-sm-3">
+    <input id="cedula" value="{{usuario.cedula}}" name="cedula" type="tel" pattern="[0-9]{10}" class="form-control"
+        oninvalid="this.setCustomValidity('Ingrese una cédula válida')" oninput="this.setCustomValidity('')" required disabled>
+    </div>
+    <label for="telefono" class="col-sm-1 col-form-label">Teléfono:</label>
+    <div class="col-sm-3">  
+    <input id="telefono" value="{{usuario.telefono}}" name="telefono" type="tel" pattern="[0-9]{9,10}" class="form-control"
+        oninvalid="this.setCustomValidity('Ingrese un telefono válido')" oninput="this.setCustomValidity('')" required disabled>
+    </div>
+    <label for="sexo" class="col-sm-1 col-form-label">Sexo:</label>
+    <div class="col-sm-3">
+        <input id="sexo" value="{{usuario.sexo}}" type="text" class="form-control"
+            oninvalid="this.setCustomValidity('Ingrese un username válido')" oninput="this.setCustomValidity('')" disabled required>
+    </div>
+</div>
+<div class="form-group row">
+    <label for="area" class="col-sm-1 col-form-label">Área:</label>
+    <div class="col-sm-3">
+        <input id="area" value="{{usuario.area}}" type="text" class="form-control"
+            oninvalid="this.setCustomValidity('Ingrese un username válido')" oninput="this.setCustomValidity('')" disabled required>
+    </div>
+    <label for="cargo" class="col-sm-1 col-form-label">Cargo:</label>
+    <div class="col-sm-3">
+        <input id="cargo" value="{{usuario.cargo}}" type="text" class="form-control"
+            oninvalid="this.setCustomValidity('Ingrese un username válido')" oninput="this.setCustomValidity('')" disabled required>
+    </div>
+    <label for="estado" class="col-sm-1 col-form-label">Estado:</label>
+    <div class="col-sm-3">
+        <input id="estado" value="{{usuario.estado}}" type="text" class="form-control"
+            oninvalid="this.setCustomValidity('Ingrese un username válido')" oninput="this.setCustomValidity('')" disabled required>
+    </div>
+</div>
+<div class="form-group">
+    <div class="custom-file">
+        <label for="preview" class="col-form-label">Imagen del Usuario</label>
+    </div>
+</div>
+<div class="img-holder" style="margin: 20px;overflow:hidden">
+    <img id="preview" src="{{ usuario.imagen }}" style="max-width: 25%;max-height: 25%" >
+</div>
+<hr>
+<div class="form-group">
+    <h4><span class="darkgreen-text">Privilegios:</span></h4>
+    {% for priv in privilegios %}
+    <div class="form-group row">
+        <label for="rol" class="col-sm-1 col-form-label">Rol:</label>
+        <div class="col-sm-5">
+            <input id="rol" value="{{priv.rol}}" name="rol" type="text" class="form-control"
+                oninvalid="this.setCustomValidity('Ingrese un nombre válido')" oninput="this.setCustomValidity('')" disabled required>
+        </div>
+        {% if priv.modulo %}
+        <label for="modulo" class="col-sm-1 col-form-label">Módulo:</label>
+        <div class="col-sm-5">
+            <input id="modulo" name="modulo" value="{{priv.modulo}}" type="text" class="form-control"
+                oninvalid="this.setCustomValidity('Ingrese un apellido válido')" oninput="this.setCustomValidity('')" disabled required>
+        </div>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+<div class="form-group">
+    <label for="user" class="col-sm-1 col-form-label">Observaciones</label>
+    <div class="col-sm-12">
+        <textarea id="user" name="observaciones" placeholder="{{usuario.observaciones}}"class="form-control" oninput="this.setCustomValidity('')" rows=2></textarea>
+    </div>
+</div>
+{% endblock %}
+
+{% block specific_scripts %}
+<script>
+    function previewImg(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function (data) {
+                $('#preview').attr('src', data.target.result);
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    $('#imgUsuario').change(function () {
+        previewImg(this);
+    })
+</script>
+{% endblock %}

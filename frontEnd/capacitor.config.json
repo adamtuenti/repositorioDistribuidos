@@ -1,0 +1,17 @@
+{
+<<<<<<< HEAD
+    "appId": "com.edu.espol",
+=======
+    "appId": "io.ionic.starter",
+>>>>>>> abbd9cce865d4cc4064fc8b83ea0df99640fd7bc
+    "appName": "app_educacion_continua",
+    "bundledWebRuntime": false,
+    "npmClient": "npm",
+    "webDir": "www",
+    "plugins": {
+        "SplashScreen": {
+            "launchShowDuration": 5
+        }
+    },
+    "cordova": {}
+}

@@ -1,0 +1,308 @@
+{% extends 'base_administrativo.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% load staticfiles %}
+
+{% block content %}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" />
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/select2-bootstrap-theme/0.1.0-beta.10/select2-bootstrap.css" />
+<div class="row mb-2">
+	<div class="col-xl-5 col-12 v-align">
+		<h2 class="text-uppercase darkgreen-text">
+			{% block regedit %}
+			Nuevo Mantenimiento
+			{% endblock regedit %}
+		</h2>
+	</div>
+	<div class="col-12 col-xl-7">
+		<div class="form-row">
+			<div class="col-6">
+				{{ form.cod_mantenimiento |as_crispy_field}}
+			</div>
+			<div class="col-6">
+				{{ form.fecha |as_crispy_field}}
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="row">
+	<div class="campo col-12 mt-2 p-2 pl-3">
+		<h5 class="black-text mb-0 text-uppercase">Información Mantenimiento</h5>
+	</div>
+</div>
+
+<form method="post" id="mantenimientoForm"  
+	data-bien-url="{% url 'ajax_load_bien' %}"  data-bienInd-url="{% url 'ajax_load_bien_detalles'%}"
+	data-proveedor-url="{% url 'ajax_load_all_proveedor' %}" data-ingresoBienes-url="{% url 'ajax_load_ingreso_bienes' %}"
+	enctype="multipart/form-data" novalidate  >
+	{% csrf_token %}
+
+	{% if error %}
+		<h2>{{error}}</h2>
+
+		{% else %}
+	<div class="row darkwhite-bg py-2">
+        <div class="col-12">
+            
+			<div class="form-row">
+                <div class="col-12">
+                    {{ form.detalle_mantenimiento|as_crispy_field}}
+                </div>
+			</div>
+
+			<div class="form-row">
+				<div class="col-4 col-xl-3">
+					{{ form.tipo_bien|as_crispy_field }}
+				</div>
+				{{form.bien}}
+				<div class="col-xl-4 col-4" id="div_cod_Inventariound">
+					<label for="cod_Inventariound" class="col-form-label requiredField">Codigo de inventario</label>
+					<span class="asteriskField">*</span>
+					<select class="select2 form-control {%if form.bien.errors %}is-invalid {%endif%}"
+						id="cod_Inventariound"></select>
+					{% for error in form.bien.errors %}
+					<p class="invalid-feedback d-block">
+						<strong>{{ error }}</strong>
+					</p>
+					{% endfor %}
+				</div>
+				<div class="col" id="div_cod_bien">
+					<label for="cod_bien" class="col-form-label requiredField">Codigo de bien</label>
+					<span class="asteriskField">*</span>
+					<select class="select2 form-control {%if form.bien.errors %}is-invalid {%endif%}"
+						id="cod_bien"></select>
+					{% for error in form.bien.errors %}
+					<p class="invalid-feedback d-block">
+						<strong>{{ error }}</strong>
+					</p>
+					{% endfor %}
+				</div>
+				<div class="col-12" id="div_nombre">
+					<label for="nombre" class="col-form-label requiredField">Nombre del bien</label>
+					<span class="asteriskField">*</span>
+					<select class="select2 form-control {%if form.bien.errors %}is-invalid {%endif%}"
+						id="nombre"></select>
+					{% for error in form.bien.errors %}
+					<p class="invalid-feedback d-block">
+						<strong>{{ error }}</strong>
+					</p>
+					{% endfor %}
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="campo col-12 mt-2 p-2 pl-3">
+					<h5 class="black-text mb-0 text-uppercase">Detalle Mantenimiento</h5>
+				</div>
+			</div>
+
+			<div class="form-row">
+				{{form.proveedor}}
+				<div class="col-xl-3 col-3" id="div_ruc">
+					<label for="ruc" class="col-form-label requiredField">RUC</label>
+					<span class="asteriskField">*</span>
+					<select class="select2 form-control {%if form.proveedor.errors %}is-invalid {%endif%}"
+						id="ruc"></select>
+					{% for error in form.proveedor.errors %}
+					<p class="invalid-feedback d-block">
+						<strong>{{ error }}</strong>
+					</p>
+					{% endfor %}
+				</div>
+				<div class="col-9" id="div_razon">
+					<label for="razon" class="col-form-label requiredField">Razón Social</label>
+					<span class="asteriskField">*</span>
+					<select class="select2 form-control {%if form.proveedor.errors %}is-invalid {%endif%}"
+						id="razon"></select>
+					{% for error in form.proveedor.errors %}
+					<p class="invalid-feedback d-block">
+						<strong>{{ error }}</strong>
+					</p>
+					{% endfor %}
+				</div>
+			</div>
+
+			<div class="form-row">
+				{{form.ingreso_bien}}
+				<div class="col-3">
+					<label for="num_factura" class="col-form-label requiredField">Nº Factura</label>
+					<span class="asteriskField">*</span>
+					<input class="form-control" type="text" id="num_factura"></input>
+				</div>
+				<div class="col-3">
+					<label for="cod_orden" class="col-form-label requiredField">Código de registro</label>
+					<input class="form-control" type="text" id="cod_orden" disabled></input>
+				</div>
+				<div class="col-3">
+					<label for="fecha_facturacion" class="col-form-label requiredField">Fecha de Facturación</label>
+					<input class="form-control" type="date" id="fecha_facturacion" disabled></input>
+				</div>
+				<div class="col-3">
+					<label for="centro_costos" class="col-form-label requiredField">Centro de costos</label>
+					<input class="form-control" type="text" id="centro_costos" disabled></input>
+				</div>
+			</div>
+
+			<div class="form-row">
+				<div class="col-6">
+					<label for="tipo_mantenimiento" class="col-form-label requiredField">Tipo mantenimiento</label>
+					<span class="asteriskField">*</span>
+					<input class="form-control" type="text" id="tipo_mantenimiento" disabled></input>
+				</div>
+				<div class="col-6">
+					<label for="freq_mantenimiento" class="col-form-label requiredField">Frecuencia mantenimiento</label>
+					<span class="asteriskField">*</span>
+					<input class="form-control" type="text" id="freq_mantenimiento" disabled></input>
+				</div>
+			</div>
+
+			<div class="form-row">
+            
+				<div class="col-4">
+					{{ form.egresos|as_crispy_field}}
+				</div>
+				<div class="col-3">
+					{{ form.es_planificado|as_crispy_field}}
+				</div>
+				<div class="col-3">
+					{{ form.iva |as_crispy_field}}
+				</div>
+			</div>
+
+			<div class="form-row">
+				<div class="col-3">
+					{{ form.subtotal|as_crispy_field }}
+					<label for="sub_total" class="col-form-label">Sub total</label>
+					<div class="currency-wrap">
+						<span class="currency-code">$</span>
+						<input type="number" id="sub_total" class="text-right form-control" value=0>
+					</div>
+				</div>
+				<div class="col-3">
+					{{ form.valor_iva|as_crispy_field}}
+					<label for="iva" class="col-form-label">IVA</label>
+					<div class="currency-wrap">
+						<span class="currency-code">$</span>
+						<input type="number" id="iva" class="form-control-plaintext text-right form-control" value=0 readonly>
+					</div>
+				</div>
+				<div class="col-3">
+					{{ form.descuento|as_crispy_field}}
+					<label for="descuento" class="col-form-label">Descuento</label>
+					<div class="currency-wrap">
+						<span class="currency-code">$</span>
+						<input type="number" id="descuento" class=" text-right form-control" value=0>
+					</div>
+				</div>
+				<div class="col-3">
+					{{ form.total|as_crispy_field}}
+					<label for="valor_total" class="col-form-label">Total</label>
+					<div class="currency-wrap">
+						<span class="currency-code">$</span>
+						<input type="number" id="valor_total" class="form-control-plaintext text-right form-control" readonly>
+					</div>
+				</div>
+			</div>
+
+			<div class="form-row">
+                <div class="col-12">
+                    {{ form.observaciones|as_crispy_field}}
+                </div>
+			</div>
+			
+			<div class="form-row">
+                <div class="col-12">
+                    {{ form.anexo|as_crispy_field}}
+                </div>
+            </div>
+			
+        </div>
+	</div>
+	
+	<!-- <div class="card">
+		<div class="card-header" id="headingThree">
+		  <h2 class="mb-0">
+			<button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#anexosmantenimiento_collapse">
+			  Anexos
+			</button>
+		  </h2>
+		</div>
+		<div id="anexosmantenimiento_collapse" class="collapse" data-parent="#accordionExample">
+		  <div class="card-body">
+			<h5> Anexos Mantenimientos </h5>
+			<anexos-plan-content 
+			  v-bind:read_only="READ_ONLY" 
+			  component_name="AnexosMantenimiento"
+			></anexos-plan-content>
+		  </div>
+		</div>
+	</div> -->
+	{% endif %}
+
+	{{ form.media }}
+    {% if form.errors %}
+    <ul>
+        {% for error in form.errors %}
+        <li>{{ error }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    <br>
+    <br>
+
+        <div class="row mt-3 crear">
+            <div class="col-12">
+            <a class="btn btn-secondary green-bg" data-toggle='modal' data-target="#mantenimiento_confirmar"
+            href='#'>Siguiente</a>
+            <a class="btn btn-secondary" href="{% url 'index_mantenimientos' %}"> Cancelar </a>
+            </div>
+        </div>
+
+	
+	
+	    <div class="modal fade" id="mantenimiento_confirmar" tabindex="-1" role="dialog" aria-labelledby="ordenTitle"
+					aria-hidden="true">
+						<div class="modal-dialog modal-dialog-centered" role="document">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="reporteTitle">Confirmación</h5>
+										<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+											<span aria-hidden="true">&times;</span>
+									</button>
+								</div>
+								<div class="modal-body" id="modal-confirmacion">
+									¿Está seguro/a que desea continuar? Verifíque los datos ingresados antes de proceder.
+								</div>
+								<div class="modal-footer">
+									<button class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+									<button type="submit" class="btn btn-secondary green-bg mr-3 hack">Confirmar</button>
+								</div>
+							</div>
+						</div>
+					</div>
+</form>
+
+
+
+
+
+{% endblock %}
+
+
+
+
+
+
+
+{% block extrafooter %}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
+<script src="{% static 'js/select2.min.js' %}"></script>
+<script src="{% static 'js/listaProveedoresJuridico.js' %}"></script>
+<script src="{% static 'js/listaBienes.js' %}"></script>
+
+<script src="{% static 'js/tabla_productos.js' %}"></script>
+{% endblock extrafooter %}

@@ -1,0 +1,236 @@
+from django.db import models
+from django.core.validators import MinValueValidator, MaxValueValidator, MinLengthValidator, MaxLengthValidator
+from ckeditor.fields import RichTextField
+from academico.evento.validator import validar_entrada_nombre, validar_entrada_entero, validar_entrada_textarea
+from academico.diseño_evento.models import DesignEvento
+from academico.docente.models import Docente
+
+# this class is temporaly, that's not the right table for Docente, only for test
+
+"""
+class Docente(models.Model):
+    id_docente = models.CharField(max_length=10)
+    nombres = models.CharField(max_length=100)
+    apellidos = models.CharField(max_length=100)
+    
+    def __str__(self):
+        return '{} {}'.format(self.nombres, self.apellidos)
+"""
+
+# Create your models here.
+class TipoConvenioAliado(models.Model):
+    id_convenio = models.AutoField(primary_key=True)
+    nombre = models.CharField(max_length=100)
+
+    def __str__(self):
+        return '{}'.format(self.nombre)
+
+
+class Aliado(models.Model):
+    codigo_aliado = models.IntegerField(primary_key=True, validators=[MaxValueValidator(999)])
+    origen = models.CharField(max_length=100)
+    nombre = models.CharField(max_length=100)
+    pais = models.CharField(max_length=100)
+    tipo_de_covenio = models.ForeignKey(
+        TipoConvenioAliado, null=False, blank=False, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return '{}'.format(self.nombre)
+
+
+class UnidadAula(models.Model):
+    id_unidad = models.AutoField(primary_key=True)
+    nombre = models.CharField(max_length=100)
+
+    def __str__(self):
+        return '{}'.format(self.nombre)
+
+
+class TipoAula(models.Model):
+    id_tipo_aula = models.AutoField(primary_key=True)
+    nombre = models.CharField(max_length=100)
+
+    def __str__(self):
+        return '{}'.format(self.nombre)
+
+
+class EstadoAula(models.Model):
+    id_estado_aula = models.AutoField(primary_key=True)
+    estado = models.CharField(max_length=100)
+
+    def __str__(self):
+        return '{}'.format(self.estado)
+
+
+class Aula(models.Model):
+    codigo_aula = models.IntegerField(primary_key=True, validators=[MaxValueValidator(999)])
+    unidad = models.ForeignKey(
+        UnidadAula, null=False, blank=False, on_delete=models.CASCADE)
+    nombre = models.CharField(max_length=100)
+    ubicacion = models.CharField(max_length=150)
+    tipo = models.ForeignKey(TipoAula, null=False,
+                             blank=False, on_delete=models.CASCADE)
+    capacidad = models.IntegerField()
+    observacion = models.TextField()
+    estado = models.ForeignKey(
+        EstadoAula, null=False, blank=False, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return '{}'.format(self.nombre)
+
+class Evento(models.Model):
+    diseno = models.ForeignKey(DesignEvento, on_delete=models.CASCADE, related_name='diseno')
+    codigo_evento = models.IntegerField(primary_key=True)
+    nombre = models.CharField(max_length=100)
+    tipo_evento = models.CharField(max_length=100)
+    codigo_evento_padre = models.ForeignKey(
+        'self', null=True, blank=True, on_delete=models.CASCADE, related_name='evento')
+    nombre_evento_Padre = models.CharField(
+        max_length=100, null=True, blank=True)
+    modalidad = models.CharField(max_length=100)
+    centro_costos = models.CharField(max_length=100)
+    alcance = models.CharField(max_length=100)
+    promocion = models.CharField(max_length=100)
+    duracion = models.IntegerField()
+    aliado = models.ForeignKey(
+        Aliado, null=False, blank=False, on_delete=models.CASCADE)
+    docente = models.ForeignKey(
+        Docente, null=False, blank=False, on_delete=models.CASCADE)
+    lugar = models.CharField(max_length=150)
+    asesor_comercial_responsable = models.CharField(max_length=100)
+    publico = models.CharField(max_length=100)
+    servicios_incluidos = models.CharField(max_length=250,null=True, blank=True)
+    hora_break = models.TimeField(null=True, blank=True)
+    hora_almuerzo = models.TimeField(null=True, blank=True)
+    opciones_de_calendario = models.CharField(max_length=150)
+    fecha_inicio = models.DateField(null=True, blank=True)
+    fecha_fin = models.DateField(null=True, blank=True)
+    estado = models.CharField(max_length=100)
+    web = models.CharField(max_length=100)
+
+    #NUEVOS CAMPOS QUE NECESITA CIERRE DE EVENTOS:
+    cierre_asistencias = models.BooleanField(blank=True, default=False)
+    cierre_calificaciones = models.BooleanField(blank=True, default=False)
+    habilitar_informes = models.BooleanField(blank=True, default=False)
+    generar_certificados = models.BooleanField(blank=True, default=False)
+    notificaciones = models.BooleanField(blank=True, default=False)
+    estado_notas1 = models.CharField(max_length=100, blank=True)
+    estado_notas2 = models.CharField(max_length=100, blank=True)
+    estado_asistencias = models.CharField(max_length=100, blank=True)
+    fecha_registro_notas1 = models.DateField(null=True, blank=True)
+    fecha_cierre = models.DateField(null=True, blank=True)
+    fecha_aprobacion = models.DateField(null=True, blank=True)
+    satisfaccion = models.CharField(max_length=100, blank=True)
+    usuario = models.CharField(max_length=100, blank=True)
+    #fecha_registro_mej = models.DateField(null=True, blank=True)
+    #fecha_rectificacion 
+
+    
+    def get_aula(self):
+        sesiones = CalendarioEvento.objects.filter(
+            evento_id=self.codigo_evento).select_related('aula')
+        return sesiones[0]
+
+    def get_one_aula(self):
+        sesiones = CalendarioEvento.objects.filter(
+            evento_id=self.codigo_evento).select_related('aula')
+        return sesiones[0]
+
+    def get_all_participantes(self):
+        obj = Evento.objects.filter(participante_eventos__evento=self.codigo_evento).count()
+        return obj
+
+    def get_part_hombres(self):
+        obj = Evento.objects.filter(participante_eventos__evento=self.codigo_evento,participante_eventos__genero='M').count()
+        return obj
+
+
+    def get_part_mujeres(self):
+        obj = Evento.objects.filter(participante_eventos__evento=self.codigo_evento,participante_eventos__genero='F').count()
+        return obj
+
+
+    def get_empresa(self):
+        if self.publico == 'Corporativo':
+            empresa = PresupuestoEvento.objects.get(evento=self.codigo_evento)
+            return empresa.razon_nombres
+        else:
+            return "Ninguna"
+
+
+    def lista_aulas(self):
+        sesiones = CalendarioEvento.objects.filter(
+            evento_id=self.codigo_evento)
+        return sesiones
+
+    def get_design(self):
+        disenio = DesignEvento.objects.get(id=self.diseno.id)
+        return disenio
+
+    def format_servicios(self):
+        s = self.servicios_incluidos
+        s = s.replace('[', '')
+        s = s.replace(']', '')
+        s = s.replace("'", '')
+        return s
+
+    def horarios(self):
+        horario = ""
+        mes = ""
+        anno = ""
+        days = CalendarioEvento.objects.filter(evento_id=self.codigo_evento)
+        for d in days:
+            if horario == "":
+                horario = horario + str(d.fecha.day)
+                mes = d.fecha.strftime("%B").capitalize()
+                anno = str(d.fecha.year)
+            else:
+                if mes != d.fecha.strftime("%B").capitalize():
+                    horario = horario + ' de ' + mes + ' de ' + anno
+                    horario = horario + ", " + str(d.fecha.day)
+                    mes = d.fecha.strftime("%B").capitalize()
+                    anno = str(d.fecha.year)
+                else:
+                    horario = horario + ", " + str(d.fecha.day)
+                    mes = d.fecha.strftime("%B").capitalize()
+                    anno = str(d.fecha.year)
+
+        horario = horario + ' de ' + mes + ' de ' + anno
+        return horario
+
+    def publish(self):
+        self.web = 'Publicado'
+        self.save(update_fields=['web'])
+
+    def __str__(self):
+        return '{}'.format(self.codigo_evento)
+    
+class CalendarioEvento(models.Model):
+    evento = models.ForeignKey(Evento, on_delete=models.CASCADE, related_name="calendario_evento")
+    dia = models.CharField(max_length=100)
+    fecha = models.DateField()
+    hora_inicio = models.TimeField()
+    hora_fin = models.TimeField()
+    facilitador = models.CharField(max_length=150)
+    aula = models.ForeignKey(
+        Aula, null=False, blank=False, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return '{}'.format(self.dia)
+
+
+class Co(models.Model):
+    co_facilitador = models.ForeignKey(
+        Docente, null=True, blank=True, on_delete=models.CASCADE, related_name='docente')
+    evento = models.ForeignKey(Evento, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return '{} {}'.format(self.co_facilitador.apellidos, self.co_facilitador.nombres) 
+
+class PubEvento(models.Model):
+    evento = models.ForeignKey(Evento, on_delete=models.CASCADE)
+    precio = models.DecimalField(max_digits=10, decimal_places=2)
+    picture = models.ImageField(upload_to='image_event/')
+
+
+        

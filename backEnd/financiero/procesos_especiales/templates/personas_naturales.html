@@ -1,0 +1,57 @@
+{% load crispy_forms_tags %}
+{% load static %}
+
+
+<div class="modal-header">
+    <h2 class="modal-title" id="ordenTitle"> Agregar Participantes </h2>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+
+    {% csrf_token %}
+    <div id="codigoEasy" hidden data-natural-url="{% url 'ajax_load_personasListPE' %}" data-alertaCG-url="{% url 'ajax_alerta_cuponGratisPE' %}">{{ cod }}</div>
+    <div class="modal-body">
+        <div class="form-row">
+            <div class="col-12 col-md-6">
+                <label for="cedulaAP" class="col-form-label">Cedula</label>
+                <select type="text" id="cedulaAP" class="form-control select3"></select>
+            </div>
+            <div class="col-12 col-md-6">
+                <label for="nombreAP" class="col-form-label">Nombre</label>
+                <select type="text" id="nombreAP" class="form-control select3"></select>
+            </div>
+        </div>
+        <br>
+        <div class="form-row">
+            <div id="tabla" class="col-12">
+                <table id="participantesTabla" class="table table-responsiv-md border-bottom">
+                    <thead class="darkgreen-bg white-text">
+                        <tr>
+                            <th>Cédula participante</th>
+                            <th>Nombre Participante</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    
+                    <tbody id="tablaNatural">
+                        
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+            <button id="agregar" class="btn btn-secondary green-bg mr-3" data-dismiss="modal"> Guardar </button>
+            <button class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+    </div>
+    
+        {{ form.media }}
+</form>
+
+
+<!-- <script src="{% static 'js/modal_agregar_n.js' %}"></script> -->
+<script>
+    $.getScript( "{% static 'js/modal_agregar_n.js' %}" );
+</script>   

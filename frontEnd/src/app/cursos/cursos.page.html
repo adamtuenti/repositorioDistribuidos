@@ -1,0 +1,25 @@
+<ion-header>
+  <ion-toolbar class="toolhead">
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Mis Cursos</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-list>
+    <ion-item [routerLink]="['/educ/cursos',list.codigo_evento]" *ngFor="let list of listCursos" >
+        <ion-avatar slot="start">
+          <ion-img [src]="list.imagen"></ion-img>
+        </ion-avatar>
+        <ion-label>
+          <h3>{{list.nombre_curso}}</h3>
+          <p>{{list.fecha_inicio}}</p>
+          <ion-text color="red">
+            <p>{{list.estado}}</p>
+          </ion-text>
+        </ion-label>
+    </ion-item>
+  </ion-list>
+</ion-content>

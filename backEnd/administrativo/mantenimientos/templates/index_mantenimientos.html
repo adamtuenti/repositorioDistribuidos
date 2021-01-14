@@ -1,0 +1,190 @@
+{% extends 'base_administrativo.html' %}
+{% load static %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+{% load humanize %}
+{% load my_tags %}
+{% load l10n %}
+{% block title %}{{ "EC - MANTENIMIENTOS" }}{% endblock title %}
+{% block extraheader %}
+{% endblock extraheader %}
+{% block content %}
+
+<div class="row mb-2 d-flex white-bg">
+	<div class="col-9 v-align">
+		<h2>CONSULTA <span class="darkgreen-text">MANTENIMIENTOS</span></h2>
+	</div>
+	<div class="col-3 col-xl-3 v-align">
+		<a class="btn btn-secondary green-bg float-right" href="{% url 'mantenimientos_view' %}"><i class="fas fa-plus"></i>
+			Agregar
+			nuevo</a>
+	</div>
+</div>
+
+
+<div class="row darkwhite-bg pb-2">
+	<div class="col-12 col-xl-12">
+		<form method="get" id="forma_test" novalidate>
+			{% csrf_token %}
+			<div class="row mb-2">
+				<div class="campo p-2 pl-3 col-12">
+					<h5 class="black-text text-uppercase mb-0">Información</h5>
+				</div>
+			</div>
+
+
+			<div class="form-row">
+
+                <div class="col-3">
+					{{ filter.form.cod_bien|as_crispy_field }}
+				</div>
+
+				<div class="col-9">
+					{{ filter.form.bien_nom|as_crispy_field }}
+				</div>
+			</div>
+
+			<div class="form-row">
+
+				<div class="col-3">
+					{{ filter.form.tipo_bien|as_crispy_field }}
+				</div>
+				
+				<div class="col-3">
+					{{ filter.form.tipo_mantenimiento|as_crispy_field }}
+                </div>
+                
+                <div class="col-3">
+					{{ filter.form.cod_mantenimiento|as_crispy_field }}
+                </div>
+                
+                <div class="col-3">
+					{{ filter.form.ubicacion|as_crispy_field }}
+				</div>
+				
+			</div>	
+			
+            <div class="form-row">
+
+				<div class="col-3">
+					{{ filter.form.proveedor_id|as_crispy_field }}
+				</div>
+
+				<div class="col-9">
+					{{ filter.form.proveedor_nom|as_crispy_field }}
+				</div>
+			</div>
+
+            <div class="form-row">
+				
+				<div class="col-4">
+					{{ filter.form.num_facturacion|as_crispy_field }}
+                </div>
+                
+                <div class="col-4">
+					{{ filter.form.centro_costos|as_crispy_field }}
+                </div>
+                
+                <div class="col-4">
+					{{ filter.form.mantenimiento_tipo|as_crispy_field }}
+				</div>
+				
+			</div>	
+
+            <div class="form-row">
+
+				<div class="col-12">
+					{{ filter.form.fecha}}
+				</div>
+				
+			</div>	
+
+			<div class="form-group">
+				<button type="submit" class="btn btn-secondary green-bg float-right">
+					<i class="fas fa-search"></i> Buscar</button>
+				{{ filter.form.media }}
+			</div>
+
+
+		</form>
+
+	</div>
+</div>
+
+
+<div class="row mt-4">
+	<div class="col-12">
+		<table id="dtBasicExample" class="table table-responsive-md border-bottom">
+			
+			<thead class="white-text darkgreen-bg">
+				<tr>
+					<th scope="col">Código de mantenimiento</th>
+                    <th scope="col">Detalle del mantenimiento</th>
+                    <th scope="col">Tipo de mantenimiento</th>
+                    <th scope="col">Orden / Pago EC</th>
+					<th scope="col">Proveedor</th>
+                    <th scope="col">Mantenimiento planificado</th>
+                    <th scope="col">Observación</th>
+                    <th scope="col">Fecha</th>
+
+					<th scope="col">Subtotal</th>
+					<th scope="col">IVA</th>
+					<th scope="col">Descuento</th>
+					<th scope="col">Total</th>
+
+					<th>Acciones</th>
+				</tr>
+            </thead>
+            {% if mantenimientos %}
+			<tbody>
+				{% for j in mantenimientos %}
+				<tr class="text-center">
+                    <td scope="row">{{j.cod_mantenimiento}}</td>
+					<td scope="row">{{j.detalle_mantenimiento}}</td>
+					<td scope="row">{{j.bien.tipo_mantenimiento}}</td>
+					<td scope="row">{{j.ingreso_bien.cod_orden}}</td>
+					<td scope="row" class="funcion2">{{j.ingreso_bien.proveedor.razon}}</td>
+                    <td scope="row">{{j.es_planificado}}</td>
+                    <td scope="row">{{j.observaciones}}</td>
+                    <td scope="row">{{j.fecha}}</td>
+                    
+					<td scope="row" style="text-align:right">${{j.subtotal|floatformat:2|intcomma}}</td>
+
+					<td scope="row" style="text-align:right">${{j.valor_iva|floatformat:2|intcomma}}</td>
+					<td scope="row" style="text-align:right">${{j.descuento|floatformat:2|intcomma}}</td>
+					<td scope="row" style="text-align:right">${{j.total|floatformat:2|intcomma}}</td>
+					
+					<td scope="row">
+						
+						<a class="m-auto btn btn-secondary btn-sm" href="{% url 'editar_mantenimiento' j.id %}"><i class="fas fa-edit"></i></a>
+						
+					</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+
+			{% else %}
+			<h2>No hay elementos que mostrar</h2>
+			{% endif %}
+		</table>
+	</div>
+</div>
+
+{% endblock %}
+
+{% block extrafooter %}
+<script src="{% static 'js/table.js' %}"></script>
+<script src="{% static 'js/fecha_mantenimientos.js' %}"></script>
+
+<script type="text/javascript">
+
+	$(document).ready(function(){
+		$('#dtBasicExample td.funcion2').each(function(){
+				$(this).css('text-transform','uppercase');				
+			}
+		);
+	});
+	
+</script>
+
+{% endblock %}

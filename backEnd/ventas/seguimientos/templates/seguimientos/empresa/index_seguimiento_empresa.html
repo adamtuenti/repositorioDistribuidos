@@ -1,0 +1,249 @@
+{% extends "base_ventas.html" %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% block title %}{{ "EC - Seguimiento Empresa" }}{% endblock title %}
+
+{% block extraheader %}
+{% endblock extraheader %}
+
+{% block content %}
+<div class="row mb-2 d-flex white-bg">
+    <div class="col-9 v-align">
+        <h2>CONSULTAS <span class="darkgreen-text">SEGUIMIENTO A EMPRESAS</span></h2>
+    </div>
+</div>
+<div class="row darkwhite-bg py-2">
+    <div class="col-12">
+        <form action="" method="get">
+            <div class="form-row ">
+                <div class="col-xl-4 col-3 ">
+                    {{ filter.form.seguimientoempresaeventos__evento__codigo_evento |as_crispy_field }}
+                </div>
+                <div class="col">
+                    {{ filter.form.seguimientoempresaeventos__evento__nombre |as_crispy_field }}
+                </div>
+            </div>
+            <div class="form-row ">
+                <div class="col-xl-4 col-3">
+                    {{ filter.form.juridica__ruc|as_crispy_field }}
+                </div>
+                <div class="col">
+                    {{ filter.form.juridica__nombre|as_crispy_field }}
+                </div>
+            </div>
+            <div class="form-row ">
+                <div class="col">
+                    {{ filter.form.estado|as_crispy_field }}
+                </div>
+                <div class="col">
+                    {{ filter.form.canal|as_crispy_field }}
+                </div>
+                <div class="col">
+                    {{ filter.form.tipo_evento|as_crispy_field }}
+                </div>
+            </div>
+            <div class="form-row ">
+                <div class="col ">
+                    {{ filter.form.juridica__tipo_empresa|as_crispy_field }}
+                </div>
+                <div class="col">
+                    {{ filter.form.tipo_oferta|as_crispy_field }}
+                </div>
+                <div class="col">
+                    {{ filter.form.added_by|as_crispy_field }}
+                </div>
+                <div class="col">
+                    {{ filter.form.exito|as_crispy_field }}
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="col">
+                    {{ filter.form.fecha__gte|as_crispy_field }}
+                </div>
+                <div class="col">
+                    {{ filter.form.fecha__lte|as_crispy_field }}
+                </div>
+
+                <div class="col">
+                    {{filter.form.fecha_seguimiento__gte|as_crispy_field}}
+                </div>
+                <div class="col">
+                    {{filter.form.fecha_seguimiento__lte|as_crispy_field}}
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-secondary green-bg float-right">
+                <i class="fas fa-search"></i> Buscar</button>
+
+        </form>
+
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+
+        <table id="dtBasicExample" class="table table-responsive border-bottom">
+            <thead class="white-text darkgreen-bg">
+                <tr>
+                    <th scope="col">N°</th>
+                    <th scope="col">Fecha Seguimiento</th>
+                    <th scope="col">RUC</th>
+                    <th scope="col">Razón Social</th>
+                    <th scope="col">Canal de Contacto</th>
+                    <th scope="col">Estado Seguimiento</th>
+                    <th scope="col">Nombre del contacto</th>
+                    <th scope="col">Teléfono de contacto</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Éxito</th>
+                    <th scope="col">Observación</th>
+                    <th scope="col">Tipo de evento</th>
+                    <th scope="col">Tipo de oferta</th>
+                    <th scope="col">N° de oferta</th>
+                    <th scope="col">N° de participantes</th>
+                    <th scope="col">Código de Evento</th>
+                    <th scope="col">Nombre de Evento</th>
+                    <th scope="col">Asesor/a</th>
+                    <th scope="col">Fecha registro</th>
+                    <!-- <th scope="col">Fecha por contactar</th>
+                    <th scope="col">Fecha sin respuesta</th>
+                    <th scope="col">Fecha contactado</th>
+                    <th scope="col">Fecha contacto inválido</th> -->
+                    <th scope="col">Acciones</th>
+                </tr>
+            </thead>
+            {% if filter.qs %}
+
+            <tbody>
+
+                {% for seg in filter.qs %}
+                <tr class="text-center">
+                    <td scope="row">{{seg.n_seguimiento}}</td>
+                    <td scope="row">{{seg.fecha_seguimiento}}</td>
+                    <td scope="row">{{seg.juridica.ruc}}</td>
+                    <td scope="row">{{seg.juridica.nombre | upper}}</td>
+                    <td scope="row">{{seg.canal}}</td>
+                    <td {%if seg.estado.pk == 1 %}class="bg-warning" {%endif%} scope="row">{{seg.estado}}</td>
+                    <td scope="row">
+                        {% for persona in seg.juridica.contacto_natural_set.all%}
+                        <div class="col-auto text-truncate">
+                            {{persona.contacto.nombres}} {{persona.contacto.apellidos }}
+                        </div>
+                        {%endfor%}
+                    </td>
+                    <td scope="row">
+                        {% for persona in seg.juridica.contacto_natural_set.all%}
+                        {{persona.contacto.celular}}
+                        {%endfor%}
+                    </td>
+                    <td scope="row">
+                        {% for persona in seg.juridica.contacto_natural_set.all%}
+                        {{persona.contacto.email}}
+                        {%endfor%}
+                    </td>
+                    <td scope="row">{{seg.exito}}</td>
+                    <td scope="row">{{seg.observaciones}}</td>
+                    <td scope="row">{{seg.tipo_evento}}</td>
+                    <td scope="row">{{seg.tipo_oferta}}</td>
+                    <td scope="row">
+                        <div class="col-auto text-truncate">
+                            {{seg.n_oferta}}
+                        </div>
+                    </td>
+                    <td scope="row">{{seg.n_participantes}}</td>
+                    <td scope="row">
+                        {% for segevnt in seg.seguimientoempresaeventos_set.all%}
+                        <div class="col-auto text-truncate">
+                            {{segevnt.evento.codigo_evento}}
+                        </div>
+                        {%endfor%}
+                    </td>
+                    <td scope="row">
+                        {% for segevnt in seg.seguimientoempresaeventos_set.all%}
+                        <div class="col-auto text-truncate">
+                            {{segevnt.evento.nombre}}
+                        </div>
+                        {%endfor%}
+                    </td>
+                    <td scope="row">{{seg.added_by}}</td>
+                    <td scope="row">{{seg.fecha}}</td>
+                    <!-- <td scope="row">{{seg.fecha_por_contactar|default_if_none:""}}</td>
+                    <td scope="row">{{seg.fecha_sin_respuesta|default_if_none:""}}</td>
+                    <td scope="row">{{seg.fecha_contactado|default_if_none:""}}</td>
+                    <td scope="row">{{seg.fecha_contacto_invalido|default_if_none:""}}</td> -->
+                    <td scope="row">
+                        <div class="col-auto text-truncate text-center">
+                            {% if user.pk == seg.added_by.pk %}
+                            <a class="btn btn-secondary btn-sm"
+                                href="{% url 'editar_seguimiento_empresa' seg.pk %}"><i class="fas fa-edit"></i></a>
+                            {% else %}
+                            <a href='#' class="btn btn-secondary btn-sm" data-toggle='modal'
+                                data-user='{{seg.added_by}}' data-target="#segCenter"
+                                data-seg="{% url 'editar_seguimiento_empresa' seg.pk %}">
+                                <i class="fas fa-edit"></i></a>
+                            {% endif%}
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            {% else %}
+            <h2>No hay elementos que mostrar</h2>
+            {% endif %}
+        </table>
+
+    </div>
+</div>
+<div class="modal fade" id="segCenter" tabindex="-1" role="dialog" aria-labelledby="segTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="segTitle">Alerta</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="white-space: pre-line">
+
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <a class="btn btn-danger" href="">Continuar</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block extrafooter%}
+<script src="{% static 'js/table.js' %}"></script>
+<script src="{% static 'js/date-filter.js' %}"></script>
+<script>
+    $(document).ready(function (e) {
+        $(".fecha").each(function (e) {
+            TextToDate($(this));
+        })
+    });
+
+    $('#segCenter').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget);
+        var recipient = button.data('seg');
+        var user = button.data('user');
+        var modal = $(this)
+        modal.find('.modal-body').text("Este seguimiento fue creado por " + user + ".\n¿Está seguro de querer editarlo?");
+        modal.find('a').attr('href', recipient);
+    })
+
+    function eliminarSE(pk) {
+        $.ajax({
+            url: "{% url 'eliminar_seguimiento_empresa' %}",
+            data: {
+                "seg_id": pk
+            },
+            success: function (data) {
+                $("#segEliminarCenter .modal-content").html(data)
+            }
+        })
+    }
+</script>
+{% endblock extrafooter %}

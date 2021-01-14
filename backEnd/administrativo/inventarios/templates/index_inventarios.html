@@ -1,0 +1,183 @@
+{% extends 'base_administrativo.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% load staticfiles %}
+{% block title %}{{ "EC - INVENTARIOS" }}{% endblock title %}
+{% block extraheader %}
+{% endblock extraheader %}
+
+{% block content %}
+<div class="row mb-2 d-flex white-bg">
+	<div class="col-9 v-align">
+		<h2>ACTUALIZACIÓN <span class="darkgreen-text"> INVENTARIOS DE BIENES</span></h2>
+    </div>
+    <div class="col-3 col-xl-3 v-align">
+		<a class="btn btn-secondary green-bg float-right" href="{% url 'inventarios_view' %}"><i class="fas fa-plus"></i>
+			Agregar
+			nuevo</a>
+	</div>
+</div>
+
+<div class="row darkwhite-bg pb-2">
+	<div class="col-12 col-xl-12">
+		<form method="get" id="forma_test" novalidate>
+			{% csrf_token %}
+			<div class="row mb-2">
+				<div class="campo p-2 pl-3 col-12">
+					<h5 class="black-text text-uppercase mb-0">Información</h5>
+				</div>
+			</div>
+
+
+			<div class="form-row">
+
+                <div class="col-3">
+					{{ filter.form.cod_bien|as_crispy_field }}
+				</div>
+
+				<div class="col-9">
+					{{ filter.form.bien_nom|as_crispy_field }}
+				</div>
+			</div>
+
+			<div class="form-row">
+
+                <div class="col-3">
+					{{ filter.form.tipo_inventario|as_crispy_field }}
+                </div>
+
+				<div class="col-3">
+					{{ filter.form.tipo_bien|as_crispy_field }}
+				</div>				
+                
+                <div class="col-3">
+					{{ filter.form.categoria|as_crispy_field }}
+                </div>
+                
+                <div class="col-3">
+					{{ filter.form.centro_costos|as_crispy_field }}
+				</div>
+				
+			</div>	
+
+            <div class="form-row">
+
+				<div class="col-8">
+					{{ filter.form.fecha}}
+                </div>
+                
+                <div class="col-4">
+					{{ filter.form.estado|as_crispy_field }}
+				</div>
+				
+			</div>	
+
+			<div class="form-group">
+				<button type="submit" class="btn btn-secondary green-bg float-right">
+					<i class="fas fa-search"></i> Buscar</button>
+				{{ filter.form.media }}
+			</div>
+
+
+		</form>
+
+	</div>
+</div>
+
+<div class="row mt-4">
+	<div class="col-12">
+		<table id="dtBasicExample" class="table table-responsive-md border-bottom">
+			
+			<thead class="white-text darkgreen-bg">
+				<tr>
+					<th scope="col">Cód. Registro</th>
+                    <th scope="col">Unidad Responsable</th>
+                    <th scope="col">Nombre Responsable Unidad</th>
+                    <th scope="col">Cargo</th>
+					<th scope="col">Nombre Responsable CEC</th>
+                    <th scope="col">Cargo</th>
+                    <th scope="col">Fecha Inicio Inventario</th>
+                    <th scope="col">Fecha Fin Inventario</th>
+                    <th scope="col">Cant. Bienes Inventariados</th>
+                    <th scope="col">Observaciones Generales</th>
+                    
+                    <th scope="col">Cant. Bienes: En buen estado</th>
+                    <th scope="col">Cant. Bienes: Dañado</th>
+                    <th scope="col">Cant. Bienes: Dado de baja</th>
+                    <th scope="col">Cant. Bienes: Por reparar</th>
+                    <th scope="col">Cant. Bienes no Encontrados</th>
+
+                    <th scope="col">Fecha del Registro</th>
+                    <th scope="col">Fecha Actualización del Registro</th>
+                    <th scope="col">Usuario</th>
+
+					<th>Acciones</th>
+				</tr>
+            </thead>
+            {% if inventarios %}
+			<tbody>
+				{% for j in inventarios %}
+				<tr class="text-center">
+                    <td scope="row">{{j.cod_inventario}}</td>
+					<td scope="row">{{j.unidad_responsable}}</td>
+					<td scope="row">{{j.nombre_responsable_unidad}}</td>
+                    <td scope="row">{{j.cargo_responsable_unidad}}</td>
+                    <td scope="row">{{j.nombre_responsable_cec}}</td>
+                    <td scope="row">{{j.cargo_responsable_entrega}}</td>
+                    <td scope="row">{{j.fecha_inicio}}</td>
+                    <td scope="row">{{j.fecha_fin}}</td>
+                    <!-- total de bienes -->
+                    <td scope="row">0</td>
+                    <td scope="row">{{j.observaciones}}</td>
+                    <!-- total de bienes en buen estado -->
+                    <td scope="row">0</td>
+                    <!-- total de bienes dañados -->
+                    <td scope="row">0</td>
+                    <!-- total de bienes dados de baja-->
+                    <td scope="row">0</td>
+                    <!-- total de bienes por reparar -->
+                    <td scope="row">0</td>
+                    <!-- total de bienes no encontrados -->
+                    <td scope="row">0</td>
+                    <td scope="row">{{j.fecha}}</td>
+                    <td scope="row">{{j.fecha_ultima_actualizacion}}</td>
+                    <td scope="row">{{j.usuario_responsable}}</td>
+					
+					<td scope="row">
+						
+						<a class="m-auto btn btn-secondary btn-sm" href="#"><i class="fas fa-edit"></i></a>
+						
+					</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+
+			{% else %}
+			<h2>No hay elementos que mostrar</h2>
+			{% endif %}
+		</table>
+	</div>
+</div>
+
+{% endblock %}
+
+{% block extrafooter %}
+<script src="{% static 'js/table.js' %}"></script>
+<script src="{% static 'js/fecha_inventarios.js' %}"></script>
+
+<script type="text/javascript">
+
+$(document).ready(function(){
+		$('#dtBasicExample td.funcion2').each(function(){
+				$(this).css('text-transform','uppercase');				
+			}
+		);
+	});
+	
+</script>
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
+
+
+{% endblock %}

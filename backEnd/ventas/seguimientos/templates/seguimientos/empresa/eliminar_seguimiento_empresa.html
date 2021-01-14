@@ -1,0 +1,22 @@
+<div class="modal-header">
+    <h5 class="modal-title" id="ordenpagoTitle">Eliminación de seguimiento de empresa</h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<form method="POST" action="{% url 'eliminar_seguimiento_empresa_gg' seg.pk %}" >
+    {% csrf_token %}
+    <div class="modal-body">
+        ¿Está seguro que desea eliminar el seguimiento?
+        <br>
+        N° de Registro: {{seg.n_seguimiento}}
+        <br>
+        RUC: {{seg.juridica.ruc}}
+        Empresa: {{seg.juridica.nombre}}
+        <br>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+        <button class="btn btn-secondary green-bg mr-3" type="submit"> Anular </button>
+    </div>
+</form>

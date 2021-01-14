@@ -1,0 +1,299 @@
+{% extends 'base_ventas.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% load staticfiles %}
+{% block title %}{{ "EC - Persona Natural" }}{% endblock title %}
+
+
+{% block content %}
+<div class="row mb-2 d-flex white-bg">
+	<div class="col-9 v-align">
+		<h2>CONSULTAS <span class="darkgreen-text">PERSONA NATURAL</span></h2>
+	</div>
+
+	<div class="col-3 v-align">
+		<a class="btn btn-secondary green-bg float-right" href="nuevo"><i class="fas fa-plus"></i>
+			Agregar Nuevo</a>
+	</div>
+</div>
+
+
+<div class="row darkwhite-bg py-2">
+	<div class="col-12">
+		<form method="GET">
+			{% csrf_token %}
+			<div class="row">
+				<div class="col-6 col-xl-6">
+					<!--{{ naturales_filter.form.cedula.label_tag }}
+					{{ naturales_filter.form.cedula }}-->
+					{{ naturales_filter.form.cedula|as_crispy_field }}
+				</div>
+				<div class="col-6 col-xl-6">
+					<!--{{ naturales_filter.form.nombres.label_tag }}
+					{{ naturales_filter.form.nombres }}-->
+					{{ naturales_filter.form.ci_domicilio|as_crispy_field }}
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-6 col-xl-6">
+					<!--{{ naturales_filter.form.apellidos.label_tag }}
+					{{ naturales_filter.form.apellidos }}-->
+					{{ naturales_filter.form.nombres|as_crispy_field }}
+				</div>
+				<div class="col-6 col-xl-6">
+					<!--{{ naturales_filter.form.empresa.label_tag }}
+					{{ naturales_filter.form.empresa }}-->
+					{{ naturales_filter.form.apellidos|as_crispy_field }}
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-6 col-xl-6">
+					<!--{{ naturales_filter.form.un_tercernivel.label_tag }}
+					{{ naturales_filter.form.un_tercernivel }}-->
+					{{ naturales_filter.form.empresa|as_crispy_field }}
+				</div>
+				<div class="col-6 col-xl-6">
+					<!--{{ naturales_filter.form.cargo.label_tag }}
+					{{ naturales_filter.form.cargo }}-->
+					{{ naturales_filter.form.cargo|as_crispy_field }}
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-6 col-xl-6">
+					<!--{{ naturales_filter.form.profesion.label_tag }}
+					{{ naturales_filter.form.profesion }}-->
+					{{ naturales_filter.form.un_tercernivel|as_crispy_field }}
+				</div>
+				<div class="col-6 col-xl-6">
+					<!--{{ naturales_filter.form.ci_domicilio.label_tag }}
+					{{ naturales_filter.form.ci_domicilio }}-->
+					{{ naturales_filter.form.profesion|as_crispy_field }}
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-4 col-xl-4">
+					<!--{{ naturales_filter.form.tel_domicilio.label_tag }}
+					{{ naturales_filter.form.tel_domicilio }}-->
+					{{ naturales_filter.form.tel_domicilio|as_crispy_field }}
+				</div>
+				<div class="col-4 col-xl-4">
+					<!--{{ naturales_filter.form.celular.label_tag }}
+					{{ naturales_filter.form.celular }}-->
+					{{ naturales_filter.form.celular|as_crispy_field }}
+				</div>
+				<div class="col-4 col-xl-4">
+					<!--{{ naturales_filter.form.email.label_tag }}
+					{{ naturales_filter.form.email }}-->
+					{{ naturales_filter.form.email|as_crispy_field }}
+				</div>
+			</div>
+			<div>
+				<button type="submit" class="btn btn-secondary green-bg float-right">
+					<i class="fas fa-search"></i> Buscar</button>
+			</div>
+		</form>
+	</div>
+</div>
+<br>
+<div class="row mt-2">
+	<div class="col-12 col-xl-12">
+		<table id="dtBasicExample" class="table table-responsive">
+			<thead class="white-text darkgreen-bg">
+				<tr>
+					<th scope="col">Cédula</th>
+					<th scope="col">Apellidos</th>
+					<th scope="col">Nombres</th>
+					<th scope="col">Fecha de Nacimiento</th>
+					<th scope="col">Género</th>
+					<th scope="col">País</th>
+					<th scope="col">Telefono</th>
+					<th scope="col">Celular</th>
+					<th scope="col">Celular (Alternativo)</th>
+					<th scope="col">Email</th>
+					<th scope="col">Email (Alternativo)</th>
+					<th scope="col">Ciudad</th>
+					<th scope="col">Dirección</th>
+					<th scope="col">Nivel de Estudio</th>
+					<th scope="col">Titulo Tercer Nivel</th>
+					<th scope="col">Universidad Tercer Nivel</th>
+					<th scope="col">Titulo Postgrado</th>
+					<th scope="col">Universidad Postgrado</th>
+					<th scope="col">Profesión</th>
+					<th scope="col">Trabajo</th>
+					<th scope="col">Empresa</th>
+					<th scope="col">Cargo</th>
+					<th scope="col">Ciudad Trabajo</th>
+					<th scope="col">Area/Departamento</th>
+					<th scope="col">Dirección Trabajo</th>
+					<th scope="col">Teléfono Trabajo</th>
+					<th scope="col">Red Social</th>
+					<th scope="col">Acciones</th>
+				</tr>
+			</thead>
+			{% if naturales %}
+
+			<tbody>
+				{% for persona in naturales %}
+				<tr class="text-center">
+					<td scope="row">{{ persona.cedula }}</td>
+					<td scope="row">{{ persona.apellidos | upper}}</td>
+					<td scope="row">{{ persona.nombres | upper}}</td>
+					<td scope="row">{{ persona.fecha_nacimiento }}</td>
+					<td scope="row">{{ persona.genero }}</td>
+					<td scope="row">{{ persona.pais }}</td>
+					<td scope="row">{{ persona.tel_domicilio }}</td>
+					<td scope="row">{{ persona.celular }}</td>
+					<td scope="row">{{ persona.celular2 }}</td>
+					<td scope="row">{{ persona.email }}</td>
+					<td scope="row">{{ persona.email2 }}</td>
+					<td scope="row">{{ persona.ci_domicilio }}</td>
+					<td scope="row">{{ persona.dir_domicilio }}</td>
+					<td scope="row">{{ persona.nivel_estudio }}</td>
+					<td scope="row">{{ persona.ti_tercernivel }}</td>
+					<td scope="row">{{ persona.un_tercernivel }}</td>
+					<td scope="row">{{ persona.ti_postgrado }}</td>
+					<td scope="row">{{ persona.un_postgrado }}</td>
+					<td scope="row">{{ persona.profesion }}</td>
+					<td scope="row">{{ persona.forma_trabajo }}</td>
+					<td scope="row">{{ persona.empresa }}</td>
+					<td scope="row">{{ persona.cargo }}</td>
+					<td scope="row">{{ persona.ci_trabajo }}</td>
+					<td scope="row">{{ persona.area }}</td>
+					<td scope="row">{{ persona.dir_trabajo }}</td>
+					<td scope="row">{{ persona.tel_trabajo }}</td>
+					<td scope="row">{{ persona.medios }}</td>
+					<td scope="row">
+						<div class="text-truncate">
+							<a class="btn btn-secondary btn-sm" href="{% url 'natural_editar' persona.cedula %}"><i
+									class="fas fa-edit"></i></a>
+
+							<a onclick='seguimiento_natural({{ persona.pk }});' href='#'
+								class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#seguimientoNatural">
+								<i class="fas fa-route"></i>
+							</a>
+						</div>
+					</td>
+				</tr>
+				{% endfor%}
+			</tbody>
+			{% else %}
+			<h2>No hay elementos que mostrar</h2>
+			{% endif %}
+		</table>
+	</div>
+</div>
+
+
+
+<div class="modal fade" id="personaEliminar" tabindex="-1" role="dialog" aria-labelledby="ordenTitle"
+	aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered" role="document">
+		<div class="modal-content">
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="seguimientoNatural" role="dialog" aria-labelledby="ordenTitle" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+		<div id="modal-content-seguimiento" class="modal-content">
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="seguimiento_fallida" tabindex="-1" role="dialog" aria-labelledby="ordenTitle"
+	aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered" role="document">
+		<div class="modal-content">
+			<div class="modal-header ">
+				<h2 class="modal-title">Alerta</h2>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body" id="modal-seguimiento_fallida">
+				Ocurrieron los siguientes errores al crear el Seguimiento:
+				<ul id="listaErrores">
+
+				</ul>
+			</div>
+			<div class="modal-footer">
+				<button class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="seguimiento_exito" tabindex="-1" role="dialog" aria-labelledby="ordenTitle"
+	aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered" role="document">
+		<div class="modal-content">
+			<div class="modal-header ">
+				<h2 class="modal-title">Confirmación</h2>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body" id="modal-seguimiento_exito">
+				Se ha guardado el seguimiento con éxito
+			</div>
+			<div class="modal-footer">
+				<button class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+{% endblock %}
+
+{% block extrafooter %}
+<script src="{% static 'js/table.js' %}"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
+<script src="{% static 'js/modalResp.js' %}"></script>
+<script>
+
+	function eliminar(id) {
+		$.ajax({
+			url: "{% url 'natural_eliminar' %}",
+			data: { "cedula": id },
+			success: function (data) {
+				$(".modal-content").html(data);
+			}
+		});
+	}
+</script>
+<script>
+	function seguimiento_natural(id) {
+		$.ajax({
+			url: "{% url 'seguimiento_natural_create' %}",
+			data: {
+				'pk': id
+			},
+			beforeSend: function () {
+				// Handle the beforeSend event
+				var loading = $("<img>")
+				loading.addClass("img-fluid m-auto")
+				loading.css({ "width": "50%", "height": "auto" })
+				loading.attr("id", "id_loading")
+				loading.attr('src', "https://miro.medium.com/max/1080/0*DqHGYPBA-ANwsma2.gif")
+				$("#modal-content-seguimiento").html(loading);
+			},
+			success: function (data) {
+				$("#modal-content-seguimiento").html(data);
+				$("#listaErrores").html("");
+			}
+		});
+	};
+</script>
+<script>
+	document.formHasErrors = {% if seguimientos_form.errors %}true{% else %} false{% endif %};
+</script>
+<script>
+	$(document).ready(function () {
+		if (document.formHasErrors) {
+			$('#seguimientoNatural').modal('toggle');
+		}
+
+	});
+</script>
+{% endblock extrafooter %}

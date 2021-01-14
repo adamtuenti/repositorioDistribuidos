@@ -1,0 +1,381 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<div id="app">
+    <form v-on:submit.prevent="subirCalificaciones">
+        <div class="row">
+            <div class="col-9 col-sm-9 col-xl-9">
+                <h3>NUEVO REGISTRO DE NOTAS <span class="darkgreen-text">PRIMERA EVALUACION</span></h3>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label for="codigo_evento" class="col-sm-2 col-form-label">Código Evento:</label>
+            <div class="col-sm-3">
+                <input id="codigo_evento" name="codigo_evento" type="text" class="form-control"
+                    oninvalid="this.setCustomValidity('Ingrese un codigo válido')" oninput="this.setCustomValidity('')"
+                    onchange="llenarNombre()" v-on:change="getPlanTrabajo()" required>
+            </div>
+            <div class="col-sm-7">
+                <input id="nombre_evento" name="nombre_evento" type="text" class="form-control"
+                    oninvalid="this.setCustomValidity('Ingrese un apellido válido')"
+                    oninput="this.setCustomValidity('')" required disabled>
+            </div>
+        </div>
+        <h4 class="darkgreen-text">Detalle de evaluacion</h4>
+        <div class="form-group row">
+            <label for="fecha" class="col-sm-3 col-form-label">Fecha de registro:</label>
+            <label for="tipo" class="col-sm-3 col-form-label">Tipo de evento:</label>
+            <label for="inicio" class="col-sm-3 col-form-label">Fecha inicio:</label>
+            <label for="fin" class="col-sm-3 col-form-label">Fecha fin:</label>
+        </div>
+        <div class="form-group row">
+            <div class="col-sm-3">
+                <input id="fecha" name="fecha" type="text" class="form-control"
+                    oninvalid="this.setCustomValidity('Ingrese un codigo válido')" oninput="this.setCustomValidity('')"
+                    required disabled>
+            </div>
+
+            <div class="col-sm-3">
+                <input id="tipo" name="tipo" type="text" class="form-control"
+                    oninvalid="this.setCustomValidity('Ingrese un codigo válido')" oninput="this.setCustomValidity('')"
+                    required disabled>
+            </div>
+
+            <div class="col-sm-3">
+                <input id="inicio" name="inicio" type="text" class="form-control"
+                    oninvalid="this.setCustomValidity('Ingrese un codigo válido')" oninput="this.setCustomValidity('')"
+                    required disabled>
+            </div>
+
+            <div class="col-sm-3">
+                <input id="fin" name="fin" type="text" class="form-control"
+                    oninvalid="this.setCustomValidity('Ingrese un codigo válido')" oninput="this.setCustomValidity('')"
+                    required disabled>
+            </div>
+        </div>
+        <div class="form-group row">
+
+            <label for="fac" class="col-sm-2 col-form-label">Facilitador:</label>
+            <div class="col-sm-3">
+                <input id="fac" name="fac" type="text" class="form-control"
+                    oninvalid="this.setCustomValidity('Ingrese un codigo válido')" oninput="this.setCustomValidity('')"
+                    required disabled>
+            </div>
+            <div class="col-sm-7">
+                <input id="nombre_fac" name="nombre_fac" type="text" class="form-control"
+                    oninvalid="this.setCustomValidity('Ingrese un apellido válido')"
+                    oninput="this.setCustomValidity('')" required disabled>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="co" class="col-sm-2 col-form-label">Cofacilitador:</label>
+            <div class="col-sm-3">
+                <input id="co" name="co" type="text" class="form-control"
+                    oninvalid="this.setCustomValidity('Ingrese un codigo válido')" oninput="this.setCustomValidity('')"
+                    required disabled>
+            </div>
+            <div class="col-sm-7">
+                <input id="nombre_co" name="nombre_co" type="text" class="form-control"
+                    oninvalid="this.setCustomValidity('Ingrese un apellido válido')"
+                    oninput="this.setCustomValidity('')" required disabled>
+            </div>
+        </div>
+        <div class="row mt-4">
+            <div class="col-16 col-xl-16 table-container">
+                <table class="table table-responsive table-bordered" id="tablacierre">
+                    <thead class="white-text darkgreen-bg">
+                        <tr scope="col">
+                            <th scope="col">No.</th>
+                            <th scope="col">Cedula</th>
+                            <th scope="col">Participante</th>
+                            <th v-for="(act,index) in actividades">
+                                <span v-for="(instrumentos) in planTrabajo.instrumentos_de_evaluacion">
+                                    <span v-if="instrumentos.nombre == act.instrumento">
+                                        {act.nombre} ({instrumentos.porcentajeAsignado}%)
+                                    </span>
+                                </span>
+                            </th>
+                            <th scope="col">NOTA FINAL (100%)</th>
+                            <th scope="col">Aprobacion (Mayor/igual 70/100)</th>
+                            <th scope="col">Observacion</th>
+                            <th scope="col">Fecha registro</th>
+                            <th scope="col">Fecha edicion</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <template v-for="(persona,index) in participantes">
+                            <template v-for="detalle in detalle_participantes">
+                                <tr v-if="persona.id == detalle.id_participante">
+                            <td scope="col">{index+1}</td>
+                            <td scope="col">{persona.identificacion}</td>
+                            <td scope="col">{persona.apellidos}, {persona.nombres}</td>
+                            <td v-for="(act,index) in actividades">
+                                <span v-for="(instrumentos) in planTrabajo.instrumentos_de_evaluacion">
+                                    <span v-if="instrumentos.nombre == act.instrumento">
+                                        <input type="number" id="notas" class="notas" min=0 max=100 @change="agregarValor($event,instrumentos,act,persona,detalle)" required>
+                                    </span>
+                                </span>
+
+                            </td>
+                            <td scope="col"><input id="total" type="number" min=0 max=100 disabled :value='detalle.nota_final1'></td>
+                            <td scope="col">{detalle.aprobado}</td>
+                            <td scope="col">Observacion</td>
+                            <td scope="col">Fecha registro</td>
+                            <td scope="col">Fecha edicion</td>
+                        </tr>
+                        </template>
+                        </template>
+                        <tr >
+                            <td scope="col"></td>
+                            <td scope="col"></td>
+                            <td scope="col">Promedio</td>
+                            <td v-for="(act,index) in actividades">
+                                <span v-for="(instrumentos) in planTrabajo.instrumentos_de_evaluacion">
+                                    <span v-if="instrumentos.nombre == act.instrumento">
+                                        <input type="number" id="notas" class="notas" min=0 max=100 @change="agregarValor($event,instrumentos,act,persona)" disabled>
+                                    </span>
+                                </span>
+
+                            </td>
+                            <td scope="col"> <input id="total" type="number" min=0 max=100 disabled></td>
+                            <td scope="col"></td>
+                            <td scope="col"></td>
+                            <td scope="col"></td>
+                            <td scope="col"></td>
+                        </tr>
+                        <tr >
+                            <td scope="col"></td>
+                            <td scope="col"></td>
+                            <td scope="col">Nota minima</td>
+                            <td v-for="(act,index) in actividades">
+                                <span v-for="(instrumentos) in planTrabajo.instrumentos_de_evaluacion">
+                                    <span v-if="instrumentos.nombre == act.instrumento">
+                                        <input type="number" id="notas" class="notas" min=0 max=100 @change="agregarValor($event,instrumentos,act,persona)" disabled>
+                                    </span>
+                                </span>
+
+                            </td>
+                            <td scope="col"> <input id="total" type="number" min=0 max=100 disabled></td>
+                            <td scope="col"></td>
+                            <td scope="col"></td>
+                            <td scope="col"></td>
+                            <td scope="col"></td>
+                        </tr>
+                        <tr >
+                            <td scope="col"></td>
+                            <td scope="col"></td>
+                            <td scope="col">Nota maxima</td>
+                            <td v-for="(act,index) in actividades">
+                                <span v-for="(instrumentos) in planTrabajo.instrumentos_de_evaluacion">
+                                    <span v-if="instrumentos.nombre == act.instrumento">
+                                        <input type="number" id="notas" class="notas" min=0 max=100 @change="agregarValor($event,instrumentos,act,persona)" disabled>
+                                    </span>
+                                </span>
+
+                            </td>
+                            <td scope="col"> <input id="total" type="number" min=0 max=100 disabled></td>
+                            <td scope="col"></td>
+                            <td scope="col"></td>
+                            <td scope="col"></td>
+                            <td scope="col"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <hr>
+
+        <button id="subir" type="submit" class="btn btn-success btn-lg submit" disabled>Agregar calificaciones</button>
+    </form>
+</div>
+<!-- </form> -->
+{% endblock %}
+{% block specific_scripts %}
+<script>
+    function llenarNombre() {
+        let codigo = $("#codigo_evento").val();
+        $.ajax({
+            url: "/academico/api/event/evento/" + codigo + "/",
+            data: {},
+            success: function (data) {
+                console.log(data);
+                $("#nombre_evento").val(data['nombre']);
+                $.ajax({
+                    url: "/academico/api/event/docente/" + data['docente'] + '/',
+                    dataa: {},
+                    success: function (dataa) {
+                        $("#fac").val(dataa['numero_de_cedula']);
+                        $("#nombre_fac").val(dataa['nombres'] + ' ' + dataa['apellidos']);
+                    }
+                });
+                $("#tipo").val(data['tipo_evento']);
+                hoy = new Date();
+                $("#fecha").val(hoy.getFullYear() + "-" + (hoy.getMonth() + 1) + "-" + hoy.getDate());
+                $("#inicio").val(data['fecha_inicio']);
+                $("#fin").val(data['fecha_fin']);
+
+            },
+            error: function () {
+                $("#nombre_evento").val("");
+            }
+        });
+    }
+    const app = new Vue({
+        el: '#app',
+        delimiters: ["{", "}"],
+        data: {
+            planTrabajo: {},
+            actividades: [],
+            detalle_participantes: [],
+            participantes: [],
+            calificaciones: [],
+        },
+        mounted: function () {
+            axios.defaults.xsrfCookieName = 'csrftoken'
+            axios.defaults.xsrfHeaderName = "X-CSRFTOKEN"
+        },
+        methods: {
+            getPlanTrabajo: function () {
+                axios.get('/api/planTrabajo/').then((response) => {
+                    for (plan of response.data) {
+                        if (plan['evento'] == $("#codigo_evento").val()) {
+                            this.planTrabajo = plan;
+                            break;
+                        }
+                    }
+                    this.getActividades();
+                    this.getIdParticipantes();
+                    document.getElementById("subir").disabled = false;
+                }).catch((err) => {
+                    console.log(err);
+                })
+            },
+            getActividades: function () {
+                axios.get('/api/actividadPlan/').then((response) => {
+                    for (act of response.data) {
+                        if (act['plan_trabajo'] == this.planTrabajo['id']) {
+                            this.actividades.push(act);
+                        }
+                    }
+                }).catch((err) => {
+                    console.log(err);
+                })
+            },
+            getIdParticipantes: function () {             //CAMBIAR RUTA DE API, SE ESTA USANDO TABLA PARTICIPANTE PROVISIONAL PARA HACER PRUEBAS
+                axios.get('/api/detalleparticipante/').then((response) => {
+                    for (elem of response.data) {
+                        if (elem['id_evento'] == $("#codigo_evento").val()) {
+                            this.detalle_participantes.push(elem);
+                        }
+                    }
+                    this.getParticipantes();
+                }).catch((err) => {
+                    console.log(err);
+                })
+            },
+            getParticipantes: function () {             //CAMBIAR RUTA DE API, SE ESTA USANDO TABLA PARTICIPANTE PROVISIONAL PARA HACER PRUEBAS
+                axios.get('/api/participante/').then((response) => {
+                    for (part of this.detalle_participantes) {
+                        for (elem of response.data) {
+                            if (elem['id'] == part['id_participante']) {
+                                this.participantes.push(elem);
+                            }
+                        }
+                    }
+                }).catch((err) => {
+                    console.log(err);
+                })
+            },
+            agregarValor: function (valor,instrumento,actividad,persona,detalle) {
+                let object = {"nota":valor.target.valueAsNumber,"porcentaje":parseInt(instrumento.porcentajeAsignado,10),"nombre":actividad.nombre}
+                let bandera = true;
+                let bandera2 = true;
+                for(cal of this.calificaciones){
+                    if (cal.participante == persona.id){
+                        for(act of cal.notas){
+                            if (act.actividad == actividad.instrumento){
+                                act.calificaciones.push(object);
+                                bandera2=false;
+                                bandera=false;
+                                break;
+                            }
+                        }
+                        if(bandera2){
+                            let notaact = []
+                            notaact.push(object);
+                            let objeto = {"actividad":actividad.instrumento,"calificaciones":notaact}
+                            cal.notas.push(objeto);
+                            bandera=false;
+                            break;
+                        }
+                    } 
+                }
+                if(bandera){
+                    let notas = []
+                    let notaact = []
+                    notaact.push(object);
+                    let objeto = {"actividad":actividad.instrumento,"calificaciones":notaact}
+                    notas.push(objeto);
+                    let dict = {"participante":persona.id, "notas":notas}
+                    this.calificaciones.push(dict);
+                }
+                valor.target.disabled = true;
+                this.calcular(persona,detalle);
+            },
+
+            calcular: function(persona,detalle){
+                for(cal of this.calificaciones){
+                    if (cal.participante == persona.id){
+                        let total = 0;
+                        for(act of cal.notas){
+                            let suma = 0;
+                            for(nota of act.calificaciones){
+                                suma += nota.nota * nota.porcentaje / 100;
+                            }
+                            console.log(suma);
+                            suma = suma / act.calificaciones.length;
+                            console.log(suma);
+                            console.log(act.calificaciones.length);
+
+                            total += suma;  
+                        }
+                        detalle.nota_final1 = total;
+                        detalle.calificaciones = cal;
+                        if(total >= 70){
+                            detalle.aprobado = "Si"
+                        }else{
+                            detalle.aprobado = "No"
+                        }
+                    }
+                }
+            },
+            // agregarValor: function (valor, id_detalle) {
+            //     axios.patch('/api/detalleparticipante/' + id_detalle + '/',
+            // { estado:  }).then((response) => {
+            // }).catch((err) => {
+            //     console.log(err.response)
+            // })
+            // },
+
+            subirCalificaciones: function () {
+                axios.patch('/academico/api/event/evento/'+$("#codigo_evento").val()+"/",{ fecha_registro_notas1: $("#fecha").val() }).then((response) => {
+                    console.log("Guardado exitoso")
+                }).catch((err) => {
+                    console.log(err);
+                });
+                for(detalle of this.detalle_participantes){
+                    axios.put('/api/detalleparticipante/'+detalle.id_detalle_participante+"/",detalle).then((response) => {
+                        console.log("Guardado exitoso")
+                    }).catch((err) => {
+                        console.log(err);
+                    })
+                }
+            }
+
+        }
+    })
+
+</script>
+{% endblock %}

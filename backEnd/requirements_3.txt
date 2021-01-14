@@ -1,0 +1,7 @@
+django-rest-auth
+django-allauth
+django-role-permissions
+django-cleanup
+psycopg2
+openpyxl
+django-cors-headers

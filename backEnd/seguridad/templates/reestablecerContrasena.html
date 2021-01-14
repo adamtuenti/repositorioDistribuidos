@@ -1,0 +1,86 @@
+{% load static %}
+<head>
+    <link href="{% static 'bootstrap-4.3.1\css\bootstrap.min.css' %}" rel="stylesheet" />
+    <link href="{% static 'css\base.css' %}" rel="stylesheet" />
+</head>
+{% block login %}
+<div class="container">
+    <div class="main-div">
+            <form method="POST" onsubmit="return validate()">
+                {% csrf_token %}
+                <!-- Tiene que mostrarse solo si el login falla -->
+                <div class="login-header">
+                    <div class="img-container">
+                        <img style="width:50%;height:50%;" src="{% static 'img/Logo CEC blanco.png' %}">
+                        
+                    </div>
+                    <hr>
+                    <h4 class="login-title">Reestablecimiento de contraseña</h4>
+                
+                <div class="login-container">
+                    <label class="text-light">Para reestablecer tu contraseña debes ingresar el email asociado a tu usuario, donde te llegará un correo para continuar con el proceso.</label>
+                    <div class="form-group">
+                        <input type="email" class="form-control" placeholder="Correo" id="correo" name="correo"
+                        oninvalid="this.setCustomValidity('Ingrese una dirección de correo válida')" required>
+                    </div>
+                    <div class="btn-login">
+                        <button type="submit" class="btn btn-success">Enviar correo</button>
+                        {% if success %}
+                            <label class="text-light">{{ success }}</label>
+                        {% elif error %}
+                            <label class="text-light">{{ error }}</label>
+                        {% endif %}
+                    </div>
+                </div>
+                </div>
+            </form>
+    </div>
+</div>
+{% endblock %}
+<style>
+    body {background-color: #292929;}
+    .main-div {
+    margin: 10rem auto 30px;
+    max-width: 38%;
+}
+hr {background-color: #32CD32}
+
+.img-container {
+    display: flex;
+    justify-content: center;
+}
+
+.login-header { 
+    padding: 3rem;
+    border: 1px solid white;
+    border-radius: 15px;
+}
+.link-pass{
+    text-align: right;
+}
+.text-light{
+    font-size: small;
+}
+.login-title {
+    text-align: center;
+    color: white;
+}
+.btn-success{
+    width: 100%;
+}
+.login-container {
+    padding: 1rem;
+}
+
+.btn-login {
+    text-align: center;
+}
+
+.form-control {
+    background-color: white;
+}
+
+.form-control:focus {
+    background-color: white;
+}
+</style>

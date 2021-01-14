@@ -1,0 +1,39 @@
+{% extends "base_financiero.html" %}
+
+{% block coordinador%}
+<div id="menu" class="row" data-toggle="collapse" data-target="#collapseCoor"
+aria-expanded="true" aria-controls="collapseCoor">
+	<div class="col-12 mlat">
+		<div id="titulo" class="row">
+			<div class="col-10">
+				<span class="pl-2">TAREAS COORDINADOR</span>
+			</div>
+			<div class="col-2">
+				<i class="fas fa-angle-down"></i>
+			</div>
+		</div>
+	</div>
+</div>
+<div id="collapseCoor" class="row collapse">
+	<div class="col-12">
+		<a class="menu" href="{% url 'pendiente_aprobacion' %}">
+			<div class="row">
+				<div class="col-12">
+					<span class="pl-4">Pendientes de aprobación</span>
+				</div>
+			</div>
+		</a>
+	</div>
+</div>
+{% endblock coordinador%}
+{% block coordinador_presupuesto%}
+	<div class="col-12">
+		<a class="menu" href="{% url 'presupuesto_anual_lista' %}">
+			<div class="row">
+				<div class="col-12">
+					<span class="pl-4">Presupuestos anuales</span>
+				</div>
+			</div>
+		</a>
+	</div>
+{% endblock coordinador_presupuesto%}

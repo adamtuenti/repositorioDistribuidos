@@ -1,0 +1,64 @@
+{% extends 'base_ventas.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+<form method="post" novalidate>
+  {% csrf_token %}
+  <div class="row mb-2">
+    <div class="col-12 col-xl-12">
+      <h2 class="text-uppercase darkgreen-text">
+        Asesoría
+      </h2>
+    </div>
+  </div>
+  <div class="row darkwhite-bg py-2">
+    <div class="col-12">
+      <div class="form-row">
+        <div class=" col-6 col-md-4 mb-0">
+          {{ form.tipo_servicio|as_crispy_field }}
+        </div>
+        <div class=" col-6 col-md-4 mb-0">
+          {{ form.descripcion|as_crispy_field }}
+        </div>
+        <div class=" col-6 col-md-4 mb-0">
+          {{ form.alcance|as_crispy_field }}
+        </div>
+        <div class=" col-6 col-md-4 mb-0">
+          {{ form.con_sin_imple|as_crispy_field }}
+        </div>
+        <div class=" col-6 col-md-4 mb-0">
+          {{ form.fecha_inicio|as_crispy_field }}
+        </div>
+        <div class=" col-6 col-md-4 mb-0">
+          {{ form.fecha_fin|as_crispy_field }}
+        </div>
+        <div class=" col-6 col-md-4 mb-0">
+          {{ form.proveedor|as_crispy_field }}
+        </div>
+        <div class=" col-6 col-md-4 mb-0">
+          {{ form.entregables|as_crispy_field }}
+        </div>
+        <div class=" col-12 mb-0">
+          {{ form.observaciones|as_crispy_field }}
+        </div>
+        <div class=" col-12 mb-0">
+          {{ form.acuerdos|as_crispy_field }}
+        </div>
+        <div class=" col-12 mb-0">
+          {{ form.exclusivo_acad|as_crispy_field }}
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row mt-3">
+    <div class="col-12">
+      <button type="submit" class="btn btn-secondary green-bg">Guardar</button>
+      <a class="btn btn-secondary" href="{% url 'reporte_editar' reporte_id%}"> Cancelar </a>
+    </div>
+  </div>
+
+  
+</form>
+
+{% endblock content %}

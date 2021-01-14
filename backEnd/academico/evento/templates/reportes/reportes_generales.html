@@ -1,0 +1,238 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style type="text/css">
+  
+  #consulta {
+        background-color: lightgray;
+    }
+
+</style>
+
+<script type="text/javascript">
+
+    $(function () {
+        $("#fechaEvento").datepicker({
+            dateFormat: "yy/mm/dd",
+        });
+    });
+
+
+
+</script>
+
+	<div class="row p-2 mb-3" id="consulta">
+    <h4>Generar hoja de asistencias del docente</h4>
+  </div>
+
+<form action="{% url 'asistencia_docente' %}" method="POST">
+{% csrf_token %}
+<div class="row">
+    <div class="col-sm-3 col-md-3 col-xl-3">
+      <div class="form-group">
+          
+        <select class="form-control js-example-basic-single" id="cedula" name="cedula">
+           <option selected disabled>Buscar cedula del docente</option>
+            {% for c in docente %}
+              <option value="{{c.pk}}">{{c.numero_de_cedula}}</option>
+            {% endfor %}
+        </select>
+      </div>
+    </div>
+
+    <div class="col-sm-9 col-md-9 col-xl-3">
+      <div class="form-group">
+        <select class="form-control js-example-basic-single" id="nombres" name="nombres" required>
+           <option value="" selected disabled>Buscar por nombre del docente</option>
+            {% for c in docente %}
+              <option value="{{c.pk}}">{{c.nombres}} {{c.apellidos}}</option>
+            {% endfor %}
+        </select>
+      </div>
+    </div>
+
+      <div class="col-sm-9 col-md-9 col-xl-3">
+        <div class="form-group">
+        <select class="form-control js-example-basic-single" id="fechaEvento" name="fechaEvento">
+           <option value="" selected disabled>Buscar por fecha del evento </option>
+            {% for c in evento %}
+              <option value="{{c.pk}}">{{c.fecha_inicio}}</option>
+            {% endfor %}
+        </select>
+        </div>
+    </div>
+
+      <div class="col-sm-3 col-md-5 col-xl-3">
+        <div class="form-group">
+        <select class="form-control js-example-basic-single" required id="evento" name="evento">
+           <option value="" selected disabled>Curso</option>
+            {% for c in evento %}
+              <option value="{{c.pk}}">{{c.nombre}}</option>
+            {% endfor %}
+        </select>
+        </div>
+    </div>
+
+    
+
+    <div class="col-sm-9 col-md-9 col-xl-3">
+      <div class="form-group"> 
+        <select class="form-control js-example-basic-single" id="empresa" name="empresa">
+           <option value="" selected disabled>Buscar por asesor</option>
+            {% for c in evento %}
+              <option value="{{c.pk}}">{{c.asesor_comercial_responsable}}</option>
+            {% endfor %}
+        </select>
+      </div>
+    </div>
+
+    <br>
+
+  </div>
+
+ <div class="d-flex justify-content-end">  
+    <button type="submit" disabled="disabled" id="btnReporte" name="btnReporte" class="btn darkgreen-bg text-light mx-2 my-2" >Generar lista</button>
+  </div>
+</form>
+
+
+	<div class="row p-2 mb-3" id="consulta">
+    <h4>Historial del participante</h4>
+  </div>
+
+<form action="{% url 'historico_participante' %}" method="POST">
+{% csrf_token %}
+
+  <div class="row">
+      <div class="col-sm-9 col-md-9 col-xl-7">
+           <div class="form-group"> 
+            <select class="form-control js-example-basic-single" id="participante" name="participante">
+              <option value="" selected disabled>Seleccione un participante</option>
+                {% for c in participantes %}
+                  <option value="{{c.id}}">Identificacion: {{c.identificacion}} Nombres: {{c.nombres}} Apellidos:{{c.apellidos}}</option>
+                {% endfor %}
+            </select>
+            </div>
+      </div>
+
+      <div class="col-sm-9 col-md-9 col-xl-5">
+           <div class="form-group"> 
+            <button type="submit" disabled="disabled" id="btnHistorial" name="btnHistorial" class="btn darkgreen-bg text-light" >Generar Historial</button>
+            </div>
+      </div>
+  </div>
+</form>
+
+
+  <div class="row p-2 mb-3" id="consulta">
+    <h4>Reporte de eventos por género</h4>
+  </div>
+
+<form action="{% url 'detalle_participante' %}" method="POST">
+{% csrf_token %}
+
+  <div class="row">
+      <div class="col-sm-9 col-md-9 col-xl-5">
+           <div class="form-group"> 
+            <button type="submit" id="btnEventoPorGenero" name="btnEventoPorGenero" class="btn darkgreen-bg text-light" >Generar reportes de eventos</button>
+            </div>
+      </div>
+  </div>
+</form>
+
+  <div class="row p-2 mb-3" id="consulta">
+    <h4>Reporte de transparencia de eventos</h4>
+  </div>
+
+<form action="{% url 'EventosPorGenero' %}" method="POST">
+{% csrf_token %}
+
+  <div class="row">
+      <div class="col-sm-9 col-md-9 col-xl-5">
+           <div class="form-group"> 
+            <button type="submit" id="btnEventoPorGenero" name="btnEventoPorGenero" class="btn darkgreen-bg text-light" >Generar transparencia de eventos</button>
+            </div>
+      </div>
+  </div>
+</form>
+
+
+
+
+<script type="text/javascript">
+  
+  var $ = jQuery.noConflict();
+
+  $(document).ready(function() {
+    $('#cedula').on('keyup change', function(){
+    if ($('option').is(':selected') && $('option:selected').val() != 0 || $.trim($('input').val()).length > 0) {
+      $('#btnReporte').attr('disabled', false);
+    }
+    else {
+      $('#btnReporte').attr('disabled', true);
+    }
+  });
+
+  $('#nombres').on('keyup change', function(){
+    if ($('option').is(':selected') && $('option:selected').val() != 0 || $.trim($('input').val()).length > 0) {
+      $('#btnReporte').attr('disabled', false);
+    }
+    else {
+      $('#btnReporte').attr('disabled', true);
+    }
+  });
+
+  $('#area').on('keyup change', function(){
+    if ($('option').is(':selected') && $('option:selected').val() != 0 || $.trim($('input').val()).length > 0) {
+      $('#btnReporte').attr('disabled', false);
+    }
+    else {
+      $('#btnReporte').attr('disabled', true);
+    }
+  });
+
+   $('#evento').on('keyup change', function(){
+    if ($('option').is(':selected') && $('option:selected').val() != 0 || $.trim($('input').val()).length > 0) {
+      $('#btnReporte').attr('disabled', false);
+    }
+    else {
+      $('#btnReporte').attr('disabled', true);
+    }
+  });
+
+   $('#empresa').on('keyup change', function(){
+    if ($('option').is(':selected') && $('option:selected').val() != 0 || $.trim($('input').val()).length > 0) {
+      $('#btnReporte').attr('disabled', false);
+    }
+    else {
+      $('#btnReporte').attr('disabled', true);
+    }
+  });
+
+    $('#fechaEvento').on('keyup change', function(){
+    if ($('option').is(':selected') && $('option:selected').val() != 0 || $.trim($('input').val()).length > 0) {
+      $('#btnReporte').attr('disabled', false);
+    }
+    else {
+      $('#btnReporte').attr('disabled', true);
+    }
+  });
+
+
+    $('#participante').on('keyup change', function(){
+    if ($('option').is(':selected') && $('option:selected').val() != 0 || $.trim($('input').val()).length > 0) {
+      $('#btnHistorial').attr('disabled', false);
+    }
+    else {
+      $('#btnHistorial').attr('disabled', true);
+    }
+  });
+
+    $('.js-example-basic-single').select2();
+});
+
+
+</script>
+
+
+{% endblock content %}

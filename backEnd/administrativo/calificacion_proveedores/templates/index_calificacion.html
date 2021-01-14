@@ -1,0 +1,192 @@
+{% extends 'base_administrativo.html' %}
+{% load static %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+{% block title %}{{ "EC - Calificación Proveedores" }}{% endblock title %}
+{% block extraheader %}
+{% endblock extraheader %}
+{% block content %}
+
+
+
+
+<div class="row mb-2 d-flex white-bg">
+	<div class="col-9 v-align">
+		<h2>CONSULTAS <span class="darkgreen-text">CALIFICACIÓN DE PROVEEDORES</span></h2>
+	</div>
+	<div class="col-3 col-xl-3 v-align">
+		<a class="btn btn-secondary green-bg float-right" href="{% url 'calificacion_proveedores_view' %}"><i class="fas fa-plus"></i>
+			Agregar
+			nuevo</a>
+	</div>
+</div>
+
+
+<div class="row darkwhite-bg pb-2">
+	<div class="col-12 col-xl-12">
+		<form method="get" id="forma_test" novalidate>
+			{% csrf_token %}
+			<div class="row mb-2">
+				<div class="campo p-2 pl-3 col-12">
+					<h5 class="black-text text-uppercase mb-0">Información</h5>
+				</div>
+			</div>
+
+
+			<div class="form-row">
+
+				<div class="col-4">
+					{{ filter.form.proveedor_id|as_crispy_field }}
+				</div>
+
+				<div class="col-8">
+					{{ filter.form.proveedor_nom|as_crispy_field }}	
+				</div>
+
+				<div class="col-3">
+					{{filter.form.evento__codigo_evento|as_crispy_field}}
+				</div>
+
+				<div class="col-6">
+					{{filter.form.evento__nombre|as_crispy_field}}
+				</div>
+
+
+				<div class="col-3">
+					{{ filter.form.fecha|as_crispy_field }}
+				</div>
+
+				<div class="col-3">
+					{{ filter.form.orden_compra|as_crispy_field }}
+				</div>
+				
+                <div class="col-3">
+					{{ filter.form.numero_orden|as_crispy_field }}
+				</div>
+				
+			</div>
+
+			<button type="submit" class="btn btn-secondary green-bg float-right">
+				<span class="fas fa-search"></span> Buscar</button>
+
+
+		</form>
+
+	</div>
+</div>
+<br>
+<div class="row">
+	<div class="col-12 col-xl-12">
+		<a class="btn btn-lg float-right btn-light" href="#"><i class="fas fa-file-pdf" data-toggle="tooltip"
+				data-placement="top" title="Exportar a pdf"></i></a>
+		<a class="btn btn-lg float-right btn-light" href="#"><i class="fas fa-file-excel" data-toggle="tooltip"
+				data-placement="top" title="Exportar a excel"></i></a>
+		<table id="dtBasicExample" class="table table-responsive  border-bottom">
+			<thead class="white-text darkgreen-bg">
+
+				<tr>
+					<th scope="col">Código</th>
+					<th scope="col">Fecha de calificación</th>
+					<th scope="col">Ruc / CC Proveedor</th>
+					<th scope="col">Nombre Proveedor</th>
+					<th scope="col">Código Evento asociado</th>
+					<th scope="col">Nombre Evento</th>
+					<th scope="col">Responsable de Calificación</th>
+					<th scope="col">Cargo Responsable de Calificación</th>
+					<th scope="col">Tipo Rubro calificado</th>
+					<th scope="col">Nº Orden de compra asociada</th>
+					<th scope="col">Observaciones</th>
+
+                    <th scope="col">Calidad del producto y/o servicio que presta (25%)</th>
+					<th scope="col">Tiempo de entrega del pedido (30%)</th>
+					<th scope="col">Tiempo de entrega de cotizaciones (25%)</th>
+					<th scope="col">Servicio al Cliente (20%)</th>
+                    <th scope="col">Total calificación</th>
+                    <th scope="col">Calificación otorgada por los participantes</th>
+					<th scope="col">Acciones</th>
+				</tr>
+			</thead>
+			{% if filter.qs %}
+			<tbody>
+				{% for j in filter.qs %}
+				<tr class="text-center">
+					<td scope="row">{{j.cod_calificacion}}</td>
+					<td scope="row">{{j.fecha}}</td>
+					<td scope="row">{{j.proveedor.ruc}}</td>
+					<td scope="row" class="funcion2">{{j.proveedor.razon}}</td>
+					<td scope="row">{{j.evento.codigo_evento}}</td>
+					<td scope="row">{{j.evento.nombre}}</td>
+					<td scope="row">{{j.responsable}}</td>
+					<td scope="row">{{j.cargo}}</td>
+					<td scope="row">{{j.tipo_rubro}}</td>
+					<td scope="row">{{j.orden_compra}}</td>
+					<td scope="row">{{j.descripcion}}</td>
+
+                    <td scope="row">{{j.total_prod}}</td>
+                    <td scope="row">{{j.total_tiempopedido}}</td>
+					<td scope="row">{{j.total_tiempo}}</td>
+					<td scope="row">{{j.total_servicio}}</td>
+					<td scope="row"  class="funcion">{{j.total}}</td>
+					<td scope="row">{{j.total_participante}}</td>  
+					                  
+					<td scope="row">
+
+						
+						<a class="m-auto btn btn-secondary btn-sm" href="{% url 'editar_calificacion_proveedor' pk=j.pk %}"><i class="fas fa-edit"></i></a>
+<!-- 
+						<a class="btn btn-secondary btn-sm btn-block" href="#" data-toggle="tooltip"
+							data-placement="top" title="Imprimir">
+							<i class="fas fa-print"></i></a> -->
+						
+					</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+
+			{% else %}
+			<h2>No hay elementos que mostrar</h2>
+			{% endif %}
+		</table>
+	</div>
+</div>
+
+
+
+
+
+
+
+{% endblock %}
+
+{% block extrafooter %}
+
+
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.js"></script>
+<script type="text/javascript">
+
+$(document).ready(function(){
+    $('#dtBasicExample td.funcion').each(function(){
+        if ($(this).text() < 80) {
+			$(this).css('color','#f00');
+        }
+    });
+});
+
+</script>
+
+<script type="text/javascript">
+
+	$(document).ready(function(){
+		$('#dtBasicExample td.funcion2').each(function(){
+				$(this).css('text-transform','uppercase');
+			}
+		);
+	});
+	
+</script>
+
+
+<script src="{% static 'js/table.js' %}"></script>
+<script src="{% static 'js/date-filter.js' %}"></script>
+
+{% endblock %}

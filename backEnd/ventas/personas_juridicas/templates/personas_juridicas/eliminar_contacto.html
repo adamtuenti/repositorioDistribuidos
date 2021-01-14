@@ -1,0 +1,25 @@
+{% load static %}
+{% load bootstrap4%} 
+<div class="modal-header">
+    <h5 class="modal-title" id="ordenTitle">Eliminar contacto</h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<form method="post">
+    {% csrf_token %}
+    <input type="hidden" id='eliminar_cedula' value="{{object.cedula}}">
+    <div class="modal-body">
+        ¿Está seguro que desea eliminar el siguiente contacto?
+        <br>
+            Cédula: {{object.cedula }}
+        <br>
+            Nombres: {{object.nombres}}
+        <br>
+            Apellidos: {{object.apellidos}}
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+        <button name="eliminar_contacto" value="{{object.cedula}}" type="submit"  class="btn btn-secondary green-bg ml-3"> Eliminar </button>
+    </div>
+</form>

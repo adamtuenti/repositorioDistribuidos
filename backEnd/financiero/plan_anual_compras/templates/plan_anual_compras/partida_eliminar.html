@@ -1,0 +1,20 @@
+<div class="modal-header">
+	<h5 class="modal-title" id="productoDeleteModalCenterTitle">Eliminar Producto/Servicio</h5>
+	<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		<span aria-hidden="true">&times;</span>
+	</button>
+</div>
+<form method="post" action="{% url 'partida_eliminar' pk fk %}">
+	{% csrf_token %}
+	<div class="modal-body">
+        ¿Está seguro que desea eliminar el siguiente producto/servicio?
+        <br>
+        Tipo de Producto: {{form.tipo_compra}}
+        <br>
+        Nombre del Producto: {% if form.producto.nombre %}{{form.producto.nombre}}{%else%} {{form.descripcion}} {%endif%}
+	</div>
+	<div class="modal-footer">
+		<button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+		<button type="submit" class="btn btn-danger">Eliminar</button>
+	</div>
+</form>

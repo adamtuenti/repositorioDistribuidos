@@ -1,0 +1,7 @@
+<option value="">---------</option>
+<!-- {% for p in participante %}
+<option value="{{ p.cod_evento }}" name="{{ p.nombre_evento }}">{{ p.cod_evento }} </option>
+{% endfor %} -->
+{% for e in eventos %}
+<option value="{{ e.codigo_evento }}" name="{{ e.nombre }}">{{ e.codigo_evento }} </option>
+{% endfor %}

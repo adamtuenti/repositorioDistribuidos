@@ -1,0 +1,4 @@
+<option value="">---------</option>
+{% for proveedor in proveedores %}
+<option value="{{ proveedor.pk }}" name="{{proveedor.tipo_rubro}}">{{ proveedor.ruc }}</option>
+{% endfor %}

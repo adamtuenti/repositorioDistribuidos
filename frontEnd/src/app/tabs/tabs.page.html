@@ -1,0 +1,10 @@
+<ion-tabs>
+
+  <ion-tab-bar slot="bottom">
+    <ion-tab-button (click)="verificar(i)" *ngFor="let list of listTabs;let i = index" [attr.data-index]="i" tab="{{list.tab}}">
+      <ion-icon name="{{list.icon}}"></ion-icon>
+      <ion-label>{{list.item}}</ion-label>
+    </ion-tab-button>
+  </ion-tab-bar>
+
+</ion-tabs>

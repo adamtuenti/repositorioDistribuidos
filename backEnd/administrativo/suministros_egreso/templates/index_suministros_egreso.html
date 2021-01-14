@@ -1,0 +1,145 @@
+{% extends 'base_administrativo.html' %}
+{% load static %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+{% block title %}{{ "EC - EGRESO SUMINISTROS" }}{% endblock title %}
+{% block extraheader %}
+{% endblock extraheader %}
+{% block content %}
+
+<div class="row mb-2 d-flex white-bg">
+	<div class="col-9 v-align">
+		<h2>CONSULTA <span class="darkgreen-text">CONSUMO SUMINISTROS</span></h2>
+	</div>
+	<div class="col-3 col-xl-3 v-align">
+		<a class="btn btn-secondary green-bg float-right" href="{% url 'suministros_egreso_view' %}"><i class="fas fa-plus"></i>
+			Agregar
+			nuevo</a>
+	</div>
+</div>
+
+
+<div class="row darkwhite-bg pb-2">
+	<div class="col-12 col-xl-12">
+		<form method="get" id="forma_test" novalidate>
+			{% csrf_token %}
+			<div class="row mb-2">
+				<div class="campo p-2 pl-3 col-12">
+					<h5 class="black-text text-uppercase mb-0">Información</h5>
+				</div>
+			</div>
+
+
+			<div class="form-row">
+
+                <div class="col-3">
+					{{ filter.form.cod_suministro_egreso|as_crispy_field }}
+				</div>
+
+				<div class="col-3">
+					{{ filter.form.evento__codigo_evento|as_crispy_field }}
+				</div>
+
+				<div class="col-6">
+					{{ filter.form.evento__nombre|as_crispy_field }}
+				</div>
+
+				
+                <div class="col-3">
+					{{ filter.form.tipo_consumo|as_crispy_field }}
+                </div>
+                
+                <div class="col-3">
+					{{ filter.form.usuario|as_crispy_field }}
+                </div>
+                
+                <div class="col-3">
+					{{ filter.form.area|as_crispy_field }}
+                </div>
+                
+                <div class="col-6">
+					{{ filter.form.fecha_egreso }}
+				</div>
+				
+			</div>
+
+
+
+
+
+
+			<button type="submit" class="btn btn-secondary green-bg float-right">
+				<i class="fas fa-search"></i> Buscar</button>
+			{{ filter.form.media }}
+
+
+		</form>
+
+	</div>
+</div>
+
+<div class="row mt-4">
+	<div class="col-12">
+		<table id="dtBasicExample" class="table table-responsive-md border-bottom">
+			
+			<thead class="white-text darkgreen-bg">
+				<tr>
+					<th scope="col">Código Orden</th>
+					<th scope="col">Fecha Orden</th>
+					<th scope="col">Fecha Egreso</th>
+					<!-- <th scope="col">Descripcion</th> -->
+					<th scope="col">Tipo Consumo</th>
+					<th scope="col">Area Requirente</th>
+
+					<th scope="col">Usuario</th>
+					<th scope="col">Cod. Evento</th>
+                    <th scope="col">Observaciones</th>
+
+					<th>Acciones</th>
+				</tr>
+            </thead>
+            {% if suministros_egreso %}
+			<tbody>
+				{% for j in suministros_egreso %}
+				<tr class="text-center">
+                    <td scope="row">{{j.cod_suministro_egreso}}</td>
+					<td scope="row">{{j.fecha}}</td>
+					<td scope="row">{{j.fecha_egreso}}</td>
+                    <td scope="row">{{j.tipo_consumo}}</td>
+                    <td scope="row">{{j.area}}</td>
+                    <td scope="row">{{j.usuario}}</td>            
+					<td scope="row">{{j.evento__codigo_evento}}</td>
+					<td scope="row">{{j.observaciones}}</td>
+
+					<td scope="row">
+
+						
+						<a class="m-auto btn btn-secondary btn-sm" href="{% url 'suministro_egreso_editar' j.id %}"><i class="fas fa-edit"></i></a>
+
+						
+						
+					</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+
+			{% else %}
+			<h2>No hay elementos que mostrar</h2>
+			{% endif %}
+		</table>
+	</div>
+</div>
+
+
+
+
+
+
+
+{% endblock %}
+
+{% block extrafooter %}
+<script src="{% static 'js/table.js' %}"></script>
+<script src="{% static 'js/fecha_suministros_egreso.js' %}"></script>
+
+{% endblock %}

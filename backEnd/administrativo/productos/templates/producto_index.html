@@ -1,0 +1,172 @@
+{% extends 'base_administrativo.html' %}
+{% load static %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+{% block title %}{{ "EC - Productos" }}{% endblock title %}
+{% block extraheader %}
+{% endblock extraheader %}
+{% block content %}
+
+<div class="row mb-2 d-flex white-bg">
+	<div class="col-9 v-align">
+		<h2>CONSULTAS <span class="darkgreen-text">PRODUCTOS</span></h2>
+	</div>
+	<div class="col-3 col-xl-3 v-align">
+		<!-- <a class="btn btn-secondary green-bg float-right" onclick="abrir_modal_crear("{% url 'productos_view' %}")" i class="fas fa-plus">Agregar nuevo</a> -->
+		<button onclick=  "abrir_modal_crear ('{% url 'productos_view' %}')"  class ="btn btn-secondary green-bg float-right"> 
+			Agregar nuevo </button>
+	</div>
+</div>
+
+
+
+<div class="row darkwhite-bg pb-2">
+	<div class="col-12 col-xl-12">
+		<form method="get" id="forma_test">
+			{% csrf_token %}
+			<div class="row mb-2">
+				<div class="campo p-2 pl-3 col-12">
+					<h5 class="black-text text-uppercase mb-0">Consulta Productos</h5>
+				</div>
+			</div>
+			<div class="form-row">
+				<div class="col-4 col-xl-4">
+					{{ filter.form.cod_producto|as_crispy_field }}
+				</div>
+				<div class="col-8 col-xl-8">
+					{{ filter.form.nombre|as_crispy_field }}
+				</div>
+			</div>
+			<div class="form-row">
+				<div class="col-2">
+					{{ filter.form.tipo|as_crispy_field }}
+				</div>
+				<div class="col-3 col-xl-3">
+					{{ filter.form.unidad_medida|as_crispy_field }}
+				</div>
+				<div class="col-3 col-xl-3">
+					{{ filter.form.estado|as_crispy_field }}
+				</div>
+				<div class="col-2 ">
+					{{ filter.form.controlable|as_crispy_field }}
+					<!-- <small class="form-text text-muted">Controlable</small> -->
+				</div>
+				<div class="col-2 ">
+					{{ filter.form.iva|as_crispy_field }}
+					<!-- <small class="form-text text-muted">IVA</small> -->
+				</div>
+			</div>
+
+			<button type="submit" class="btn btn-secondary green-bg float-right">
+				<i class="fas fa-search"></i> Buscar</button>
+			{{ filter.form.media }}
+
+		</form>
+
+	</div>
+</div>
+
+<div class="row mt-4-md">
+	<div class="col-12">
+		<table id="dtBasicExample" class="table table-responsive-md border-bottom">
+			
+			<thead class="white-text darkgreen-bg">
+				<tr>
+					<th scope="col">Codigo de Producto</th>
+					<th scope="col">Nombre Item</th>
+					<th scope="col">Tipo de Bien</th>
+					<th scope="col">Unidad de medida</th>
+					<th scope="col">Estado</th>
+					<th scope="col">Controlable S/N</th>
+					<th scope="col">IVA S/N</th>
+					<th scope="col">Punto Reorden</th>
+					<th scope="col">Tolerancia</th>
+					<th scope="col">Cantidad Máxima</th>
+					<th scope="col">Stock Vigente</th>
+					<th scope="col">Fecha Creación</th>
+					<th>Acciones</th>
+				</tr>
+			</thead>
+			{% if productos %}
+			<tbody>
+				{% for j in productos %}
+				<tr class="text-center">
+					<td scope="row" style="width: 200px">{{j.cod_producto}}</td>
+					<td scope="row">{{j.nombre}}</td>
+					<td scope="row">{{j.tipo}}</td>
+					<td scope="row">{{j.unidad_medida}}</td>
+					<td scope="row">{{j.estado}}</td>
+					<td scope="row">{{j.controlable}}</td>
+					<td scope="row">{{j.iva}}</td>
+					<td scope="row">{{j.punto_reorden}}</td>
+					<td scope="row">{{j.tolerancia}}</td>
+					<td scope="row">{{j.cant_maxima}}</td>
+					<td scope="row">{{j.stock_actual}}</td>
+					<td scope="row">{{j.fecha}}</td>
+					<td scope="row">
+
+						<button onclick=  "abrir_modal_editar ('{% url 'editar_producto' pk=j.pk %}')"  class ="m-auto btn btn-secondary btn-sm"> <i class="fas fa-edit"> </i>
+							</button>
+				
+						<!-- <a class="m-auto btn btn-secondary btn-sm" href="{% url 'editar_producto' pk=j.pk %}"> <i class="fas fa-edit"> </i></a> -->
+
+						
+						
+					</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+
+			{% else %}
+			<h2>No hay elementos que mostrar</h2>
+			{% endif %}
+		</table>
+	</div>
+</div>
+
+
+
+<div class='modal fade' id='creacion' role='dialog'>
+    
+</div>
+
+<div class='modal fade' id='edicion' role='dialog'>
+    
+</div>
+{% endblock %}
+
+
+{% block extrajs %}
+
+<script type='text/javascript'>
+	var $ = jQuery.noConflict();
+	function abrir_modal_crear(url){
+		$('#creacion').load(url, function(){
+			$(this).modal('show');
+		});
+
+	}
+</script>
+
+<script type='text/javascript'>
+	var $ = jQuery.noConflict();
+	function abrir_modal_editar(url){
+		$('#edicion').load(url, function(){
+			$(this).modal('show');
+		});
+
+	}
+</script>
+
+{% endblock extrajs %}
+
+
+{% block extrafooter %}
+<script type="text/javascript">
+	window.onload = function () {
+	  document.getElementById("id_cod_producto").readOnly = False;
+	};
+  </script>
+
+<script src="{% static 'js/table.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,4 @@
+<option value="">---------</option>
+{% for op in opciones %}
+<option value="{{ op.0|safe }}">{{ op.1|safe }}</option>
+{% endfor %}

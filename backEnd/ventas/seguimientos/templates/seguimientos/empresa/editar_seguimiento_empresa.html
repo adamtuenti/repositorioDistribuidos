@@ -1,0 +1,129 @@
+{% extends "base_ventas.html" %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% block title %}{{ "EC - Nuevo Seguimiento Empresa" }}{% endblock title %}
+
+{% block extraheader %}
+<link rel="stylesheet" href="{% static 'css/select2.min.css' %}" />
+<link rel="stylesheet" href="{% static 'css/select2-bootstrap.min.css' %}" />
+{% endblock extraheader %}
+
+{% block content %}
+<form method="POST" data-reporte-url="{% url 'ajax_load_reportes' %}" data-evento-url="{% url 'ajax_load_eventos_tipo' %}"
+    data-participante-url="{% url 'ajax_load_n_participantes' %}"  data-oferta-url="{% url 'ajax_load_ofertas' %}" novalidate>
+    {% csrf_token %}
+    <div class="row mb-2">
+        <div class="col-xl-5 col-12 v-align">
+            <h2 class="text-uppercase darkgreen-text mb-0">
+                Editar Seguimiento de Empresa
+            </h2>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <div class="form-row">
+                {{form.juridica}}
+                {{form.n_evento}}
+                <div class="col-xl-2 col-3" id="div_ruc-ci">
+                    <label for="ruc" class="col-form-label requiredField">RUC</label>
+                    <span class="asteriskField">*</span>
+                    <input type="text" id="ruc" class="form-control {%if form.proveedor.errors %}is-invalid {%endif%}" value="{{empresa.ruc}}" readonly>
+                    {% for error in form.juridica.errors %}
+                    <p class="invalid-feedback d-block">
+                        <strong>{{ error }}</strong>
+                    </p>
+                    {% endfor %}
+                </div>
+                <div class="col col-xl-5" id="div_razon-nombre">
+                    <label for="razon" class="col-form-label requiredField">Razón Social</label>
+                    <span class="asteriskField">*</span>
+                    <input type="text" id="razon" class="form-control {%if form.proveedor.errors %}is-invalid {%endif%}" value="{{empresa.nombre}}" readonly>
+
+                    {% for error in form.juridica.errors %}
+                    <p class="invalid-feedback d-block">
+                        <strong>{{ error }}</strong>
+                    </p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="campo col-12 p-2 pl-3 my-3">
+            <h5 class="black-text text-uppercase mb-0">Datos del seguimiento</h5>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <input type="hidden" id="n_oferta" value="{{form.n_oferta.value}}">
+            {% crispy form %}
+            <div class="form-row">
+                <div class="col-2">
+                    <a id="add-evento" class="btn btn-sm btn-secondary green-bg btn-block white-text" href="#">Añadir
+                        evento <i class="fas fa-plus"></i></a>
+                </div>
+            </div>
+            <div class="form-row">
+                <table class="table border-bottom">
+                    <tbody>
+                        <input type="hidden" id="reporte_contacto" value="{{form.reporte_contacto.value}}">
+                        {{ formset.management_form }}
+                        {% for f in formset %}
+                        <tr class="formset {%if not forloop.first %}d-none{%endif%}">
+                            <td class="evento form-row">
+                                {% for hidden in f.hidden_fields %}
+                                {{ hidden }}
+                                {% endfor %}
+                                <div class="col-3">{{f.codigo_evento|as_crispy_field}}</div>
+                                <div class="col-7">{{f.nombre_evento|as_crispy_field}}</div>
+                                <div class="col-2 v-align">
+                                    {% if formset.can_delete and f.codigo_evento.value and form.n_evento.value > 1%}
+                                    {{ f.DELETE | as_crispy_field}}
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                        {%endfor%}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="row my-3">
+        <div class="col-12">
+            <a class="btn btn-secondary green-bg" data-toggle='modal' data-target="#segAgregarCenter"
+                href='#'>Guardar</a>
+            <a class="btn btn-secondary" href="{% url 'seguimiento_empresa' %}"> Cancelar </a>
+        </div>
+    </div>
+    <div class="modal fade" id="segAgregarCenter" tabindex="-1" role="dialog" aria-labelledby="segTitle"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="segTitle">Confirmación</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="modal-confirmacion">
+                    ¿Está seguro/a que desea continuar? Verifíque los datos ingresados antes de proceder.
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                    <button type="submit" id="enviar" class="btn btn-secondary green-bg mr-3">Confirmar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{ form.media }}
+</form>
+{% endblock content %}
+
+{% block extrafooter %}
+<script src="{% static 'js/select2.min.js' %}"></script>
+<script src="{% static 'js/seguimiento_empresa_editar.js' %}"></script>
+<script>
+    SetNum("{{form.n_evento.value}}")
+</script>
+{% endblock extrafooter %}

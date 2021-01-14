@@ -1,0 +1,13 @@
+
+@media (min-width: 576px) {
+  #productoModalCenter .modal-dialog { max-width: none; }
+}
+
+#productoModalCenter .modal-dialog {
+  width: 80% !important;
+  padding: 0 !important;
+}
+
+#productoModalCenter .modal-content {
+  height: 99% !important;
+}

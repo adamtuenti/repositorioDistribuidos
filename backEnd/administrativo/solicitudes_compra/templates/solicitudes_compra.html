@@ -1,0 +1,158 @@
+{% extends 'base_administrativo.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% load staticfiles %}
+{% block title %}{{ "EC - SOLICITUDES COMPRA" }}{% endblock title %}
+{% load humanize %}
+{% load my_tags %}
+{% load l10n %}
+
+{% block content %}
+<div class="row darkwhite-bg pb-2 justify-content-center justify-content-md-start">
+	<div class="campo p-2 pl-3 col-12">
+		<h5 class="black-text text-uppercase mt-2 mr-1 float-left">NUEVO PROCESO</h5>
+    	<a class="btn btn-secondary green-bg float-left ml-1" href="{% url 'nueva_compra' %}">
+			Nueva Solicitud Compra</a>
+
+		<a class="btn btn-secondary green-bg float-left ml-1" href="{% url 'nueva_orden' %}">
+			Nueva Orden de Compra</a>
+
+		<a class="btn btn-secondary green-bg float-left ml-1" href="{% url 'nuevo_analisis' %}">
+			Nuevo Análisis de Cotizaciones</a>     
+	</div>	
+</div>
+
+<div class="row mb-2 d-flex white-bg">
+	<div class="col-9 v-align">
+		<h2>CONSULTA <span class="darkgreen-text"> SOLICITUDES DE COMPRA</span></h2>
+	</div>
+</div>
+
+<div class="row darkwhite-bg pb-2">
+	<div class="col-12 col-xl-12">
+		<form method="get" id="forma_test" novalidate>
+			{% csrf_token %}
+			<div class="row mb-2">
+				<div class="campo p-2 pl-3 col-12">
+					<h5 class="black-text text-uppercase mb-0">Información</h5>
+				</div>
+			</div>
+
+			<div class="form-row">
+                <div class="col-3">
+					{{ filter.form.cod_solicitud|as_crispy_field }}
+				</div>
+				<div class="col-3">
+					{{ filter.form.estado|as_crispy_field }}
+				</div>
+				<div class="col-3">
+					{{ filter.form.tipo_proceso|as_crispy_field }}
+				</div>
+				<div class="col-3">
+					{{ filter.form.procedimiento_sugerido|as_crispy_field }}
+				</div>
+			</div>
+
+			<div class="form-row">
+				<div class="col-3">
+					{{ filter.form.periodo_compra|as_crispy_field }}
+				</div>				
+				<div class="col-3">
+					{{ filter.form.centro_costos|as_crispy_field }}
+				</div>
+				<div class="col-6">
+					{{ filter.form.fecha }}
+				</div>								
+			</div>	
+
+			<div class="form-row">
+				<div class="col-3">
+					{{ filter.form.tipo_compra|as_crispy_field }}
+				</div>				
+			</div>	
+
+			<div class="form-group">
+				<button type="submit" class="btn btn-secondary green-bg float-right">
+					<i class="fas fa-search"></i> Buscar</button>
+				{{ filter.form.media }}
+			</div>
+		</form>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-12 col-xl-12">
+		<a class="btn btn-lg float-right btn-light" href="#"><i class="fas fa-file-pdf" data-toggle="tooltip"
+				data-placement="top" title="Exportar a pdf"></i></a>
+		<a class="btn btn-lg float-right btn-light" href="#"><i class="fas fa-file-excel" data-toggle="tooltip"
+				data-placement="top" title="Exportar a excel"></i></a>
+		<table id="dtBasicExample" class="table table-responsive  border-bottom">
+			<thead class="white-text darkgreen-bg">
+				<tr>
+                    <th scope="col">Cód Solicitud Compra</th>
+                    <th scope="col">Fecha solicitud</th>
+                    <th scope="col">Tipo de proceso</th>
+					<th scope="col">Procedimiento sugerido</th>
+                    <th scope="col">Tipo de compra</th>
+                    <th scope="col">Período de compra</th>
+                    <th scope="col">Centro de costos</th>
+
+					<th scope="col">Subtotal 0%</th>
+					<th scope="col">Subtotal IVA</th>
+					<th scope="col">IVA</th>
+					<th scope="col">Total</th>
+
+					<th scope="col">Estado</th>
+                    <th scope="col">Fecha aprobación</th>
+					<th>Acciones</th>
+				</tr>
+            </thead>
+            {% if solicitudes %}
+			<tbody>
+				{% for j in solicitudes %}
+				<tr class="text-center">
+                    <td scope="row">{{j.cod_solicitud }}</td>
+					<td scope="row">{{j.fecha }}</td>
+					<td scope="row">{{j.tipo_proceso }}</td>
+					<td scope="row">{{j.procedimiento_sugerido }}</td>
+					<td scope="row">{{j.tipo_compra}}</td>
+                    <td scope="row">{{j.periodo_compra}}</td>
+					<td scope="row">{{j.centro_costos}}</td>
+                    
+					<td scope="row" style="text-align:right">${{j.subtotal_0|floatformat:2|intcomma}}</td>
+					<td scope="row" style="text-align:right">${{j.subtotal_iva|floatformat:2|intcomma}}</td>
+					<td scope="row" style="text-align:right">${{j.valor_iva|floatformat:2|intcomma}}</td>
+					<td scope="row" style="text-align:right">${{j.total|floatformat:2|intcomma}}</td>
+
+                    <td scope="row">{{j.estado}}</td>					
+                    <td scope="row">{{j.fecha_aprobacion}}</td>					
+					<td scope="row">
+						
+					<a class="m-auto btn btn-secondary btn-sm" href="{% url 'solicitud_editar' j.id %}"><i class="fas fa-edit"></i></a>
+						
+					</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+
+			{% else %}
+			<h2>No hay elementos que mostrar</h2>
+			{% endif %}
+		</table>
+	</div>
+</div>
+
+{% block extrafooter %}
+<script src="{% static 'js/table.js' %}"></script>
+<script src="{% static 'js/fecha_compras.js' %}"></script>
+
+    <script type="text/javascript">
+        window.onload = function () {
+        document.getElementById("id_fecha").readOnly = true;
+        };
+    </script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
+{% endblock extrafooter %}
+
+{% endblock content %}

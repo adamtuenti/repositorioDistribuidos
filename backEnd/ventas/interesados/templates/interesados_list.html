@@ -1,0 +1,216 @@
+{% extends "base_ventas.html" %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block extraheader %}
+<link rel="stylesheet" href="{% static 'css/select2.min.css' %}" />
+<link rel="stylesheet" href="{% static 'css/select2-bootstrap.min.css' %}" />
+{% endblock extraheader %}
+
+{% block content %}
+
+<div class="row mb-2 d-flex white-bg">
+    <div class="col-12 col-sm-6 col-md-8 v-align">
+        <h2 class="text-uppercase">Consultas <span class="darkgreen-text">Interesados</span></h2>
+    </div>
+    <div class="col-9 col-sm-3 col-md-2  ml-md-0.4 v-align ">
+        <a class="btn btn-secondary green-bg float-right" href="{% url 'interesados_nuevo' %}"> <i
+                class="fas fa-plus "></i> Agregar Nuevo</a>
+    </div>
+    <div class=" col-sm-3 col-md-2">
+        <a class="btn btn-secondary green-bg float-right " href="{% url 'interesados_cargar' %}"> <i
+                class="mr-sm-0 mr-md-1 fas fa-plus"></i> Cargar Interesados</a>
+    </div>
+</div>
+
+
+
+<div class="row darkwhite-bg py-2">
+    <div class="col-12">
+        <form action="" method="get">
+            {% csrf_token %}
+            <div class="form-row ">
+                <div class="col-4">
+                    {{ filter.form.nombre|as_crispy_field }}
+                </div>
+                <div class="col-4">
+                    {{ filter.form.apellido|as_crispy_field }}
+                </div>
+                <div class="col-4">
+                    {{ filter.form.celular|as_crispy_field }}
+                </div>
+            </div>
+            <div class="form-row ">
+                <div class="col-6">
+                    {{ filter.form.correo|as_crispy_field }}
+                </div>
+                <div class="col-6">
+                    {{ filter.form.canal_de_contacto|as_crispy_field }}
+                </div>
+            </div>
+            <div>
+                <button type="submit" class="btn btn-secondary green-bg float-right">
+                    <span class="fas fa-search"></span> Buscar</button>
+            </div>
+        </form>
+
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <a class="btn btn-lg float-right btn-light" href="#"><i class="fas fa-file-pdf" data-toggle="tooltip"
+                data-placement="top" title="Exportar a pdf"></i></a>
+        <a class="btn btn-lg float-right btn-light" href="#"><i class="fas fa-file-excel" data-toggle="tooltip"
+                data-placement="top" title="Exportar a excel"></i></a>
+        <table id="dtBasicExample" class="table table-responsive-md border-bottom">
+            <thead class="darkgreen-bg white-text">
+                <tr>
+                    <th>Nombre</th>
+                    <!--<th>Anexo</th>-->
+                    <th>Apellido</th>
+                    <th>Celular</th>
+                    <th>Correo</th>
+                    <th>Canal de Contacto</th>
+                    <th>Acciones</th>
+
+                </tr>
+            </thead>
+            {% if filter.qs %}
+
+            <tbody>
+
+
+                {% for interesado in filter.qs %}
+                <tr class="text-center">
+                    <td>{{interesado.nombre | upper}}</td>
+                    <!--
+                    <td>
+                        {% if ordenIngreso.anexo %}
+                            <a class="btn btn-secondary" href="{{ordenIngreso.anexo.url}}" target="_blank">
+                                Descargar
+                            </a>
+                        {% else %}
+                            No anexo
+                        {% endif %}
+                    </td>
+                    -->
+                    <td>{{interesado.apellido | upper}}</td>
+                    <td>{{interesado.celular}}</td>
+                    <td>{{interesado.correo}}</td>
+                    <td>{{interesado.canal_de_contacto}}</td>
+                    <td>
+                        <div class="col-auto text-truncate text-center">
+
+                            <a class="btn btn-secondary btn-sm" href="{% url 'interesados_editar' interesado.pk %}"><i
+                                    class="fas fa-edit"></i></a>
+                            <a onclick='eliminar({{ interesado.pk }});' class="btn btn-danger btn-sm"
+                                data-toggle='modal' data-target="#interesadoEliminarCenter" href='#'><i
+                                    class="fas fa-trash"></i></a>
+                            <a class="btn btn-secondary btn-sm" href="#" data-toggle="tooltip" data-placement="top"
+                                title="Imprimir">
+                                <i class="fas fa-print"></i></a>
+                            <a onclick='seguimiento_interesado({{ interesado.pk }});' class="btn btn-secondary btn-sm"
+                                data-toggle="modal" data-target="#seguimientoInteresado">
+                                <i class="text-white fas fa-route"></i></a>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+
+            </tbody>
+            {% else %}
+            <h2>No hay elementos que mostrar</h2>
+            {% endif %}
+        </table>
+
+    </div>
+</div>
+<div class="modal fade" id="interesadoEliminarCenter" tabindex="-1" role="dialog" aria-labelledby="ordenTitle"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div id="modal-content" class="modal-content">
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="seguimientoInteresado" role="dialog" aria-labelledby="ordenTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div id="modal-content-seguimiento" class="modal-content">
+        </div>
+    </div>
+</div>
+
+
+
+{% comment %} ---------------Modal Creacion Exitosa ---------------- {% endcomment %}
+<div class="modal fade" id="seguimiento_exito" tabindex="-1" role="dialog" aria-labelledby="ordenTitle"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header ">
+                <h2 class="modal-title">Confirmación</h2>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="modal-seguimiento_exito">
+                Se creo correctamente el seguimiento
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% comment %} ------------------------Fin Modal creacion exitosa -------------------- {% endcomment %}
+
+
+{% endblock content %}
+
+{% block extrafooter%}
+<script src="{% static 'js/select2.min.js' %}"></script>
+<script src="{% static 'js/table.js' %}"></script>
+<script>
+    function eliminar(id) {
+        $.ajax({
+            url: "{% url 'interesado_confirmar_eliminar' %}",
+            data: {
+                'pk': id
+            },
+
+            success: function (data) {
+                console.log(data);
+                $(".modal-content").html(data)
+            }
+        });
+    };
+</script>
+<script>
+    function seguimiento_interesado(id) {
+        $.ajax({
+            url: "{% url 'interesado_cargar_seguimiento' %}",
+            data: {
+                'pk': id
+            },
+            beforeSend: function () {
+                // Handle the beforeSend event
+                var loading = $("<img>")
+                loading.addClass("img-fluid m-auto")
+                loading.css({ "width": "50%", "height": "auto" })
+                loading.attr("id", "id_loading")
+                loading.attr('src', "https://miro.medium.com/max/1080/0*DqHGYPBA-ANwsma2.gif")
+                $("#seguimientoInteresado .modal-content").html(loading);
+            },
+            success: function (data) {
+                console.log(data);
+                $("#modal-content-seguimiento").html(data)
+            }
+        });
+    };
+</script>
+
+{% endblock extrafooter %}

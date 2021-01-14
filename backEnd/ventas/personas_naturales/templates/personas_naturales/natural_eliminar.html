@@ -1,0 +1,21 @@
+<div class="modal-header">
+    <h5 class="modal-title" id="ordenTitle">Eliminar persona natural</h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<form method="POST" action="{% url 'natural_eliminar' object.cedula %}" >
+    {% csrf_token %}
+
+    <div class="modal-body">
+        ¿Está seguro que desea eliminar la siguiente persona natural?
+        <br>
+            Cédula: {{ object.cedula }}
+        <br>
+            Nombres y Apellidos: {{ object.nombres }} {{ object.apellidos }}
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+        <button class="btn btn-secondary green-bg ml-3" type="submit"> Eliminar </button>
+    </div>
+</form>

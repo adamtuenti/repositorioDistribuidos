@@ -1,0 +1,4 @@
+<option value="">---------</option>
+{% for presupuesto in presupuestos %}
+<option value="{{ presupuesto.evento.nombre }}" name="{{ presupuesto.evento.codigo_evento }}">{{ presupuesto.evento.nombre}}</option>
+{% endfor %}

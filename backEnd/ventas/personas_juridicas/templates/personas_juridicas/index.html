@@ -1,0 +1,291 @@
+{% extends 'base_ventas.html' %}
+{% load static %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+{% block title %}{{ "EC - Persona Jurídica" }}{% endblock title %}
+
+{% block extraheader %}
+<link rel="stylesheet" href="{% static 'css/select2.min.css' %}" />
+<link rel="stylesheet" href="{% static 'css/select2-bootstrap.min.css' %}" />
+{% endblock extraheader %}
+
+{% block content %}
+<div class="row mb-2 d-flex white-bg">
+	<div class="col-9 v-align">
+		<h2>CONSULTAS <span class="darkgreen-text">PERSONAS JURÍDICAS</span></h2>
+	</div>
+	<div class="col-3 col-xl-3 v-align">
+		<a class="btn btn-secondary green-bg float-right" href="{% url 'juridicas_view' %}"><i class="fas fa-plus"></i>
+			Agregar
+			nuevo</a>
+	</div>
+</div>
+<div class="row darkwhite-bg pb-2">
+	<div class="col-12 col-xl-12">
+		<form method="get" id="forma_test" data-cities-url="{% url 'ajax_load_ciudades' %}" novalidate>
+			{% csrf_token %}
+			<div class="row mb-2">
+				<div class="campo p-2 pl-3 col-12">
+					<h5 class="black-text text-uppercase mb-0">Información Empresa</h5>
+				</div>
+			</div>
+			<div class="form-row">
+				<div class="col-4 col-xl-4">
+					{{ filter.form.ruc|as_crispy_field }}
+				</div>
+				<div class="col-8 col-xl-8">
+					{{ filter.form.nombre|as_crispy_field }}
+				</div>
+			</div>
+			<div class="form-row">
+				<div class="col-3 col-xl-3">
+					{{ filter.form.tipo_empresa|as_crispy_field }}
+				</div>
+				<div class="col-3 col-xl-3">
+					{{ filter.form.sector|as_crispy_field }}
+				</div>
+				<div class="col-3 col-xl-3">
+					{{ filter.form.provincia|as_crispy_field }}
+				</div>
+				<div class="col-3 col-xl-3">
+					{{ filter.form.ciudad|as_crispy_field }}
+				</div>
+			</div>
+			<div class="form-row">
+
+				<div class="col-6 col-xl-6">
+					{{ filter.form.direccion|as_crispy_field }}
+				</div>
+				<div class="col-3 col-xl-3">
+					{{ filter.form.telefono|as_crispy_field }}
+				</div>
+				<div class="col-3 col-xl-3">
+					{{ filter.form.celular|as_crispy_field }}
+				</div>
+
+			</div>
+
+			<div class="form-row">
+
+				<div class="col-3 col-xl-3">
+					{{ filter.form.correo|as_crispy_field }}
+				</div>
+				<div class="col-3 col-xl-3">
+					{{ filter.form.forma_pago|as_crispy_field }}
+				</div>
+			</div>
+			<div class="form-row">
+				<div class="campo mb-2 p-2 pl-3 col-12">
+					<h5 class="black-text text-uppercase mb-0">Contacto Empresa</h5>
+				</div>
+				<div class="col-4 col-xl-4">
+					{{ filter.form.contacto_natural__contacto__cedula|as_crispy_field }}
+				</div>
+				<div class="col-4 col-xl-4">
+					{{ filter.form.contacto_natural__contacto__nombres|as_crispy_field }}
+				</div>
+				<div class="col-4 col-xl-4">
+					{{ filter.form.contacto_natural__contacto__apellidos|as_crispy_field }}
+				</div>
+			</div>
+			<div class="form-row">
+				<div class="col-4 col-xl-4">
+					{{ filter.form.contacto_natural__contacto__tel_domicilio|as_crispy_field }}
+				</div>
+				<div class="col-4 col-xl-4">
+					{{ filter.form.contacto_natural__contacto__celular|as_crispy_field }}
+				</div>
+				<div class="col-4 col-xl-4">
+					{{  filter.form.contacto_natural__contacto__email|as_crispy_field }}
+				</div>
+			</div>
+
+			{% comment %} <div class="form-row">
+				<div class="col-4 col-xl-4">
+					{{ filter.form.contacto_natural.cedula|as_crispy_field }}
+				</div>
+				<div class="col-4 col-xl-4">
+					{{ filter.form.contacto_nombres|as_crispy_field }}
+				</div>
+				<div class="col-4 col-xl-4">
+					{{ filter.form.contacto_apellidos|as_crispy_field }}
+				</div>
+			</div>
+			<div class="form-row">
+				<div class="col-4 col-xl-4">
+					{{ filter.form.contacto_telefono|as_crispy_field }}
+				</div>
+				<div class="col-4 col-xl-4">
+					{{ filter.form.contacto_celular|as_crispy_field }}
+				</div>
+				<div class="col-4 col-xl-4">
+					{{ filter.form.contacto_correo|as_crispy_field }}
+				</div>
+			</div> {% endcomment %}
+
+			<button type="submit" class="btn btn-secondary green-bg float-right">
+				<i class="fas fa-search"></i> Buscar</button>
+			{{ filter.form.media }}
+		</form>
+
+	</div>
+</div>
+
+<div class="row mt-4">
+	<div class="col-12 col-xl-12 table-container">
+		<table id="dtBasicExample" class="table table-responsive border-bottom">
+			<thead class="white-text darkgreen-bg">
+				<tr>
+					<th scope="col">RUC</th>
+					<th scope="col">Razón Social</th>
+					<th scope="col">Ciudad</th>
+					<th scope="col">Provincia</th>
+					<th scope="col">Tipo</th>
+					<th scope="col">Sector</th>
+					<th scope="col">Forma de pago</th>
+					<th scope="col">Teléfono</th>
+					<th scope="col">Celular</th>
+					<th scope="col">Representante legal</th>
+					<th scope="col">Contacto </th>
+					<th scope="col">Contacto Teléfono</th>
+					<th scope="col">Contacto Celular</th>
+					<th scope="col">Contacto Email</th>
+					<th>Acciones<p class= "invisible">titulo_largo</p></th>
+				</tr>
+			</thead>
+			{% if juridicas %}
+			<tbody>
+				{% for j in juridicas %}
+				<tr class="text-center">
+					<td scope="row">{{j.ruc}}</td>
+					<td scope="row">{{j.nombre | upper}}</td>
+					<td scope="row">{{j.ciudad}}</td>
+					<td scope="row">{{j.provincia}}</td>
+					<td scope="row">{{j.tipo_empresa}}</td>
+					<td scope="row">{{j.sector}}</td>
+					<td scope="row">{{j.forma_pago}}</td>
+					<td scope="row">{{j.telefono}}</td>
+					<td scope="row">{{j.celular}}</td>
+					<td scope="row">{{j.representante}}</td>
+					<td scope="row">
+						{% for c in j.contacto_natural_set.all %}
+						{{c.contacto.cedula}}
+						{% endfor %}
+					</td>
+
+					<td scope="row">
+						{% for c in j.contacto_natural_set.all %}
+						{{c.contacto.tel_domicilio}}
+						{% endfor %}
+					</td>
+
+					<td scope="row">
+						{% for c in j.contacto_natural_set.all %}
+						{{c.contacto.celular}}
+						{% endfor %}
+					</td>
+
+					<td scope="row">
+						{% for c in j.contacto_natural_set.all %}
+						{{c.contacto.email}}
+						{% endfor %}
+					</td>
+					<td scope="row">
+						<a class="btn btn-secondary btn-sm" href="{% url 'editar_juridica' pk=j.pk %}"><i
+								class="fas fa-edit"></i></a>
+						<a class="btn btn-secondary btn-sm" href='#' onclick='seguimiento("{{ j.pk }}");'
+							data-toggle='modal' data-target="#personaModal"><i class="fas fa-route"></i></a>
+					</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+
+			{% else %}
+			<h2>No hay elementos que mostrar</h2>
+			{% endif %}
+		</table>
+	</div>
+</div>
+<div class="modal fade" id="personaModal" aria-labelledby="personaTitle" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+		<div id="modal-seg" class="modal-content">
+			<div class="modal-body">
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal" id="respuesta-post">
+	<div class="modal-dialog modal-dialog-centered" role="document">
+	  <div class="modal-content">
+		<div class="modal-header">
+		  <h5 class="modal-title">Notificación</h5>
+		  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			<span aria-hidden="true">&times;</span>
+		  </button>
+		</div>
+		<div class="modal-body">
+		  
+		</div>
+		<div class="modal-footer">
+		  <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+		</div>
+	  </div>
+	</div>
+  </div>
+
+{% endblock %}
+
+{% block extrafooter %}
+<script src="{% static 'js/table.js' %}"></script>
+<script src="{% static 'js/select2.min.js' %}"></script>
+<script src="{% static 'js/seguimiento_empresa_nuevo.js' %}"></script>
+<script>
+	
+	$("#id_provincia").change(function () {
+		var url = $("#forma_test").attr("data-cities-url");  // get the url of the `load_cities` view
+		var countryId = $(this).val();  // get the selected country ID from the HTML input
+
+		$.ajax({                       // initialize an AJAX request
+			url: url,                    // set the url of the request (= localhost:8000/hr/ajax/load-cities/)
+			data: {
+				'provincia': countryId       // add the country id to the GET parameters
+			},
+			success: function (data) {   // `data` is the return of the `load_cities` view function
+				$("#id_ciudad").html(data);  // replace the contents of the city input with the data that came from the server
+			}
+		});
+
+	});
+
+	function eliminar(id) {
+		$.ajax({
+			url: "{% url 'eliminar_juridica' %}",
+			data: { "pk": id },
+			success: function (data) {
+				$(".modal-content").html(data);
+			}
+		});
+	}
+	function seguimiento(id) {
+		$.ajax({
+			url: "{% url 'nuevo_seguimiento_empresa_gg' %}",
+			data: { "pk": id },
+			beforeSend: function(){
+				// Handle the beforeSend event
+				var loading=$("<img>")
+				loading.addClass("img-fluid m-auto")
+				loading.css({"width":"50%","height": "auto"})
+				loading.attr("id","id_loading")
+				loading.attr('src',"https://miro.medium.com/max/1080/0*DqHGYPBA-ANwsma2.gif")
+				$("#personaModal .modal-content").html(loading);
+			},
+			success: function (data) {
+				$("#personaModal .modal-content").html(data);
+				init_all();
+			},
+		});
+	}
+
+</script>
+{% endblock %}

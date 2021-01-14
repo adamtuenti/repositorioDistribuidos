@@ -1,0 +1,143 @@
+{% extends 'base_ventas.html' %}
+
+{% load crispy_forms_tags %}
+
+
+{% load static %}
+{% load staticfiles %}
+
+{% block content %}
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" />
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/select2-bootstrap-theme/0.1.0-beta.10/select2-bootstrap.css" />
+<div class="row mb-2">
+	<div class="col-12 col-xl-12">
+		<h2 class="text-uppercase darkgreen-text">
+			{% block regedit %}
+			Registro Persona Jurídica
+			{% endblock regedit %}
+		</h2>
+	</div>
+</div>
+<div class="row">
+	<div class="campo col-12 mt-2 p-2 pl-3">
+		<h5 class="black-text mb-0 text-uppercase">Información Empresa</h5>
+	</div>
+</div>
+
+<form method="post" novalidate id="form_test" data-cities-url="{% url 'ajax_load_ciudades' %}" enctype="multipart/form-data" , data-persona-url="{% url 'ajax_load_personas' %}" data-confirmacion-url="{% url 'ajax_verificar_campos' %}" eliminar-contacto-url="{% url 'eliminar_contacto'%}"data-natural-url="{% url 'natural_nuevo'%}" data-juridica-url="{% url 'juridicas_view' %}"
+data-info-url="{% url 'ajax_info_id' %}">
+	{% csrf_token %}
+	<div class="row darkwhite-bg py-2">
+		<div class="col-12">
+			<div class=" form-row">
+				<input type="hidden" id='rc' value="{{form.ruc_ci.value}}">
+    			<input type="hidden" id='rn' value="{{form.razon_nombres.value}}">
+				<div class="col-6 col-xl-3">
+					{{ form.ruc|as_crispy_field}}
+				</div>
+				<div class="col-6 col-xl-4">
+					{{ form.nombre |as_crispy_field}}
+				</div>
+				
+				<div class="col-6 col-xl-2">
+					{{ form.tipo_empresa|as_crispy_field}}
+				</div>
+				<div class="col-6 col-xl-3">
+					{{ form.sector|as_crispy_field}}
+				</div>
+			</div>
+			<div class="form-row">
+				<div class="col-12 col-xl-6">
+					{{ form.direccion |as_crispy_field}}
+				</div>
+				<div class="col-3 col-xl-3">
+					{{ form.provincia|as_crispy_field}}
+				</div>
+				<div class="col-3 col-xl-3">
+					{{ form.ciudad|as_crispy_field}}
+				</div>
+			</div>
+			<div class="form-row">
+				<div class="col-3 col-xl-2">
+					{{ form.telefono|as_crispy_field}}
+				</div>
+				<div class="col-3 col-xl-2">
+					{{ form.celular|as_crispy_field}}
+				</div>
+				<div class="col-6 col-xl-4">
+
+					{{ form.correo |as_crispy_field}}
+				</div>
+				<div class="col-6 col-xl-4">
+					{{ form.representante |as_crispy_field}}
+				</div>
+			</div>
+			<div class="form-row">
+				<div class="col-6 col-xl-3">
+
+					{{ form.maximo_facturas |as_crispy_field}}
+				</div>
+				<div class="col-6 col-xl-3">
+					{{ form.forma_pago |as_crispy_field}}
+				</div>
+			</div>
+		
+			{% block tabla %}
+				<div class="row mt-3">
+					<div class="col-12">
+						<a class="btn btn-secondary green-bg" data-toggle='modal' data-target="#juridica_confirmar"
+						href='#'>Siguiente</a>
+						<a class="btn btn-secondary" href="{% url 'index_juridicas' %}"> Cancelar </a>
+					 </div>
+				 </div>
+
+
+				<div class="modal fade" id="juridica_confirmar" tabindex="-1" role="dialog" aria-labelledby="ordenTitle"
+				aria-hidden="true">
+					<div class="modal-dialog modal-dialog-centered" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title" id="presupuestoTitle">Confirmación</h5>
+									<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+										<span aria-hidden="true">&times;</span>
+								</button>
+							</div>
+							<div class="modal-body" id="modal-confirmacion">
+								¿Está seguro/a que desea continuar? Verifíque los datos ingresados antes de proceder.
+							</div>
+							<div class="modal-footer">
+								<button class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+								<button type="submit" class="btn btn-secondary green-bg mr-3">Confirmar</button>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				 
+			{% endblock tabla %}
+		</form>
+	
+
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+
+<script>
+	$("#id_provincia").change(function () {
+		var url = $("#form_test").attr("data-cities-url");  // get the url of the `load_cities` view
+		var provinciaId = $(this).val();  // get the selected country ID from the HTML input
+
+		$.ajax({                       // initialize an AJAX request
+			url: url,                    // set the url of the request (= localhost:8000/hr/ajax/load-cities/)
+			data: {
+				'provincia': provinciaId       // add the country id to the GET parameters
+			},
+			success: function (data) {   // `data` is the return of the `load_cities` view function
+				$("#id_ciudad").html(data);  // replace the contents of the city input with the data that came from the server
+			}
+		});
+
+	});
+</script>
+{% endblock %}

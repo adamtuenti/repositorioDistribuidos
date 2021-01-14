@@ -1,0 +1,531 @@
+{% extends "base.html" %} {% block content %}
+
+<div id="app">
+  <div class="card my-2">
+    <div class="card-header">
+      <h6 class="mb-0">
+        <h2><span class="darkgreen-text">Docentes</span></h2>
+      </h6>
+    </div>
+    <div class="card-body">
+      <docentes-content component_name="Docentes"> </docentes-content>
+    </div>
+  </div>
+</div>
+
+{% endblock %} {% block specific_scripts %}
+
+<script type="text/javascript">
+  // START - components
+
+  // Docentes
+  Vue.component("docentes-content", {
+    delimiters: ["[[", "]]"],
+    props: ["component_name"],
+    template: `
+  <div>
+  <!-- START List Items -->
+  <v-app id="inspire">
+      <v-toolbar dark color="primary" fixed>
+        <v-toolbar-title class="white--text">Nutrition</v-toolbar-title>
+        <v-spacer></v-spacer>
+        <v-text-field v-model="search" append-icon="search" label="Search" single-line hide-details></v-text-field>
+        <v-menu offset-y :nudge-left="170" :close-on-content-click="false">
+            <v-btn icon slot="activator">
+                <v-icon>more_vert</v-icon>
+              </v-btn>
+            <v-list>
+              <v-list-tile  v-for="(item, index) in headers"  :key="item.value"   @click="changeSort(item.value)">
+                <v-list-tile-title>{{ item.text }}<v-icon v-if="pagination.sortBy === item.value">[[pagination.descending ? 'arrow_downward':'arrow_upward']]</v-icon></v-list-tile-title>
+              </v-list-tile>
+            </v-list>
+          </v-menu>
+      </v-toolbar>
+          <v-layout column >
+            <v-data-table :headers="headers" :items="items" :search="search" :pagination.sync="pagination" >
+              <template slot="items" slot-scope="props">
+                <tr>
+                  <td>{{ props.item.id }}</td>
+                  <td class="text-xs-right">{{ props.item.numero_de_cedula }}</td>
+                  <td class="text-xs-right">{{ props.item.nombres }}</td>
+                  <td class="text-xs-right">{{ props.item.apellidos }}</td>
+                  <td class="text-xs-right">{{ props.item.estado }}</td>
+                  <td> 
+                    <td class="text-xs-right">{{ props.item.estado }}</td>
+                     </td>
+                </tr>
+              </template>
+            </v-data-table>
+          </v-layout>
+    </v-app>
+  <div class="d-flex justify-content-end">
+    <button class="btn btn-secondary green-bg" data-toggle="modal" :data-target="'#'+this.modals.add.id"><span>&#43;</span></button>
+  </div>
+  <div class="loading" v-if="loading===true">Loading&#8230;</div>
+  <!-- END List Items -->
+
+  <!-- START Add Item Modal -->
+  <div class="modal fade" :id="this.modals.add.id" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title"> Agregar Docente </h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
+        </div>
+        <form v-on:submit.prevent="addItem()">
+          <div class="modal-body">
+              <div class="form-row">
+                <div class="col">
+                  <div class="form-group">
+                  <input type="text" class="form-control" v-model="newItem.nombres" placeholder="Nombres*" required>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="form-group">
+                  <input type="text" class="form-control" v-model="newItem.direccion_de_domicilio" placeholder="Dirección de domicilio*" required>
+                  </div>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="col">
+                  <div class="form-group">
+                  <input type="text" class="form-control" v-model="newItem.apellidos" placeholder="Apellidos*" required>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="form-group">
+                  <input type="text" class="form-control" v-model="newItem.telefono_movil" placeholder="Teléfono Móvil*" required>
+                  </div>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="col">
+                  <div class="form-group">            
+                  <textarea 
+                    class="form-control" 
+                    placeholder="Síntesis de Currículum redactado en tercera persona, utilizando 600 caracteres. Iniciar con títulos de cuarto nivel, resaltar experiencia profesional en el área del curso o seminario que imparte. Detallar experiencia académica sin especificar nombres de otras universidades.*"
+                    v-model="newItem.sintesis_cv" 
+                    rows="7" 
+                    required>
+                  </textarea>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="form-group">
+                  <input type="text" class="form-control" v-model="newItem.telefono_convencional" placeholder="Teléfono Convencional*" required>
+                  </div>
+                  <div class="form-group">
+                  <label>Fecha de nacimiento* : </label>
+                  <input type="date" class="form-control" v-model="newItem.fecha_de_nacimiento" placeholder="Fecha De nacimiento*" required>
+                  </div>
+                  <div class="form-group">
+                  <input type="text" class="form-control" v-model="newItem.lugar_de_nacimiento" placeholder="Lugar de Nacimiento*" required>
+                  </div>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="col">
+                  <div class="form-group">
+                  <input type="text" class="form-control" maxlength=10 v-model="newItem.indice_dactilar" placeholder="Indice Dáctilar*" required>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="form-group">
+                  <input type="email" class="form-control" v-model="newItem.correo_principal" placeholder="Correo Principal*" required>
+                  </div>
+                </div>
+              </div>                                                                                            
+              
+              <div class="form-row">
+                <div class="col">
+                  <div class="form-group">
+                  <input type="text" class="form-control" v-model="newItem.numero_de_cedula" placeholder="Número de cédula*" required>
+                  </div>
+                </div>
+                <div class="col">            
+                  <div class="form-group">
+                  <input type="email" class="form-control" v-model="newItem.correo_secundario" placeholder="Correo Secundario">
+                  </div>
+                </div>
+              </div>
+
+          </div>
+          <div class="modal-footer"> 
+            <button type="submit" class="btn btn-primary">Continuar</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div class="loading" v-if="loading===true">Loading&#8230;</div>          
+  </div>  
+  <!-- END Add Item modal -->
+
+  <!-- START Update Item Modal -->
+  <div class="modal fade" :id="this.modals.update.id" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title"> Editar Docente </h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
+        </div>
+        <form v-on:submit.prevent="updateItem()">
+          <div class="modal-body">
+               <div class="form-row">
+                <div class="col">
+                  <div class="form-group">
+                  <input type="text" class="form-control" v-model="currentItem.nombres" placeholder="Nombres" required>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="form-group">
+                  <input type="text" class="form-control" v-model="currentItem.direccion_de_domicilio" placeholder="Dirección de domicilio" required>
+                  </div>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="col">
+                  <div class="form-group">
+                  <input type="text" class="form-control" v-model="currentItem.apellidos" placeholder="Apellidos" required>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="form-group">
+                  <input type="text" class="form-control" v-model="currentItem.telefono_movil" placeholder="Teléfono Móvil" required>
+                  </div>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="col">
+                  <div class="form-group">            
+                  <textarea 
+                    class="form-control" 
+                    placeholder="Síntesis de Currículum redactado en tercera persona, utilizando 600 caracteres. Iniciar con títulos de cuarto nivel, resaltar experiencia profesional en el área del curso o seminario que imparte. Detallar experiencia académica sin especificar nombres de otras universidades."
+                    v-model="currentItem.sintesis_cv" 
+                    rows="7" 
+                    required>
+                  </textarea>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="form-group">
+                  <input type="text" class="form-control" v-model="currentItem.telefono_convencional" placeholder="Teléfono Convencional" required>
+                  </div>
+                  <div class="form-group">
+                  <label>Fecha de nacimiento : </label>
+                  <input type="date" class="form-control" v-model="currentItem.fecha_de_nacimiento" placeholder="Fecha De nacimiento" required>
+                  </div>
+                  <div class="form-group">
+                  <input type="text" class="form-control" v-model="currentItem.lugar_de_nacimiento" placeholder="Lugar de Nacimiento" required>
+                  </div>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="col">
+                  <div class="form-group">
+                  <input type="text" class="form-control" v-model="currentItem.indice_dactilar" placeholder="Indice Dáctilar" required>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="form-group">
+                  <input type="email" class="form-control" v-model="currentItem.correo_principal" placeholder="Correo Principal" required>
+                  </div>
+                </div>
+              </div>                                                                                            
+              
+              <div class="form-row">
+                <div class="col">
+                  <div class="form-group">
+                  <input type="text" class="form-control" v-model="currentItem.numero_de_cedula" placeholder="Número de cédula" required>
+                  </div>
+                </div>
+                <div class="col">            
+                  <div class="form-group">
+                  <input type="email" class="form-control" v-model="currentItem.correo_secundario" placeholder="Correo Secundario" required>
+                  </div>
+                </div>
+              </div>
+
+          </div>
+          <div class="modal-footer"> <button type="submit" class="btn btn-primary">Guardar</button> </div>
+        </form>
+      </div>
+    </div>
+    <div class="loading" v-if="loading===true">Loading&#8230;</div>          
+  </div>  
+  <!-- END Edit Item modal -->
+
+  <!-- START View Item Modal -->
+  <div class="modal fade" :id="this.modals.view.id" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title"> Docente </h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
+        </div>
+        <form>
+          <div class="modal-body">        
+                <div class="form-row">
+                  <div class="col">
+                    <div class="form-group">
+                    <input type="text" class="form-control" v-model="currentItem.nombres" placeholder="Nombres" required>
+                    </div>
+                  </div>
+                  <div class="col">
+                    <div class="form-group">
+                    <input type="text" class="form-control" v-model="currentItem.direccion_de_domicilio" placeholder="Dirección de domicilio" required>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="col">
+                    <div class="form-group">
+                    <input type="text" class="form-control" v-model="currentItem.apellidos" placeholder="Apellidos" required>
+                    </div>
+                  </div>
+                  <div class="col">
+                    <div class="form-group">
+                    <input type="text" class="form-control" v-model="currentItem.telefono_movil" placeholder="Teléfono Móvil" required>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="col">
+                    <div class="form-group">            
+                    <textarea 
+                      class="form-control" 
+                      placeholder="Síntesis de Currículum redactado en tercera persona, utilizando 600 caracteres. Iniciar con títulos de cuarto nivel, resaltar experiencia profesional en el área del curso o seminario que imparte. Detallar experiencia académica sin especificar nombres de otras universidades."
+                      v-model="currentItem.sintesis_cv" 
+                      rows="7" 
+                      required>
+                    </textarea>
+                    </div>
+                  </div>
+                  <div class="col">
+                    <div class="form-group">
+                    <input type="text" class="form-control" v-model="currentItem.telefono_convencional" placeholder="Teléfono Convencional" required>
+                    </div>
+                    <div class="form-group">
+                    <label>Fecha de nacimiento : </label>
+                    <input type="date" class="form-control" v-model="currentItem.fecha_de_nacimiento" placeholder="Fecha De nacimiento" required>
+                    </div>
+                    <div class="form-group">
+                    <input type="text" class="form-control" v-model="currentItem.lugar_de_nacimiento" placeholder="Lugar de Nacimiento" required>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="col">
+                    <div class="form-group">
+                    <input type="text" class="form-control" v-model="currentItem.indice_dactilar" placeholder="Indice Dáctilar" required>
+                    </div>
+                  </div>
+                  <div class="col">
+                    <div class="form-group">
+                    <input type="email" class="form-control" v-model="currentItem.correo_principal" placeholder="Correo Principal" required>
+                    </div>
+                  </div>
+                </div>                                                                                            
+                
+                <div class="form-row">
+                  <div class="col">
+                    <div class="form-group">
+                    <input type="text" class="form-control" v-model="currentItem.numero_de_cedula" placeholder="Número de cédula" required>
+                    </div>
+                  </div>
+                  <div class="col">            
+                    <div class="form-group">
+                    <input type="email" class="form-control" v-model="currentItem.correo_secundario" placeholder="Correo Secundario" required>
+                    </div>
+                  </div>
+                </div>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div class="loading" v-if="loading===true">Loading&#8230;</div>          
+  </div>  
+  <!-- END View Item modal -->
+  
+  <!-- START Ver Observacion Modal -->
+  <div class="modal fade" :id="this.modals.ver_observacion.id" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title"> Observación </h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
+        </div>
+        <form>
+          <div class="modal-body"> 
+          <div class="form-group">
+            <textarea 
+              class="form-control" 
+              v-model="this.currentItem.observacion"
+              rows="5" 
+              disabled>
+            </textarea>
+          </div>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div class="loading" v-if="loading===true">Loading&#8230;</div>          
+  </div>  
+  <!-- END Ver Observacion modal -->
+
+  </div>
+  `,
+    data: function() {
+      return {
+        url: "/api/docente/",
+        items: [],
+        loading: false,
+        search: '',
+        pagination: {
+          sortBy: 'id'
+        },
+        currentItem: {},
+        message: null,
+        headers: [{
+            text: 'ID',
+            value: 'id'
+          },
+          {
+            text: 'Cédula',
+            value: 'numero_de_cedula'
+          },
+          {
+            text: 'Nombres',
+            value: 'nombres'
+          },
+          {
+            text: 'Apellidos',
+            value: 'apellidos'
+          },
+          {
+            text: 'Estado',
+            value: 'estado'
+          }
+        ],
+        newItem: {
+          nombres: null,
+          apellidos: null,
+          sintesis_cv: null,
+          indice_dactilar: null,
+          direccion_de_domicilio: null,
+          telefono_movil: null,
+          telefono_convencional: null,
+          fecha_de_nacimiento: null,
+          lugar_de_nacimiento: null,
+          correo_principal: null,
+          correo_secundario: null,
+          numero_de_cedula: null,
+          estado: "No Habilitado"
+        },
+        modals: {
+          view: {
+            id: "viewItemModal_" + this.component_name
+          },
+          add: {
+            id: "addItemModal_" + this.component_name
+          },
+          update: {
+            id: "updateItemModal_" + this.component_name
+          },
+          ver_observacion: {
+            id: "verObservacionItemModal_" + this.component_name
+          }
+        }
+      };
+    },
+    mounted: function() {
+      this.getItems();
+    },
+    methods: {
+      getItems: function() {
+        this.loading = true;
+        axios
+          .get(this.url)
+          .then(response => {
+            this.items = response.data;
+            this.loading = false;
+          })
+          .catch(err => {
+            this.loading = false;
+            console.log(err);
+          });
+      },
+      getItem: function(id, type) {
+        this.loading = true;
+        axios
+          .get(`${this.url}${id}/`)
+          .then(response => {
+            this.currentItem = response.data;
+            if (type == "edit") {
+              $(`#${this.modals.update.id}`).modal("show");
+            } else if (type == "view") {
+              $(`#${this.modals.view.id}`).modal("show");
+            } else {
+              $(`#${this.modals.ver_observacion.id}`).modal("show");
+            }
+            this.loading = false;
+          })
+          .catch(err => {
+            this.loading = false;
+            console.log(err);
+          });
+      },
+      addItem: function() {
+        this.loading = true;
+        axios
+          .post(this.url, this.newItem)
+          .then(response => {
+            this.loading = false;
+            this.getItems();
+            $(`#${this.modals.add.id}`).modal("hide");
+          })
+          .catch(err => {
+            this.loading = false;
+            console.log(err.response);
+          });
+      },
+      updateItem: function() {
+        this.loading = true;
+        axios
+          .put(`${this.url}${this.currentItem.id}/`, this.currentItem)
+          .then(response => {
+            this.loading = false;
+            this.currentItem = response.data;
+            this.getItems();
+            $(`#${this.modals.update.id}`).modal("hide");
+          })
+          .catch(err => {
+            this.loading = false;
+            console.log(err);
+          });
+      },
+      deleteItem: function(id) {
+        this.loading = true;
+        axios
+          .delete(`${this.url}${id}/`)
+          .then(response => {
+            this.loading = false;
+            this.getItems();
+          })
+          .catch(err => {
+            this.loading = false;
+            console.log(err);
+          });
+      },
+      fillDocente: function(id) {
+        window.location = `/academico/docente/${id}/fill`;
+      }
+    }
+  });
+
+  var app = new Vue({
+    delimiters: ["[[", "]]"], //https://stackoverflow.com/questions/49948261/vuejs-data-wont-display
+    el: "#app"
+  });
+</script>
+{% endblock%}

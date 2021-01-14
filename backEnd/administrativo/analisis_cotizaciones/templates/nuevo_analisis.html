@@ -1,0 +1,288 @@
+{% extends 'base_administrativo.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% load staticfiles %}
+{% block title %}{{ "EC - ANALISIS COTIZACIONES" }}{% endblock title %}
+
+{% block content %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" />
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/select2-bootstrap-theme/0.1.0-beta.10/select2-bootstrap.css" />
+<div class="row mb-2">
+	<div class="col-xl-5 col-12 v-align">
+		<h2 class="text-uppercase darkgreen-text">
+			{% block regedit %}
+			Nueva Solicitud de Compra
+			{% endblock regedit %}
+		</h2>
+	</div>
+
+	<div class="col-12 col-xl-7">
+		<div class="form-row">
+			<div class="col-6">
+				{{ form.cod_analisis|as_crispy_field }}
+			</div>
+			<div class="col-6">
+				{{ form.fecha|as_crispy_field }}
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="row">
+	<div class="campo col-12 mt-2 p-2 pl-3">
+		<h5 class="black-text mb-0 text-uppercase">Información Ingreso</h5>
+	</div>
+</div>
+
+<div class="row darkwhite-bg py-2">
+    <div class="col-12">
+        <div class="form-row">
+            <div class="col-4">
+                {{ form.tipo_proceso|as_crispy_field }}
+            </div>
+            <div class="col-4">
+                {{ form.procedimiento_sugerido|as_crispy_field }}					
+            </div>
+            <div class="col-4">
+                {{ form.estado|as_crispy_field }}
+            </div>
+	    </div>
+    </div>
+
+    <div class="col-12">
+        <div class="form-row">
+            <div class="col-12">
+                {{ form.detalle_proceso|as_crispy_field }}
+            </div>
+	    </div>
+    </div>
+
+    <div class="col-12">
+        <div class="form-row">
+            <div class="col-2 mt-4 p-2 pl-5">
+                <h5 class="black-text mb-0 text-uppercase">Proveedor 1</h5>
+            </div>
+            <div class="col-3">
+                {{ form.tipo_proveedor|as_crispy_field }}					
+            </div>
+            <div class="col-3">
+                {{ form.ruc|as_crispy_field }}
+            </div>
+            <div class="col-4">
+                {{ form.razon|as_crispy_field }}
+            </div>
+	    </div>
+    </div>
+
+    <div class="col-12">
+        <div class="form-row">
+            <div class="col-2 mt-4 p-2 pl-5">
+                <h5 class="black-text mb-0 text-uppercase">Proveedor 2</h5>
+            </div>
+            <div class="col-3">
+                {{ form.tipo_proveedor|as_crispy_field }}					
+            </div>
+            <div class="col-3">
+                {{ form.ruc|as_crispy_field }}
+            </div>
+            <div class="col-4">
+                {{ form.razon|as_crispy_field }}
+            </div>
+	    </div>
+    </div>
+
+    <div class="col-12">
+        <div class="form-row">
+            <div class="col-2 mt-4 p-2 pl-5">
+                <h5 class="black-text mb-0 text-uppercase">Proveedor 3</h5>
+            </div>
+            <div class="col-3">
+                {{ form.tipo_proveedor|as_crispy_field }}					
+            </div>
+            <div class="col-3">
+                {{ form.ruc|as_crispy_field }}
+            </div>
+            <div class="col-4">
+                {{ form.razon|as_crispy_field }}
+            </div>
+	    </div>
+    </div>  
+</div>
+
+    <br>
+    <div class="row mb-2">
+			<div class="col">
+				<div class="form-row float-right">
+					<div class="col-auto v-align ml-auto">
+            	<a id="add" class="text-white btn btn-secondary green-bg btn-sm"><i
+					class="fas fa-plus"></i>   Agregar Ítem</a>
+				</div>
+			</div>
+        </div>
+	</div>
+
+<div class="row">
+	<div class="col-12 col-xl-12">
+		<a class="btn btn-lg float-right btn-light" href="#"><i class="fas fa-file-pdf" data-toggle="tooltip"
+				data-placement="top" title="Exportar a pdf"></i></a>
+		<a class="btn btn-lg float-right btn-light" href="#"><i class="fas fa-file-excel" data-toggle="tooltip"
+				data-placement="top" title="Exportar a excel"></i></a>
+		<table id="dtBasicExample" class="table table-responsive  border-bottom">
+			<thead class="white-text darkgreen-bg">
+					<tr>
+						<th>N°</th>
+						<th>Unidad Medida</th>
+						<th>Cantidad</th>
+						<th>Objeto de cotización</th>
+						<th>IVA</th>
+						<th>Proveedor 1<br/>Observación</th>
+						<th>Proveedor 1<br/>Valor Unitario</th>
+						<th>Proveedor 1<br/>Total</th>
+						<th>Proveedor 2<br/>Observación</th>
+						<th>Proveedor 2<br/>Valor Unitario</th>
+						<th>Proveedor 2<br/>Total</th>
+						<th>Proveedor 3<br/>Observación</th>
+						<th>Proveedor 3<br/>Valor Unitario</th>
+						<th>Proveedor 3<br/>Total</th>
+						<th>Acciones</th>
+					</tr>
+				</thead>
+				
+				<tbody id="productoTableBody">
+					
+				</tbody>
+			</table>
+		</div>
+	</div>
+
+	<div class="form-row">
+		<div id="tabla" class="col-12">
+			<table id="productos-table" class="table table-responsive-md border-bottom">
+				<thead class="darkgreen-bg white-text">
+					<tr>
+						<th>N°</th>
+						<th>Proveedor</th>
+						<th>Subtotal 0%</th>
+						<th>Subtotal IVA</th>
+						<th>IVA</th>
+						<th>TOTAL</th>
+					</tr>
+				</thead>
+				
+				<tbody id="productoTableBody">
+					
+				</tbody>
+			</table>
+		</div>
+	</div>    
+
+<div class="row">
+	<div class="campo col-12 mt-2 p-2 pl-3">
+		<h5 class="black-text mb-0 text-uppercase">DATOS MEJOR OFERENTE Y COTIZACIÓN</h5>
+	</div>
+</div>
+
+<div class="row darkwhite-bg py-2">
+    <div class="col-12">
+        <div class="form-row">
+            <div class="col-3 mt-4 p-2 pl-5">
+                <h5 class="black-text mb-0 text-uppercase">Proveedor Adjudicado</h5>
+            </div>
+            <div class="col-3">
+                {{ form.ruc|as_crispy_field }}
+            </div>
+            <div class="col-6">
+                {{ form.razon|as_crispy_field }}
+            </div>
+	    </div>
+    </div>
+    <div class="col-12">
+        <div class="form-row">
+            <div class="col-12">
+                {{ form.criterio_seleccion|as_crispy_field }}
+            </div>
+	    </div>
+    </div>
+</div>
+
+ 	<div class="form-row">
+		<div class="col-6 col-md-3 mb-2">
+			{{ form.subtotal}}
+			<label for="sub_total" class="col-form-label">Sub total 0%</label>
+			<div class="currency-wrap">
+				<span class="currency-code">$</span>
+				<input type="text" id="sub_total" class="form-control-plaintext text-right form-control" readonly>
+			</div>
+		</div>
+		<div class="col-6 col-md-3">
+			{{ form.subtotal}}
+			<label for="sub_total" class="col-form-label">Sub total IVA</label>
+			<div class="currency-wrap">
+				<span class="currency-code">$</span>
+				<input type="text" id="sub_total" class="form-control-plaintext text-right form-control" readonly>
+			</div>
+		</div>
+		<div class="col-6 col-md-3">
+			{{ form.valor_iva}}
+			<label for="iva" class="col-form-label">IVA</label>
+			<div class="currency-wrap">
+				<span class="currency-code">$</span>
+				<input type="text" id="iva" class="form-control-plaintext text-right form-control" readonly>
+			</div>
+		</div>
+		<div class="col-6 col-md-3">
+			{{ form.total}}
+			<label for="valor_total" class="col-form-label">Total</label>
+			<div class="currency-wrap">
+				<span class="currency-code">$</span>
+				<input type="text" id="valor_total" class="form-control-plaintext text-right form-control" readonly>
+			</div>
+		</div>
+	</div>
+
+<div class="row darkwhite-bg py-2">
+    <div class="col-12">
+        <div class="form-row">
+            <div class="col-12">
+                {{ form.valor_letras|as_crispy_field }}
+            </div>
+	    </div>
+    </div>
+</div>
+
+<div class="container">
+  <div class="form-group col-6">
+    <label for="banner">Subir Archivo:</label>
+    <div class="input-group">
+        <label class="form-control textinput textInput col-3">
+			<span class="btn btn-secondary green-bg btn-file">
+                Anexos <input accept=".jpg,.png,.jpeg,.gif" class="hidden" name="banner" type="file" id="banner">
+            </span>
+        </label>
+        <input class="form-control" id="banner_captura" readonly="readonly" name="banner_captura" type="text" value="">
+    </div>
+</div>
+
+        <div class="row crear float-right mb-3 mt-3">
+            <div class="col-12">
+            <a class="btn btn-secondary green-bg" data-toggle='modal' data-target="#suministro_confirmar"
+            href='nueva_compra'>Guardar</a>
+            <a class="btn btn-secondary" href="{% url 'solicitudes_compra' %}"> Cancelar </a>
+            </div>
+        </div>  
+
+<br />
+
+{% endblock content %}
+
+{% block extrafooter %}
+    <script type="text/javascript">
+        window.onload = function () {
+        document.getElementById("id_fecha").readOnly = true;
+        };
+    </script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
+{% endblock extrafooter %}
+

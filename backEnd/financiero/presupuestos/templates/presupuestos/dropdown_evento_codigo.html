@@ -1,0 +1,5 @@
+<option value="">---------</option>
+{% for evento in eventos %}
+<option value="{{ evento.pk }}" data-modalidad="{{evento.modalidad}}" 
+data-finicio="{{evento.fecha_inicio}}" data-ffin="{{evento.fecha_fin}}">{{ evento.pk }}</option>
+{% endfor %}

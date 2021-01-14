@@ -1,0 +1,135 @@
+{% extends 'base_ventas.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+<form method="post" novalidate>
+  {% csrf_token %}
+  <div class="row mb-2">
+    <div class="col-12 col-xl-12">
+      <h2 class="text-uppercase darkgreen-text">
+        Capacitación
+      </h2>
+    </div>
+  </div>
+  <div class="row darkwhite-bg py-2">
+    <div class="col-12">
+      <div class="form-row">
+        <div class=" col-6 col-md-4 mb-0">
+          {{ form.tema|as_crispy_field }}
+        </div>
+
+        <div class=" col-6 col-md-4 mb-0">
+          {{ form.tipo|as_crispy_field }}
+        </div>
+
+        <div class=" col-6 col-md-4 mb-0">
+          {{ form.modalidad|as_crispy_field }}
+        </div>
+
+        <div class=" col-6 col-md-4 mb-0">
+          {{ form.area|as_crispy_field }}
+        </div>
+
+        <div class=" col-6 col-md-4 mb-0">
+          {{ form.nivel_organizacion|as_crispy_field }}
+        </div>
+
+        <div class=" col-6 col-md-4 mb-0">
+          {{ form.numero_participantes|as_crispy_field }}
+        </div>
+
+        <div class=" col-6 col-md-4 mb-0">
+          {{ form.horario_trabajo|as_crispy_field }}
+        </div>
+
+        <div class=" col-6 col-md-4 mb-0">
+          {{ form.nivel_educacion|as_crispy_field }}
+        </div>
+
+        <div class=" col-6 col-md-4 mb-0">
+          {{ form.edad_promedio|as_crispy_field }}
+        </div>
+
+        <div class=" col-6 col-md-4 mb-0">
+          {{ form.lugar|as_crispy_field }}
+        </div>
+
+        <div class=" col-6 col-md-4 mb-0">
+          {{ form.ciudad|as_crispy_field }}
+        </div>
+
+        <div class=" col-6 col-md-4 mb-0">
+          {{ form.fecha_evento|as_crispy_field }}
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="col-12">
+          <div class="row">
+            <div class="col-12">
+              <label class="col-form-label py-0">Horario estimado del evento</label>
+            </div>
+            <div class=" col-6 col-md-4 mb-0">
+              {{ form.horario_evento_inicio|as_crispy_field }}
+            </div>
+            <div class=" col-6 col-md-4 mb-0">
+              {{ form.horario_evento_fin|as_crispy_field }}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class=" col-12 mb-0">
+          {{ form.observaciones|as_crispy_field }}
+        </div>
+
+        <div class=" col-12 mb-0">
+          {{ form.acuerdos|as_crispy_field }}
+        </div>
+
+        <div class=" col-12 mb-0">
+          {{ form.exclusivo_acad|as_crispy_field }}
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- <div class="row mt-3">
+    <div class="col-12">
+      <button type="submit" class="btn btn-secondary green-bg">Guardar</button>
+      <a class="btn btn-secondary" href="{% url 'reporte_editar' reporte_id%}"> Cancelar </a>
+    </div>
+  </div> -->
+
+  <div class="row mt-3">
+    <div class="col-12">
+      <a class="btn btn-secondary green-bg" data-toggle='modal' data-target="#capacitacion_confirmar"
+      href='#'>Siguiente</a>
+      <a class="btn btn-secondary" href="{% url 'reporte_editar' reporte_id%}"> Cancelar </a>
+     </div>
+   </div>
+
+  <div class="modal fade" id="capacitacion_confirmar" tabindex="-1" role="dialog" aria-labelledby="ordenTitle"
+				aria-hidden="true">
+					<div class="modal-dialog modal-dialog-centered" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title" id="reporteTitle">Confirmación</h5>
+									<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+										<span aria-hidden="true">&times;</span>
+								</button>
+							</div>
+							<div class="modal-body" id="modal-confirmacion">
+								¿Está seguro/a que desea continuar? Verifíque los datos ingresados antes de proceder.
+							</div>
+							<div class="modal-footer">
+								<button class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+								<button type="submit" class="btn btn-secondary green-bg mr-3">Confirmar</button>
+							</div>
+						</div>
+					</div>
+				</div>
+</form>
+
+{% endblock content %}

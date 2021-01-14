@@ -1,0 +1,35 @@
+ion-content {
+    --ion-background-color: #ECECEC;
+}
+
+ion-card {
+    --ion-background-color: #FFF;
+}
+  
+ion-card-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #49714B;
+}
+
+#subtitle {
+    font-size: 1.1rem;
+    margin-top: 0px;
+    margin-bottom: 3%;
+}
+
+#labeval {
+    font-size: 16px;
+}
+
+
+.list_items {
+    display: block;
+    margin-left: 10%;
+    margin-right: auto;
+    text-align: left;
+    align-content: left;
+    width: 100%;
+    padding: 2%;
+    margin-top: 2%;
+}

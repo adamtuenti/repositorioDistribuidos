@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "44397923925",
+    "firebase_url": "https://prueba-63695.firebaseio.com",
+    "project_id": "prueba-63695",
+    "storage_bucket": "prueba-63695.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:44397923925:android:aa4e539cab116e27bdcedc",
+        "android_client_info": {
+          "package_name": "com.edu.espol"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "44397923925-ol0lhmb8a1iaajue65338t5ccfkgfcp3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.edu.espol",
+            "certificate_hash": "96cd38507e948c7e1166e92fcdda6dc915b02913"
+          }
+        },
+        {
+          "client_id": "44397923925-udqfaidjvqhp8p7ule0oihpn4i3co6je.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCUcH3V-8Z_FwQiPFdRLR_PGh3LxY_lIH8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "44397923925-udqfaidjvqhp8p7ule0oihpn4i3co6je.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "44397923925-v2h59mbrud78i0mjjc9qo4icac9rd7vq.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.edu.espol"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

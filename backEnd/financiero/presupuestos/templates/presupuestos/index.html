@@ -1,0 +1,206 @@
+{% extends 'base_financiero.html' %}
+{% load static %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+{% load humanize %}
+{% load l10n %}
+{% load my_tags %}
+{% block title %}{{ "EC - Presupuestos Evento" }}{% endblock title %}
+{% block content %}
+<div class="row d-flex mb-2 white-bg">
+	<div class="col-9 v-align">
+		<h2 class="text-uppercase">CONSULTAS <span class="darkgreen-text">Presupuestos Eventos</span></h2>
+	</div>
+	<div class="col-3 col-xl-3 v-align">
+		<a class="btn btn-secondary green-bg float-right" href="{% url 'nuevo_presupuestos' %}"><i
+				class="fas fa-plus"></i>
+			Agregar nuevo</a>
+	</div>
+</div>
+<div class="row darkwhite-bg py-2 mb-2">
+	<div class="col-12 col-xl-12">
+		<form method="get">
+			<div class="form-row">
+				<div class="col-2">
+					{{ filter.form.codigo|as_crispy_field }}
+				</div>
+				<div class="col-2">
+					{{ filter.form.evento__codigo_evento|as_crispy_field }}
+				</div>
+				<div class="col-8">
+					{{ filter.form.evento__nombre|as_crispy_field }}
+				</div>
+			</div>
+			<div class="form-row">
+				<div class="col-3 col-xl-3">
+					{{ filter.form.fecha|as_crispy_field }}
+				</div>
+				<div class="col-2">
+					{{ filter.form.ruc_ci|as_crispy_field }}
+				</div>
+				<div class="col-4">
+					{{ filter.form.razon_nombres|as_crispy_field }}
+				</div>
+				<div class="col-3">
+					{{filter.form.codigo_propuesta|as_crispy_field}}
+				</div>
+			</div>
+			<div class="form-row">
+				<div class="col-3">
+					{{ filter.form.evento__modalidad|as_crispy_field}}
+				</div>
+				<div class="col-2">
+					{{ filter.form.tipo|as_crispy_field}}
+				</div>
+				<div class="col-2">
+					{{ filter.form.evento__fecha_inicio|as_crispy_field}}
+
+				</div>
+				<div class="col-2">
+					{{ filter.form.evento__fecha_fin|as_crispy_field}}
+
+				</div>
+				<div class="col-3">
+					{{ filter.form.estado|as_crispy_field }}
+				</div>
+				<div class="col-3">
+					{{ filter.form.centro_costos|as_crispy_field }}
+				</div>
+			</div>
+
+			<button type="submit" class="btn btn-secondary green-bg float-right">
+				<i class="fas fa-search"></i> Buscar</button>
+			{{ filter.form.media }}
+		</form>
+
+	</div>
+</div>
+
+<div class="row mt-4">
+	<div class="col-12 col-xl-12">
+		<table id="dtBasicExample" class="table table-responsive  border-bottom">
+			<thead class="white-text darkgreen-bg">
+				<tr>
+					<th scope="col">Código</th>
+					<th scope="col">Versión</th>
+					<th scope="col">Cod. Evento</th>
+					<th scope="col">Cod. Propuesta</th>
+					<th scope="col">Nombre Evento</th>
+					<th scope="col">Tipo</th>
+					<th scope="col">Fecha Elaboracion</th>
+					<th scope="col">% Margen contrib</th>
+					<th scope="col">Punto equilibrio</th>
+					<th scope="col">No. Participantes</th>
+					<th scope="col">Ingreso Total</th>
+					<th scope="col">Estado</th>
+					<th scope="col">Centro Costos</th>
+					<th scope="col">Fecha Envío Solicitud</th>
+					<th scope="col">Fecha Aprobación sin Evento</th>
+					<th scope="col">Fecha Aprobación con Evento</th>
+					<!-- <th scope="col">Fecha Anulado</th> -->
+					<th scope="col">Acciones</th>
+				</tr>
+			</thead>
+			{% if filter.qs %}
+			<tbody>
+				{% for p in filter.qs %}
+				<tr class="text-center">
+					<td scope="row">{{p.codigo}}</td>
+					<td scope="row">{{p.version}}</td>
+					<td scope="row">{{p.evento.codigo_evento}}</td>
+					<td scope="row">{{p.codigo_propuesta|default_if_none:""}}</td>
+					<td scope="row">{{p.evento.nombre}}</td>
+					<td scope="row">{{p.get_tipo_display}}</td>
+					<td scope="row">{{p.fecha}}</td>
+					<td scope="row">{{p.margen_contribucion|porcentaje}}</td>
+					<td scope="row">{{p.punto_equilibrio}}</td>
+					<td scope="row">{{p.n_participantes}}</td>
+					<td scope="row">${{p.ingreso_neto_total|floatformat:2|intcomma}}</td>
+					<td scope="row">{{p.estado}}</td>
+					<td scope="row">{{p.centro_costos}}</td>
+					<td scope="row">{{p.fecha_envio|default_if_none:""}}</td>
+					<td scope="row">{{p.fecha_aprobada_sin|default_if_none:""}}</td>
+					<td scope="row">{{p.fecha_aprobada_con.date|default_if_none:""}}</td>
+					<!-- <td scope="row">{{p.fecha_anulado|default_if_none:""}}</td> -->
+					<td scope="row">
+						<div class="col-auto text-truncate text-center">
+							<a class="btn btn-secondary btn-sm" href="{% url 'editar_presupuestos' pk=p.id %}"><i
+									class="fas fa-edit"></i></a>
+
+							{% if p.estado == 'Grabado' %}
+							<a href='javascript:;' onclick='eliminar({{ p.id }});' class="btn btn-danger btn-sm"
+								data-toggle='modal' data-target="#presupuestoEliminarCenter"><i
+									class="fas fa-trash"></i></a>
+							{% endif %}
+							<a class="btn btn-secondary btn-sm" href="#" data-toggle="tooltip" data-placement="top"
+								title="Imprimir">
+								<i class="fas fa-print"></i></a>
+						</div>
+					</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+			{% else %}
+			<h2>No hay elementos que mostrar</h2>
+			{% endif %}
+		</table>
+	</div>
+
+	<div class="modal fade" id="presupuestoEliminarCenter" tabindex="-1" role="dialog"
+		aria-labelledby="presupuestoTitle" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+			</div>
+		</div>
+	</div>
+</div>
+
+
+
+{% endblock %}
+{% block extrafooter%}
+<script src="{% static 'js/table.js' %}"></script>
+<script src="{% static 'js/date-filter.js' %}"></script>
+<script>
+	function GetCurrentDate() {
+		var today = new Date();
+		var dd = String(today.getDate()).padStart(2, '0');
+		var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+		var yyyy = today.getFullYear();
+
+		today = yyyy + '-' + mm + '-' + dd;
+		return today;
+	}
+</script>
+<script>
+	function eliminar(id) {
+		$.ajax({
+			url: "{% url 'presupuesto_confirmar_eliminar' %}",
+			data: {
+				'pk': id
+			},
+			success: function (data) {
+				$(".modal-content").html(data)
+			}
+		});
+	};
+
+	$(document).on("change", '#id_motivo_anular', function () {
+		if ($(this).val().length > 20) {
+			$('#anular').attr('disabled', false);
+			$('#id_fecha_anulado').val(GetCurrentDate());
+		}
+		else {
+			$('#anular').attr('disabled', true);
+			$('#id_fecha_anulado').val(null);
+		}
+	})
+
+	$(document).ready(function (e) {
+		$(".fecha").each(function (e) {
+			TextToDate($(this));
+			console.log($(this).val());
+		})
+	});
+</script>
+{% endblock extrafooter %}

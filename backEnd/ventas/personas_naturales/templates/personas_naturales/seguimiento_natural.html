@@ -1,0 +1,87 @@
+{% load crispy_forms_tags %}
+{% load static %}
+<div class="modal-header">
+    <h2 class="modal-title darkgreen-text"  >Nuevo seguimiento a {{natural.nombres}} {{natural.apellidos}}</h2>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+   
+</div>
+
+<form method="POST" id="form-segNat" action="{% url 'ajax_seguimiento_create' %}" data-event-url="{% url 'ajax_load_eventos_Natural' %}">
+    {% csrf_token %}
+
+    <div class="modal-body">
+        <div class="row darkwhite-bg py-2 pb-3">
+            <div class="col-12">
+                <h5 class=" border-bottom rounded-lg border-success darkgreen-text ">Datos del nuevo seguimiento</h5>
+               
+               <div class="form-row">
+                    <div class="col-6 col-md-4 mb-0 ">
+                        {{seguimientos_form.n_registro|as_crispy_field}}
+                    </div>
+                    <div class="col-6 col-md-4 mb-0 ">
+                        {{seguimientos_form.fecha_registro|as_crispy_field}}
+                    </div>
+                    <div class="col-6 col-md-4 mb-0 ">
+                        {{seguimientos_form.fecha_seguimiento|as_crispy_field}}
+                    </div>
+               </div>
+
+               <div class="form-row">
+                <div class="col-6 col-md-4 mb-0 ">
+                    {{seguimientos_form.estado_seguimiento|as_crispy_field}}
+                </div>
+                <div class="col-6 col-md-4 mb-0 ">
+                    {{seguimientos_form.canal_de_contacto|as_crispy_field}}
+                </div>
+                <div class="col-6 col-md-1 mb-0 ">
+                    {{seguimientos_form.exito|as_crispy_field}}
+                </div>
+                
+           </div>
+
+                <div class="form-row">
+                    <div class="col-6 col-md-4 mb-0 ">
+                        {{seguimientos_form.proximo_seguimiento|as_crispy_field}}
+                    </div>
+                    <div class="col-12 col-md-4 mb-0 ">
+                        {{seguimientos_form.tipo_inscripcion|as_crispy_field}}
+                   </div>
+                    <div class="col-12 col-md-4 mb-0 ">
+                         {{seguimientos_form.estado_participante|as_crispy_field}}
+                    </div>
+                </div>
+
+                 <div class="form-row">
+                    
+                    <div class="col-6 col-md-3 mb-0 ">
+                        {{seguimientos_form.cod_evento|as_crispy_field}}
+                    </div>
+                    <div class="col-6 col-md-9 mb-0 ">
+                        {{seguimientos_form.nombre_evento|as_crispy_field}}
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="col-12 col-md-12 mb-0 ">
+                         {{seguimientos_form.observaciones|as_crispy_field}}
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-8 mb-0 ">
+                    {{seguimientos_form.pers_natural}}
+               </div>
+               <div id="cedulaNatural" hidden>{{natural.cedula}}</div>
+            
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+        <button class="btn btn-secondary green-bg mr-3" type="submit"> Guardar </button>
+    </div>
+    
+</form>
+<script src="{% static 'js/seguimiento_natural.js' %}"></script>
+

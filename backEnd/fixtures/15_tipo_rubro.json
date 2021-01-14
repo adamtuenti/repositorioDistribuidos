@@ -1,0 +1,214 @@
+[
+    {
+      "model":"proveedores.TipoRubro",
+      "pk": 1,
+      "fields": {
+        "nombre":"Devolución de valores"
+      }
+    },
+  
+    {
+      "model":"proveedores.TipoRubro",
+      "pk": 2,
+      "fields": {
+        "nombre":"Alimentación"
+      }
+    },
+
+    {
+        "model":"proveedores.TipoRubro",
+        "pk": 3,
+        "fields": {
+          "nombre":"Honorarios profesionales de docencia"
+        }
+      },
+    
+      {
+        "model":"proveedores.TipoRubro",
+        "pk": 4,
+        "fields": {
+          "nombre":"Honorarios profesionales"
+        }
+      },
+      {
+      "model":"proveedores.TipoRubro",
+      "pk": 5,
+      "fields": {
+        "nombre":"Hospedaje con o sin alimentación"
+      }
+    },
+  
+    {
+      "model":"proveedores.TipoRubro",
+      "pk": 6,
+      "fields": {
+        "nombre":"Movilización interna"
+      }
+    },
+    {
+        "model":"proveedores.TipoRubro",
+        "pk": 7,
+        "fields": {
+          "nombre":"Movilización externa"
+        }
+      },
+    
+      {
+        "model":"proveedores.TipoRubro",
+        "pk": 8,
+        "fields": {
+          "nombre":"Servicios aéreos"
+        }
+      },
+      {
+        "model":"proveedores.TipoRubro",
+        "pk": 9,
+        "fields": {
+          "nombre":"Viáticos al interior"
+        }
+      },
+    
+      {
+        "model":"proveedores.TipoRubro",
+        "pk": 10,
+        "fields": {
+          "nombre":"Viáticos al exterior"
+        }
+      },
+      {
+        "model":"proveedores.TipoRubro",
+        "pk": 11,
+        "fields": {
+          "nombre":"Suministros de oficina"
+        }
+      },
+    
+      {
+        "model":"proveedores.TipoRubro",
+        "pk": 12,
+        "fields": {
+          "nombre":"Otros suministros"
+        }
+      },
+      {
+        "model":"proveedores.TipoRubro",
+        "pk": 13,
+        "fields": {
+          "nombre":"Materiales de ferreteria"
+        }
+      },
+    
+      {
+        "model":"proveedores.TipoRubro",
+        "pk": 14,
+        "fields": {
+          "nombre":"Materiales de limpieza"
+        }
+      },
+      {
+        "model":"proveedores.TipoRubro",
+        "pk": 15,
+        "fields": {
+          "nombre":"Mantenimientos de instalaciones"
+        }
+      },
+    
+      {
+        "model":"proveedores.TipoRubro",
+        "pk": 16,
+        "fields": {
+          "nombre":"Equipos tecnológicos"
+        }
+      },
+      {
+        "model":"proveedores.TipoRubro",
+        "pk": 17,
+        "fields": {
+          "nombre":"Equipos de oficina"
+        }
+      },
+
+      {
+        "model":"proveedores.TipoRubro",
+        "pk": 18,
+        "fields": {
+          "nombre":"Materiales"
+        }
+      },
+    
+      {
+        "model":"proveedores.TipoRubro",
+        "pk": 19,
+        "fields": {
+          "nombre":"Publicidad impresa"
+        }
+      },
+
+      {
+        "model":"proveedores.TipoRubro",
+        "pk": 20,
+        "fields": {
+          "nombre":"Publicidad en medios digitales"
+        }
+      },
+    
+      {
+        "model":"proveedores.TipoRubro",
+        "pk": 21,
+        "fields": {
+          "nombre":"Internet"
+        }
+      },
+
+      {
+        "model":"proveedores.TipoRubro",
+        "pk": 22,
+        "fields": {
+          "nombre":"Servicios de agua potable"
+        }
+      },
+    
+      {
+        "model":"proveedores.TipoRubro",
+        "pk": 23,
+        "fields": {
+          "nombre":"Servicio de energia eléctrica y alumbrado público"
+        }
+      },
+
+      {
+        "model":"proveedores.TipoRubro",
+        "pk": 24,
+        "fields": {
+          "nombre":"Servicio de telefonía y/o móvil"
+        }
+      },
+    
+      {
+        "model":"proveedores.TipoRubro",
+        "pk": 25,
+        "fields": {
+          "nombre":"Servicio de vigilancia"
+        }
+      },
+
+      {
+        "model":"proveedores.TipoRubro",
+        "pk": 26,
+        "fields": {
+          "nombre":"Materiales didácticos"
+        }
+      },
+    
+      {
+        "model":"proveedores.TipoRubro",
+        "pk": 27,
+        "fields": {
+          "nombre":"Otros gastos"
+        }
+      }
+      
+
+  ]
+
+  

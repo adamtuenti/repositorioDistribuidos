@@ -1,0 +1,2197 @@
+{% extends 'base_financiero.html' %}
+
+{% load crispy_forms_tags %}
+
+
+{% load static %}
+{% load staticfiles %}
+
+{% block title %}{{ "EC - Presupuesto de Evento" }}{% endblock title %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/select2.min.css' %}" />
+<link rel="stylesheet" href="{% static 'css/select2-bootstrap.min.css' %}" />
+
+<form method="post" data-info-url="{% url 'ajax_cargar_valor' %}"
+	data-confirmacion-url="{% url 'ajax_verificar_campos' %}" id="form"
+	data-evento-url="{% url 'ajax_load_eventos_presupuestos' %}" data-persona-url="{% url 'ajax_load_personas' %}"
+	data-juridica-url="{% url 'juridicas_view' %}" data-evento-all-url="{% url 'ajax_load_all_eventos_presupuestos' %}" novalidate>
+	{% csrf_token %}
+	<div class="row">
+		<div class="col-xl-5 col-12">
+			<h2 class="text-uppercase darkgreen-text">Edición Presupuesto Evento</h2>
+		</div>
+		<div class="col-xl-7 col-12">
+			<div class="form-row">
+				<div class="col-xl-1"></div>
+				<div class="col-xl-4 col">{{ form.estado}}</div>
+				<div class="col-xl-3 col">{{ form.codigo}}</div>
+				{{form.ultimo}}
+				{{form.last_id}}
+				{{form.active}}
+				<div class="col-xl-1 col-1">
+					<input type="hidden" id="version_hack" value='{{form.version.value}}' />
+					{% if form.estado.value != "Grabado" or form.active.value == False %}
+					{{ form.version|as_crispy_field }}
+					{%else%}
+					<input type="number" name="version" class="form-control px-1 text-center"
+						value='{{form.version.value}}' />
+					{%endif%}
+					<small>Versión</small>
+				</div>
+				<div class="col-xl-3 col">{{ form.fecha}}</div>
+				{{form.fecha_envio}}
+				{{form.fecha_aprobada_sin}}
+				{{form.fecha_aprobada_con}}
+				{{ form.fecha_anulado }}
+				{{form.evento}}
+
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="campo col-12 mt-2 p-2 pl-3">
+			<h5 class="black-text text-uppercase mb-0">Datos Generales</h5>
+		</div>
+	</div>
+	<div class="row darkwhite-bg py-2">
+		<div class="col-12">
+			<div class="form-row">
+				<div class="col-xl-3">
+					{% if form.estado.value == "Autorizada sin evento" or form.estado.value == "Autorizada con evento" %}
+					<label for="codigo_evento" class="col-form-label">Código del Evento</label>
+					<select class="select2-evento form-control" id="codigo_evento"></select>
+					{%endif%}
+				</div>
+				<div class="col-xl-6">
+					<div class="form-group">
+						{% if form.estado.value == "Autorizada sin evento" or form.estado.value == "Autorizada con evento" %}
+						<label for="nombre_evento" class="col-form-label">Nombre del Evento</label>
+						<select class="select2-evento form-control" id="nombre_evento"></select>
+						{%endif%}
+					</div>
+				</div>
+				<div class="col-xl-3">
+					{% if form.estado.value == "Autorizada sin evento" or form.estado.value == "Autorizada con evento" %}
+					<label for="modalidad_evento" class="col-form-label">Modalidad</label>
+					<input type="text" readonly id="modalidad_evento" class="form-control textInput">
+					{%else%}
+					<input type="hidden" id="modalidad_evento" class="form-control textInput">
+					{%endif%}
+				</div>
+			</div>
+			<div class="form-row">
+				<input type="hidden" name="tipo" value='{{form.tipo.value}}' />
+				<div class="col-xl-2">{{form.tipo | as_crispy_field}}</div>
+
+				<input type="hidden" name="ruc_ci" value='{{form.ruc_ci.value}}' />
+				<div class="col-xl-3">{{ form.ruc_ci | as_crispy_field}}</div>
+
+				<input type="hidden" name="razon_nombres" value='{{form.razon_nombres.value}}' />
+				<div class="col-xl-3">{{ form.razon_nombres | as_crispy_field}}</div>
+
+				<div class="col-xl-2">
+					{% if form.estado.value == "Autorizada sin evento" or form.estado.value == "Autorizada con evento" %}
+					<label for="fecha_inicio_evento" class="col-form-label">Fecha Inicio</label>
+					<input type="date" readonly id="fecha_inicio_evento" class="form-control textInput">
+					{%else%}
+					<input type="hidden" id="fecha_inicio_evento" class="form-control textInput">
+					{%endif%}
+				</div>
+				<div class="col-xl-2">
+					{% if form.estado.value == "Autorizada sin evento" or form.estado.value == "Autorizada con evento" %}
+					<label for="fecha_fin_evento" class="col-form-label">Fecha Fin</label>
+					<input type="date" readonly id="fecha_fin_evento" class="form-control textInput">
+					{%else%}
+					<input type="hidden" id="fecha_fin_evento" class="form-control textInput">
+					{%endif%}
+				</div>
+			</div>
+			<div class="form-row">
+				<div class="col-xl-2 col-4">{{ form.hora_inicio | as_crispy_field}}</div>
+				<div class="col-xl-2 col-4">{{ form.hora_fin | as_crispy_field}}</div>
+				<div class="col-xl-2 col-4">{{ form.n_horas | as_crispy_field}}</div>
+				<div class="col-xl-2 col-4">{{ form.n_dias | as_crispy_field}}</div>
+				<div class="col-xl-2 col-4">{{ form.n_participantes | as_crispy_field}}</div>
+				<input type="hidden" name="centro_costos" value='{{form.centro_costos.value}}' />
+				<div class="col-xl-2 col-4">{{ form.centro_costos | as_crispy_field}}</div>
+			</div>
+			<div class="form-row">
+				<div class="col-4 col-xl-2">{{form.codigo_propuesta |as_crispy_field}}</div>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="campo col-12 p-2 pl-3">
+			<h5 class="black-text text-uppercase mb-0">Ingresos</h5>
+		</div>
+	</div>
+
+	<div class="row darkwhite-bg py-2">
+		<div class="col-xl-12">
+			<div class="row">
+				<div class="col-xl-2 d-none-sm"></div>
+				<div class="col-xl-8 col-12">
+					<div class="form-row">
+						<div class="col-3"></div>
+						<div class="col-3">
+							<h5 class="text-center">Datos</h5>
+						</div>
+						<div class="col-3">
+							<h5 class="text-center">Valor Unitario</h5>
+						</div>
+						<div class="col-3">
+							<h5 class="text-center">Total</h5>
+						</div>
+					</div>
+					<div class="form-row">
+						<div class="col-3 v-align">Ingresos sin descuento</div>
+						<div class="col-3"></div>
+						<div class="col-3">
+							<div class="currency-wrap money">
+								<span class="currency-code money">$</span>
+								{{ form.ingreso_individual_sin_desc | as_crispy_field}}
+							</div>
+						</div>
+						<div class="col-3">
+							<div class="form-group">
+								<div class="currency-wrap">
+									<span class="currency-code">$</span>
+									{{ form.ingreso_total_sin_desc |as_crispy_field}}
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="form-row">
+						<div class="col-3 v-align">Porcentaje de descuento</div>
+						<div class="col-3">
+							<div class="form-group">
+								<div class="currency-wrap">
+									<span class="currency-code">%</span>
+									{{ form.descuento_maximo |as_crispy_field}}
+								</div>
+							</div>
+						</div>
+						<div class="col-3">
+							<div class="form-group">
+								<div class="currency-wrap">
+									<span class="currency-code">$</span>
+									{{ form.descuento_individual |as_crispy_field}}
+								</div>
+							</div>
+						</div>
+						<div class="col-3">
+							<div class="form-group">
+								<div class="currency-wrap">
+									<span class="currency-code">$</span>
+									{{ form.descuento_total |as_crispy_field}}
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="form-row">
+						<div class="col-3"></div>
+						<div class="col-3 v-align">
+							<h5 class="text-center">TOTAL INGRESOS</h5>
+						</div>
+						<div class="col-3">
+							<div class="form-group">
+								<div class="currency-wrap">
+									<span class="currency-code">$</span>
+									{{ form.ingreso_neto_individual |as_crispy_field}}
+								</div>
+							</div>
+						</div>
+						<div class="col-3">
+							<div class="form-group">
+								<div class="currency-wrap">
+									<span class="currency-code">$</span>
+									{{ form.ingreso_neto_total |as_crispy_field}}
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-xl-2 d-none-sm">
+				</div>
+			</div>
+
+
+		</div>
+	</div>
+	<div class="row">
+		<div class="campo col-xl-12 p-2 pl-3">
+			<h5 class="black-text text-uppercase mb-0">Egresos >> <span class="green-text"> Egresos Fijos</span></h5>
+		</div>
+	</div>
+	<div class="my-3">
+		<div id="accordion">
+			<div class="card">
+				<div class="card-header border-bottom border-success" id="heading1">
+					<a style="cursor: pointer" data-toggle="collapse" data-target="#collapse1" aria-expanded="false"
+						aria-controls="collapse1">
+						<h5 class="mb-0">
+							EGRESOS INSTRUCTOR<i class="fas fa-angle-down float-right"></i>
+						</h5>
+					</a>
+				</div>
+
+				<div id="collapse1" class="collapse" aria-labelledby="heading1" data-parent="#accordion">
+					<div class="card-body">
+						<div class="row">
+							<div class="col-xl-1"></div>
+							<div class="col-xl-10 col-11">
+								<div class="form-row">
+									<div class="col-3"></div>
+									<div class="col-2">
+										<div class="form-group">
+											<h5 class="text-center">Datos</h5>
+										</div>
+									</div>
+									<div class="col-2">
+										<h5 class="text-center">Valor Unitario</h5>
+									</div>
+									<div class="col-2">
+										<h5 class="text-center">Valor Total</h5>
+									</div>
+									<div class="col-auto">
+										<span class="muted">IR</span>
+									</div>
+									<div class="col-1"></div>
+									<div class="col pl-4">
+										<span class="text-center">Imp.Renta</span>
+									</div>
+
+								</div>
+
+								<!-- DESDE AQUI -->
+								<div class="form-row d-none" id="div_hora_1">
+									<div class="col-3">Honorarios instructor 1</div>
+									<div class="col-2">
+										<div class="form-row">
+											<div class="col">
+												<div class="currency-wrap">
+													<span class="currency-code">%</span>
+													<input type="number" min="0" id="porcentaje1" readonly
+														class='form-control porcentaje-honorario numberinput text-currency'
+														placeholder="honorario">
+												</div>
+											</div>
+											<div class="col">
+												<input type="number" min="0" id="hora1" required {%if form.estado.value != "Grabado" %} readonly {%endif%}
+													class='pr-3 form-control horas-honorario valor-total p-1 p-xl-2'
+													placeholder="#horas" data-depend="True" data-field="costo1"
+													data-total="total1" data-toggle="tooltip" data-placement="top"
+													title="# horas">
+											</div>
+										</div>
+									</div>
+									<div class="col-2">
+										<div class="currency-wrap money">
+											<span class="currency-code">$</span>
+											<input type="text" min="0" id="costo1" required {%if form.estado.value != "Grabado" %} readonly {%endif%}
+												class='pr-3 form-control costo-hora valor-total text-currency'
+												data-depend="True" data-field="hora1" data-total="total1"
+												placeholder="Costo hora">
+										</div>
+									</div>
+									<div class="col-2">
+										<div class="form-group">
+											<div class="currency-wrap">
+												<span class="currency-code">$</span>
+												<input type="text" min="0" id="total1" readonly required
+													data-porc="porcentaje1"
+													class='form-control pr-3 total-honorario text-currency valor-total'
+													data-depend="True" data-field="ir1" data-total="impuesto_total_1">
+											</div>
+										</div>
+									</div>
+									<div class="col-auto">
+										<div class="form-check">
+											<input type="checkbox" class="form-check-input impuesto-select" required{%if form.estado.value != "Grabado" %} disabled {%endif%}
+												id="impuesto_select_1" value=1 data-toggle="tooltip"
+												data-placement="top" title="¿Tiene impuesto?" data-field="ir1"
+												data-label="total1" data-depend="impuesto_porcentaje_1">
+										</div>
+									</div>
+									<div class="col-1">
+										<div class="currency-wrap">
+											<span class="currency-code">%</span>
+											<input type="number" min="0" max="100" id="impuesto_porcentaje_1" required
+												class='form-control porcentaje-impuesto text-currency valor-porcentaje'
+												placeholder="impuesto">
+										</div>
+									</div>
+									<div class="col">
+										<div class="currency-wrap">
+											<span class="currency-code">$</span>
+											<input type="text" min="0" id="impuesto_total_1" required readonly
+												class='form-control pr-3 total-impuesto text-currency'
+												placeholder="Valor Total">
+										</div>
+									</div>
+									<input type="hidden" id="ir1" value=0>
+								</div>
+								<div class="form-row d-none" id="div_hora_2">
+									<div class="col-3">Honorarios instructor 2</div>
+									<div class="col-2">
+										<div class="form-row">
+											<div class="col">
+												<div class="currency-wrap">
+													<span class="currency-code">%</span>
+													<input type="number" min="0" id="porcentaje2" readonly
+														class='form-control porcentaje-honorario numberinput text-currency'
+														placeholder="honorario">
+												</div>
+											</div>
+											<div class="col">
+												<input type="number" min="0" id="hora2" required{%if form.estado.value != "Grabado" %} readonly {%endif%}
+													class='pr-3 form-control horas-honorario valor-total p-1 p-xl-2'
+													placeholder="#horas" data-depend="True" data-field="costo2"
+													data-total="total2" data-toggle="tooltip" data-placement="top"
+													title="# horas">
+											</div>
+										</div>
+									</div>
+									<div class="col-2">
+										<div class="currency-wrap money">
+											<span class="currency-code">$</span>
+											<input type="text" min="0" id="costo2" required{%if form.estado.value != "Grabado" %} readonly {%endif%}
+												class='pr-3 form-control costo-hora valor-total text-currency'
+												data-depend="True" data-field="hora2" data-total="total2"
+												placeholder="Costo hora">
+										</div>
+									</div>
+									<div class="col-2">
+										<div class="form-group">
+											<div class="currency-wrap">
+												<span class="currency-code">$</span>
+												<input type="text" min="0" id="total2" readonly required
+													data-porc="porcentaje2"
+													class='form-control pr-3 total-honorario text-currency valor-total'
+													data-depend="True" data-field="ir2" data-total="impuesto_total_2">
+											</div>
+										</div>
+									</div>
+									<div class="col-auto">
+										<div class="form-check">
+											<input type="checkbox" class="form-check-input impuesto-select" required{%if form.estado.value != "Grabado" %} disabled {%endif%}
+												id="impuesto_select_2" value=1 data-toggle="tooltip"
+												data-placement="top" title="¿Tiene impuesto?" data-field="ir2"
+												data-label="total2" data-depend="impuesto_porcentaje_2">
+										</div>
+									</div>
+									<div class="col-1">
+										<div class="currency-wrap">
+											<span class="currency-code">%</span>
+											<input type="number" min="0"  max="100"  id="impuesto_porcentaje_2" required
+												class='form-control porcentaje-impuesto valor-porcentaje text-currency'
+												placeholder="impuesto">
+										</div>
+									</div>
+									<div class="col">
+										<div class="currency-wrap">
+											<span class="currency-code">$</span>
+											<input type="text" min="0" id="impuesto_total_2" required readonly
+												class='form-control pr-3 total-impuesto text-currency'
+												placeholder="Valor Total">
+										</div>
+									</div>
+									<input type="hidden" id="ir2" value=0>
+								</div>
+								<div class="form-row d-none" id="div_hora_3">
+									<div class="col-3">Honorarios instructor 3</div>
+									<div class="col-2">
+										<div class="form-row">
+											<div class="col">
+												<div class="currency-wrap">
+													<span class="currency-code">%</span>
+													<input type="number" min="0" id="porcentaje3" readonly
+														class='form-control porcentaje-honorario numberinput text-currency'
+														placeholder="honorario">
+												</div>
+											</div>
+											<div class="col">
+												<input type="number" min="0" id="hora3" required{%if form.estado.value != "Grabado" %} readonly {%endif%}
+													class='pr-3 form-control horas-honorario valor-total p-1 p-xl-2'
+													placeholder="#horas" data-depend="True" data-field="costo3"
+													data-total="total3" data-toggle="tooltip" data-placement="top"
+													title="# horas">
+											</div>
+										</div>
+									</div>
+									<div class="col-2">
+										<div class="currency-wrap money">
+											<span class="currency-code">$</span>
+											<input type="text" min="0" id="costo3" required{%if form.estado.value != "Grabado" %} readonly {%endif%}
+												class='pr-3 form-control costo-hora valor-total text-currency'
+												data-depend="True" data-field="hora3" data-total="total3"
+												placeholder="Costo hora">
+										</div>
+									</div>
+									<div class="col-2">
+										<div class="form-group">
+											<div class="currency-wrap">
+												<span class="currency-code">$</span>
+												<input type="text" min="0" id="total3" readonly required
+													data-porc="porcentaje3"
+													class='form-control pr-3 total-honorario text-currency valor-total'
+													data-depend="True" data-field="ir3" data-total="impuesto_total_3">
+											</div>
+										</div>
+									</div>
+									<div class="col-auto">
+										<div class="form-check">
+											<input type="checkbox" class="form-check-input impuesto-select" required{%if form.estado.value != "Grabado" %} disabled {%endif%}
+												id="impuesto_select_3" value=1 data-toggle="tooltip"
+												data-placement="top" title="¿Tiene impuesto?" data-field="ir3"
+												data-label="total3" data-depend="impuesto_porcentaje_3">
+										</div>
+									</div>
+									<div class="col-1">
+										<div class="currency-wrap">
+											<span class="currency-code">%</span>
+											<input type="number" min="0"  max="100" id="impuesto_porcentaje_3" required
+												class='form-control porcentaje-impuesto valor-porcentaje text-currency'
+												placeholder="impuesto">
+										</div>
+									</div>
+									<div class="col">
+										<div class="currency-wrap">
+											<span class="currency-code">$</span>
+											<input type="text" min="0" id="impuesto_total_3" required readonly
+												class='form-control pr-3 total-impuesto text-currency'
+												placeholder="Valor Total">
+										</div>
+									</div>
+									<input type="hidden" id="ir3" value=0>
+								</div>
+								<div class="form-row d-none" id="div_hora_4">
+									<div class="col-3">Honorarios instructor 4</div>
+									<div class="col-2">
+										<div class="form-row">
+											<div class="col">
+												<div class="currency-wrap">
+													<span class="currency-code">%</span>
+													<input type="number" min="0" id="porcentaje4" readonly
+														class='form-control porcentaje-honorario numberinput text-currency'
+														placeholder="honorario">
+												</div>
+											</div>
+											<div class="col">
+												<input type="number" min="0" id="hora4" required{%if form.estado.value != "Grabado" %} readonly {%endif%}
+													class='pr-3 form-control horas-honorario valor-total p-1 p-xl-2'
+													placeholder="#horas" data-depend="True" data-field="costo4"
+													data-total="total4" data-toggle="tooltip" data-placement="top"
+													title="# horas">
+											</div>
+										</div>
+									</div>
+									<div class="col-2">
+										<div class="currency-wrap money">
+											<span class="currency-code">$</span>
+											<input type="text" min="0" id="costo4" required{%if form.estado.value != "Grabado" %} readonly {%endif%}
+												class='pr-3 form-control costo-hora valor-total text-currency'
+												data-depend="True" data-field="hora4" data-total="total4"
+												placeholder="Costo hora">
+										</div>
+									</div>
+									<div class="col-2">
+										<div class="form-group">
+											<div class="currency-wrap">
+												<span class="currency-code">$</span>
+												<input type="text" min="0" id="total4" readonly required
+													data-porc="porcentaje4"
+													class='form-control pr-3 total-honorario text-currency valor-total'
+													data-depend="True" data-field="ir4" data-total="impuesto_total_4">
+											</div>
+										</div>
+									</div>
+									<div class="col-auto">
+										<div class="form-check">
+											<input type="checkbox" class="form-check-input impuesto-select" required{%if form.estado.value != "Grabado" %} disabled {%endif%}
+												id="impuesto_select_4" value=1 data-toggle="tooltip"
+												data-placement="top" title="¿Tiene impuesto?" data-field="ir4"
+												data-label="total4" data-depend="impuesto_porcentaje_4">
+										</div>
+									</div>
+									<div class="col-1">
+										<div class="currency-wrap">
+											<span class="currency-code">%</span>
+											<input type="number" min="0" max="100"  id="impuesto_porcentaje_4" required
+												class='form-control porcentaje-impuesto valor-porcentaje text-currency'
+												placeholder="impuesto">
+										</div>
+									</div>
+									<div class="col">
+										<div class="currency-wrap">
+											<span class="currency-code">$</span>
+											<input type="text" min="0" id="impuesto_total_4" required readonly
+												class='form-control pr-3 total-impuesto text-currency'
+												placeholder="Valor Total">
+										</div>
+									</div>
+									<input type="hidden" id="ir4" value=0>
+								</div>
+								<div class="form-row d-none" id="div_hora_5">
+									<div class="col-3">Honorarios instructor 5</div>
+									<div class="col-2">
+										<div class="form-row">
+											<div class="col">
+												<div class="currency-wrap">
+													<span class="currency-code">%</span>
+													<input type="number" min="0" id="porcentaje5" readonly
+														class='form-control porcentaje-honorario numberinput text-currency'
+														placeholder="honorario">
+												</div>
+											</div>
+											<div class="col">
+												<input type="number" min="0" id="hora5" required{%if form.estado.value != "Grabado" %} readonly {%endif%}
+													class='pr-3 form-control horas-honorario valor-total p-1 p-xl-2'
+													placeholder="#horas" data-depend="True" data-field="costo5"
+													data-total="total5" data-toggle="tooltip" data-placement="top"
+													title="# horas">
+											</div>
+										</div>
+									</div>
+									<div class="col-2">
+										<div class="currency-wrap money">
+											<span class="currency-code">$</span>
+											<input type="text" min="0" id="costo5" required{%if form.estado.value != "Grabado" %} readonly {%endif%}
+												class='pr-3 form-control costo-hora valor-total text-currency'
+												data-depend="True" data-field="hora5" data-total="total5"
+												placeholder="Costo hora">
+										</div>
+									</div>
+									<div class="col-2">
+										<div class="form-group">
+											<div class="currency-wrap">
+												<span class="currency-code">$</span>
+												<input type="text" min="0" id="total5" readonly required
+													data-porc="porcentaje5"
+													class='form-control pr-3 total-honorario text-currency valor-total'
+													data-depend="True" data-field="ir5" data-total="impuesto_total_5">
+											</div>
+										</div>
+									</div>
+									<div class="col-auto">
+										<div class="form-check">
+											<input type="checkbox" class="form-check-input impuesto-select" required{%if form.estado.value != "Grabado" %} disabled {%endif%}
+												id="impuesto_select_5" value=1 data-toggle="tooltip"
+												data-placement="top" title="¿Tiene impuesto?" data-field="ir5"
+												data-label="total5" data-depend="impuesto_porcentaje_5">
+										</div>
+									</div>
+									<div class="col-1">
+										<div class="currency-wrap">
+											<span class="currency-code">%</span>
+											<input type="number" min="0"  max="100" id="impuesto_porcentaje_5" required
+												class='form-control porcentaje-impuesto valor-porcentaje text-currency'
+												placeholder="impuesto">
+										</div>
+									</div>
+									<div class="col">
+										<div class="currency-wrap">
+											<span class="currency-code">$</span>
+											<input type="text" min="0" id="impuesto_total_5" required readonly
+												class='form-control pr-3 total-impuesto text-currency'
+												placeholder="Valor Total">
+										</div>
+									</div>
+									<input type="hidden" id="ir5" value=0>
+								</div>
+								{{form.impuesto_porcentaje}}
+								{{form.costo_hora_instructores}}
+								{{form.honorario_instructores}}
+								{{form.horas_instructores}}
+								{{form.valor_total}}
+								{{form.impuesto_total}}
+								{{form.impuesto_select}}
+
+								<!-- HASTA AQUI -->
+
+								<div class="form-row">
+									<div class="col-3 v-align">Honorarios Instructor/es</div>
+									<div class="col-2">
+										<div class="form-row">
+											<div class="col">
+												<div class="form-group">
+													<div class="currency-wrap"><span
+															class="currency-code">%</span>{{form.porcentaje_honorario_instructor| as_crispy_field}}
+													</div>
+												</div>
+											</div>
+											<div class="col"></div>
+										</div>
+									</div>
+									<div class="col-2">
+										<div class="currency-wrap"><span class="currency-code">$</span>
+											{{form.costo_instructores|as_crispy_field}}
+										</div>
+									</div>
+									<div class="col-2">
+										<div class="currency-wrap"><span class="currency-code">$</span>
+											{{form.honorario_total_evento_impuesto|as_crispy_field}}
+										</div>
+									</div>
+									<div class="col-auto">
+										<div class="form-check">
+											<input type="hidden">
+										</div>
+									</div>
+									<div class="col-1"></div>
+									<div class="col">
+										<div class="currency-wrap"><span
+												class="currency-code">$</span>{{form.honorario_total_evento |as_crispy_field}}
+										</div>
+									</div>
+								</div>
+								<div class="form-row mt-3">
+									<div class="col-3"></div>
+									<div class="col-3">
+										<div class="form-group">
+											<h5 class="text-center">Datos</h5>
+										</div>
+									</div>
+									<div class="col-3">
+										<h5 class="text-center">Valor Unitario</h5>
+									</div>
+									<div class="col-3">
+										<h5 class="text-center">Valor Total</h5>
+									</div>
+								</div>
+								<div class="form-row">
+									<div class="col-3 v-align">Pasaje Instructor</div>
+
+									<div class="col-3">
+										<div class="form-group">
+											{{form.pasaje_instructor_cantidad | as_crispy_field}}
+										</div>
+									</div>
+									<div class="col-3">
+										<div class="currency-wrap money"><span
+												class="currency-code">$</span>{{form.pasaje_instructor_unitario|as_crispy_field}}
+										</div>
+									</div>
+									<div class="col-3">
+										<div class="currency-wrap"><span
+												class="currency-code">$</span>{{form.pasaje_instructor_total|as_crispy_field}}
+										</div>
+									</div>
+								</div>
+								<div class="form-row">
+									<div class="col-3 v-align">Hospedaje y alimentación Instructor</div>
+									<div class="col-2">
+										<input type="hidden" name="hospedaje_alimentacion_instructor" value="{{form.hospedaje_alimentacion_instructor.value}}">
+										<div class="form-group">
+											{{form.hospedaje_alimentacion_instructor|as_crispy_field}}
+										</div>
+									</div>
+									<div class="col-1">
+										{{form.hospedaje_alimentacion_instructor_dias}}
+									</div>
+									<div class="col-1">
+										{{form.hospedaje_alimentacion_instructor_n}}
+									</div>
+									<div class="col-2">
+										<div class="currency-wrap"><span class="currency-code">$</span>
+											{{form.hospedaje_alimentacion_instructor_unitario|as_crispy_field}}
+										</div>
+									</div>
+									<div class="col-3">
+										<div class="currency-wrap"><span class="currency-code">$</span>
+											{{form.hospedaje_alimentacion_instructor_total|as_crispy_field}}
+										</div>
+									</div>
+									<input type="hidden" id="hospedaje_alimentacion_instructor_r" class="valor-total"
+										data-total="id_hospedaje_alimentacion_instructor_total" data-depend="True"
+										data-field="id_hospedaje_alimentacion_instructor_unitario">
+								</div>
+								<div class="form-row">
+									<div class="col-3 v-align">Breaks Instructor</div>
+									<div class="col-2">
+										<input type="hidden" name="break_instructor" value="{{form.break_instructor.value}}">
+										<div class="form-group">
+											{{form.break_instructor|as_crispy_field}}
+										</div>
+									</div>
+									<div class="col-1">
+										{{form.break_instructor_dias}}
+									</div>
+									<div class="col-1">
+										{{form.break_instructor_n}}
+									</div>
+									<div class="col-2">
+										<div class="currency-wrap"><span class="currency-code">$</span>
+											{{form.break_instructor_unitario|as_crispy_field}}
+										</div>
+									</div>
+									<div class="col-3">
+										<div class="currency-wrap"><span class="currency-code">$</span>
+											{{form.break_instructor_total|as_crispy_field}}
+										</div>
+									</div>
+									<input type="hidden" id="break_instructor_r" class="valor-total"
+										data-total="id_break_instructor_total" data-depend="True"
+										data-field="id_break_instructor_unitario">
+								</div>
+								<div class="form-row">
+									<div class="col-3 v-align">Almuerzos Instructor</div>
+									<div class="col-2">
+										<input type="hidden" name="almuerzo_instructor" value="{{form.almuerzo_instructor.value}}">
+										<div class="form-group">
+											{{form.almuerzo_instructor|as_crispy_field}}
+										</div>
+									</div>
+									<div class="col-1">
+										{{form.almuerzo_instructor_dias}}
+									</div>
+									<div class="col-1">
+										{{form.almuerzo_instructor_n}}
+									</div>
+									<div class="col-2">
+										<div class="currency-wrap"><span class="currency-code">$</span>
+											{{form.almuerzo_instructor_unitario|as_crispy_field}}
+										</div>
+									</div>
+									<div class="col-3">
+										<div class="currency-wrap"><span class="currency-code">$</span>
+											{{form.almuerzo_instructor_total|as_crispy_field}}
+										</div>
+									</div>
+									<input type="hidden" id="almuerzo_instructor_r" class="valor-total"
+										data-total="id_almuerzo_instructor_total" data-depend="True"
+										data-field="id_almuerzo_instructor_unitario">
+
+								</div>
+							</div>
+							
+							<div class="col-1">
+								{%if form.estado.value == "Grabado" %}
+								<div class="form-row">
+									<div class="col-12 v-align">
+										<a id="add_inst" class="btn btn-block btn-sm white-text btn-secondary">+</a>
+									</div>
+								</div>
+								<div class="form-row mt-2">
+									<div class="col-12 v-align">
+										<a id="remove_inst" class="btn btn-block btn-sm white-text btn-secondary">-</a>
+									</div>
+								</div> {%endif%}
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="card">
+				<div class="card-header border-bottom border-success" id="heading2">
+					<a style="cursor: pointer" data-toggle="collapse" data-target="#collapse2" aria-expanded="false"
+						aria-controls="collapse2">
+						<h5 class="mb-0">
+							VIATICOS DEL PERSONAL<i class="fas fa-angle-down float-right"></i>
+						</h5>
+					</a>
+				</div>
+				<div id="collapse2" class="collapse" aria-labelledby="heading2" data-parent="#accordion">
+					<div class="card-body">
+						<div class="row">
+							<div class="col-xl-1 d-none-sm"></div>
+							<div class="col-xl-10 col-12">
+								<div class="form-row">
+									<div class="col-3"></div>
+									<div class="col-3">
+										<div class="form-group">
+											<h5 class="text-center">Datos</h5>
+										</div>
+									</div>
+									<div class="col-3">
+										<h5 class="text-center">Valor Unitario</h5>
+									</div>
+									<div class="col-3">
+										<h5 class="text-center">Valor Total</h5>
+									</div>
+								</div>
+								<div class="form-row">
+									<div class="col-3 v-align">Pasaje del personal</div>
+									<div class="col-2">
+										<div class="form-group">
+											{{form.pasaje_personal_cantidad|as_crispy_field}}
+										</div>
+									</div>
+									<input type="hidden" id="pasaje_personal_r" class="valor-total"
+										data-total="id_pasaje_personal_total" data-depend="True"
+										data-field="id_pasaje_personal_unitario">
+									<div class="col-1">
+										{{form.pasaje_personal_dias}}
+									</div>
+									<div class="col-3">
+										<div class="currency-wrap money"><span class="currency-code">$</span>
+											{{form.pasaje_personal_unitario|as_crispy_field}}
+										</div>
+									</div>
+									<div class="col-3">
+										<div class="currency-wrap"><span class="currency-code">$</span>
+											{{form.pasaje_personal_total|as_crispy_field}}
+										</div>
+									</div>
+								</div>
+								<div class="form-row">
+									<div class="col-3 v-align">Hospedaje y alimentación</div>
+									<div class="col-2">
+										<div class="form-group">
+											<input type="hidden" name="hospedaje_alimentacion_personal" value="{{form.hospedaje_alimentacion_personal.value}}">
+											{{form.hospedaje_alimentacion_personal|as_crispy_field}}
+										</div>
+									</div>
+									<div class="col-1">
+										{{form.hospedaje_alimentacion_personal_dias}}
+									</div>
+									<div class="col-3">
+										<div class="currency-wrap"><span class="currency-code">$</span>
+											{{form.hospedaje_alimentacion_personal_unitario|as_crispy_field}}
+										</div>
+									</div>
+									<div class="col-3">
+										<div class="currency-wrap"><span class="currency-code">$</span>
+											{{form.hospedaje_alimentacion_personal_total|as_crispy_field}}
+										</div>
+									</div>
+								</div>
+								<div class="form-row">
+									<div class="col-3 v-align">Movilización</div>
+									<div class="col-2">
+									</div>
+									<div class="col-1">
+										<div class="form-group">
+											{{form.movilizacion_personal_dias}}
+										</div>
+									</div>
+									<div class="col-3">
+										<div class="currency-wrap money"><span class="currency-code">$</span>
+											{{form.movilizacion_personal_unitario|as_crispy_field}}
+										</div>
+									</div>
+									<div class="col-3">
+										<div class="currency-wrap"><span class="currency-code">$</span>
+											{{form.movilizacion_personal_total|as_crispy_field}}
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="card">
+				<div class="card-header border-bottom border-success" id="heading3">
+					<a style="cursor: pointer" class="collapsed" data-toggle="collapse" data-target="#collapse3"
+						aria-expanded="false" aria-controls="collapse3">
+						<h5 class="mb-0">
+							INFRAESTRUCTURA<i class="fas fa-angle-down float-right"></i>
+						</h5>
+					</a>
+				</div>
+				<div id="collapse3" class="collapse" aria-labelledby="heading3" data-parent="#accordion">
+					<div class="card-body">
+						<div class="row">
+							<div class="col-xl-1"></div>
+							<div class="col-xl-10">
+								<div class="form-row">
+									<div class="col-3"></div>
+									<div class="col-3">
+										<div class="form-group">
+											<h5 class="text-center">Datos</h5>
+										</div>
+									</div>
+									<div class="col-3">
+										<h5 class="text-center">Valor Unitario</h5>
+									</div>
+									<div class="col-3">
+										<h5 class="text-center">Valor Total</h5>
+									</div>
+								</div>
+								<div class="form-row">
+									<div class="col-3 v-align">Instalaciones</div>
+									<div class="col-3">
+										<input type="hidden" name="instalaciones" value="{{form.instalaciones.value}}">
+										<div class="form-group">
+											{{form.instalaciones|as_crispy_field}}
+										</div>
+									</div>
+									<div class="col-3">
+										<div class="currency-wrap"><span
+												class="currency-code">$</span>{{form.instalaciones_unitario|as_crispy_field}}
+										</div>
+									</div>
+									<div class="col-3">
+										<div class="currency-wrap"><span
+												class="currency-code">$</span>{{form.instalaciones_total|as_crispy_field}}
+										</div>
+									</div>
+								</div>
+								<div class="form-row">
+									<div class="col-3 v-align">Provisión mejoras de instalaciones</div>
+									<div class="col-3">
+										<div class="form-group">
+											<div class="currency-wrap"><span
+													class="currency-code">%</span>{{form.provision_mejoras_porcentaje}}
+											</div>
+										</div>
+									</div>
+									<div class="col-3">
+										<div class="currency-wrap"><span class="currency-code">$</span>
+											<input type="text" id="provision_mejoras_unitario"
+												class="pr-3 form-control text-currency" readonly placeholder="Total egresos"
+												value="{{form.ingreso_neto_total.value}}">
+										</div>
+									</div>
+									<div class="col-3">
+										<div class="currency-wrap"><span
+												class="currency-code">$</span>{{form.provision_mejoras_total}}</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="card">
+				<div class="card-header border-bottom border-success" id="heading4">
+					<a style="cursor: pointer" class="collapsed" data-toggle="collapse" data-target="#collapse4"
+						aria-expanded="false" aria-controls="collapse4">
+						<h5 class="mb-0">
+							PUBLICIDAD<i class="fas fa-angle-down float-right"></i>
+						</h5>
+					</a>
+				</div>
+				<div id="collapse4" class="collapse" aria-labelledby="heading4" data-parent="#accordion">
+					<div class="card-body">
+						<div class="row">
+							<div class="col-xl-1"></div>
+							<div class="col-xl-10">
+								<div class="form-row">
+									<div class="col-3"></div>
+									<div class="col-3">
+										<div class="form-group">
+											<h5 class="text-center">Datos</h5>
+										</div>
+									</div>
+									<div class="col-3">
+										<h5 class="text-center">Valor Unitario</h5>
+									</div>
+									<div class="col-3">
+										<h5 class="text-center">Valor Total</h5>
+									</div>
+								</div>
+								<div class="form-row">
+									<div class="col-3 v-align">Publicidad</div>
+									<div class="col-3">
+										{{form.publicidad|as_crispy_field}}
+									</div>
+									<div class="col-3">
+										<div class="form-group">
+											<div class="currency-wrap money"><span
+													class="currency-code">$</span>{{form.publicidad_unitario|as_crispy_field}}
+											</div>
+										</div>
+									</div>
+									<div class="col-3">
+										<div class="currency-wrap"><span
+												class="currency-code">$</span>{{form.publicidad_total|as_crispy_field}}
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="card">
+				<div class="card-header border-bottom border-success" id="heading5">
+					<a style="cursor: pointer" class="collapsed" data-toggle="collapse" data-target="#collapse5"
+						aria-expanded="false" aria-controls="collapse5">
+						<h5 class="mb-0">
+							PERSONAL DEL EVENTO<i class="fas fa-angle-down float-right"></i>
+						</h5>
+					</a>
+				</div>
+				<div id="collapse5" class="collapse" aria-labelledby="heading5" data-parent="#accordion">
+					<div class="card-body">
+						<div class="row">
+							<div class="col-xl-1"></div>
+							<div class="col-xl-10">
+								<div class="form-row">
+									<div class="col-3"></div>
+									<div class="col-3">
+										<div class="form-group">
+											<h5 class="text-center">Datos</h5>
+										</div>
+									</div>
+									<div class="col-3">
+										<h5 class="text-center">Valor Unitario</h5>
+									</div>
+									<div class="col-3">
+										<h5 class="text-center">Valor Total</h5>
+									</div>
+								</div>
+								<div class="form-row">
+									<div class="col-3 v-align">Personal del evento</div>
+									<div class="col-3">
+										<input type="hidden" name="personal_evento" value="{{form.personal_evento.value}}">
+										{{form.personal_evento|as_crispy_field}}
+									</div>
+									<div class="col-3">
+										<div class="form-group">
+											<div class="currency-wrap money"><span
+													class="currency-code">$</span>{{form.personal_evento_unitario|as_crispy_field}}
+											</div>
+										</div>
+									</div>
+									<div class="col-3">
+										<div class="currency-wrap"><span
+												class="currency-code">$</span>{{form.personal_evento_total|as_crispy_field}}
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="card">
+				<div class="card-header border-bottom border-success" id="heading6">
+					<a style="cursor: pointer" class="collapsed" data-toggle="collapse" data-target="#collapse6"
+						aria-expanded="false" aria-controls="collapse6">
+						<h5 class="mb-0">
+							COSTO DEL PROSPECTO<i class="fas fa-angle-down float-right"></i>
+						</h5>
+					</a>
+				</div>
+				<div id="collapse6" class="collapse" aria-labelledby="heading6" data-parent="#accordion">
+					<div class="card-body">
+						<div class="row">
+							<div class="col-xl-1"></div>
+							<div class="col-xl-10">
+								<div class="form-row">
+									<div class="col-3"></div>
+									<div class="col-3">
+										<div class="form-group">
+											<h5 class="text-center">Datos</h5>
+										</div>
+									</div>
+									<div class="col-3">
+										<h5 class="text-center">Valor Unitario</h5>
+									</div>
+									<div class="col-3">
+										<h5 class="text-center">Valor Total</h5>
+									</div>
+								</div>
+								<div class="form-row">
+									<div class="col-3 v-align">Prospecto del evento</div>
+									<div class="col-3">
+										<input type="hidden" name="prospecto_evento" value="{{form.prospecto_evento.value}}">
+										{{form.prospecto_evento|as_crispy_field}}
+									</div>
+									<div class="col-3">
+										<div class="form-group">
+											<div class="currency-wrap"><span
+													class="currency-code">$</span>{{form.prospecto_evento_unitario|as_crispy_field}}
+											</div>
+										</div>
+									</div>
+									<div class="col-3">
+										<div class="currency-wrap"><span
+												class="currency-code">$</span>{{form.prospecto_evento_total|as_crispy_field}}
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</div>
+	<div class="my-3">
+		<div class="card">
+			<div class="card-body">
+				<div class="row">
+					<div class="col-xl-1"></div>
+					<div class="col-xl-10">
+						<div class="form-row">
+							<div class="col-9 v-align">
+								<h5 class="float-right">TOTAL EGRESOS FIJOS</h5>
+							</div>
+							<div class="col-3">
+								<div class="form-group">
+									<div class="currency-wrap">
+										<span class="currency-code">$</span>{{form.total_egresos_fijos|as_crispy_field}}
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</div>
+
+
+	<div class="row">
+		<div class="campo col-xl-12 p-2 pl-3">
+			<h5 class="black-text text-uppercase mb-0">Egresos >> <span class="green-text"> Egresos Variables</span>
+			</h5>
+		</div>
+	</div>
+	<div class="my-3">
+		<div id="accordion">
+			<div class="card">
+				<div class="card-header border-bottom border-success" id="heading7">
+					<a style="cursor: pointer" data-toggle="collapse" data-target="#collapse7" aria-expanded="false"
+						aria-controls="collapse7">
+						<h5 class="mb-0">
+							MATERIAL DEL EVENTO<i class="fas fa-angle-down float-right"></i>
+						</h5>
+					</a>
+				</div>
+
+				<div id="collapse7" class="collapse" aria-labelledby="heading7" data-parent="#accordion">
+					<div class="card-body">
+						<div class="row">
+							<div class="col-xl-1"></div>
+							<div class="col-xl-10">
+								<div class="form-row">
+									<div class="col-3"></div>
+									<div class="col-3">
+										<div class="form-group">
+											<h5 class="text-center">Datos</h5>
+										</div>
+									</div>
+									<div class="col-3">
+										<h5 class="text-center">Valor Unitario</h5>
+									</div>
+									<div class="col-3">
+										<h5 class="text-center">Valor Total</h5>
+									</div>
+								</div>
+								<div class="form-row">
+									<div class="col-3 v-align">Emisión Certificados</div>
+									<div class="col-3">
+										<div class="form-group">
+											<input type="hidden" name="certificados" value="{{form.certificados.value}}">
+											{{form.certificados|as_crispy_field}}
+										</div>
+									</div>
+									<div class="col-3">
+										<div class="currency-wrap"><span
+												class="currency-code">$</span>{{form.certificados_unitario|as_crispy_field}}
+										</div>
+									</div>
+									<div class="col-3">
+										<div class="currency-wrap"><span
+												class="currency-code">$</span>{{form.certificados_total|as_crispy_field}}
+										</div>
+									</div>
+								</div>
+								<div class="form-row">
+									<div class="col-3 v-align">Carpeta cartón con logo EC</div>
+									<div class="col-3">
+										<div class="form-group">
+											<input type="hidden" name="carpeta" value="{{form.carpeta.value}}">
+											{{form.carpeta|as_crispy_field}}
+										</div>
+									</div>
+									<div class="col-3">
+										<div class="currency-wrap"><span class="currency-code">$</span>
+											{{form.carpeta_unitario|as_crispy_field}}
+										</div>
+									</div>
+									<div class="col-3">
+										<div class="currency-wrap"><span class="currency-code">$</span>
+											{{form.carpeta_total|as_crispy_field}}
+										</div>
+									</div>
+								</div>
+								<div class="form-row">
+									<div class="col-3 v-align">Maletín (Solo diplomados)</div>
+
+									<div class="col-3">
+										<div class="form-group">
+											<input type="hidden" name="maletin" value="{{form.maletin.value}}">
+											{{form.maletin|as_crispy_field}}
+										</div>
+									</div>
+									<div class="col-3">
+										<div class="currency-wrap money"><span
+												class="currency-code">$</span>{{form.maletin_unitario|as_crispy_field}}
+										</div>
+									</div>
+									<div class="col-3">
+										<div class="currency-wrap"><span
+												class="currency-code">$</span>{{form.maletin_total|as_crispy_field}}
+										</div>
+									</div>
+								</div>
+								<div class="form-row">
+									<div class="col-3 v-align">Blocks</div>
+									<div class="col-3">
+										<div class="form-group">
+											<input type="hidden" name="block" value="{{form.block.value}}">
+											{{form.block|as_crispy_field}}
+										</div>
+									</div>
+									<div class="col-3">
+										<div class="currency-wrap"><span class="currency-code">$</span>
+											{{form.block_unitario|as_crispy_field}}
+										</div>
+									</div>
+									<div class="col-3">
+										<div class="currency-wrap"><span class="currency-code">$</span>
+											{{form.block_total|as_crispy_field}}
+										</div>
+									</div>
+								</div>
+								<div class="form-row">
+									<div class="col-3 v-align">Pluma con logo EC</div>
+									<div class="col-3">
+										<div class="form-group">
+											<input type="hidden" name="pluma" value="{{form.pluma.value}}">
+											{{form.pluma|as_crispy_field}}
+										</div>
+									</div>
+									<div class="col-3">
+										<div class="currency-wrap"><span class="currency-code">$</span>
+											{{form.pluma_unitario|as_crispy_field}}
+										</div>
+									</div>
+									<div class="col-3">
+										<div class="currency-wrap"><span class="currency-code">$</span>
+											{{form.pluma_total|as_crispy_field}}
+										</div>
+									</div>
+								</div>
+								<div class="form-row">
+									<div class="col-3 v-align">Lápices</div>
+									<div class="col-3">
+										<div class="form-group">
+											<input type="hidden" name="lapiz" value="{{form.lapiz.value}}">
+											{{form.lapiz|as_crispy_field}}
+										</div>
+									</div>
+									<div class="col-3">
+										<div class="currency-wrap"><span class="currency-code">$</span>
+											{{form.lapiz_unitario|as_crispy_field}}
+										</div>
+									</div>
+									<div class="col-3">
+										<div class="currency-wrap"><span class="currency-code">$</span>
+											{{form.lapiz_total|as_crispy_field}}
+										</div>
+									</div>
+								</div>
+								<div class="form-row">
+									<div class="col-3 v-align">Credenciales (plástico)</div>
+									<div class="col-3">
+										<div class="form-group">
+											<input type="hidden" name="credencial_plastico" value="{{form.credencial_plastico.value}}">
+											{{form.credencial_plastico|as_crispy_field}}
+										</div>
+									</div>
+									<div class="col-3">
+										<div class="currency-wrap money"><span class="currency-code">$</span>
+											{{form.credencial_plastico_unitario|as_crispy_field}}
+										</div>
+									</div>
+									<div class="col-3">
+										<div class="currency-wrap"><span class="currency-code">$</span>
+											{{form.credencial_plastico_total|as_crispy_field}}
+										</div>
+									</div>
+								</div>
+								<div class="form-row">
+									<div class="col-3 v-align">Credenciales (pvc)</div>
+									<div class="col-3">
+										<div class="form-group">
+											<input type="hidden" name="credencial_pvc" value="{{form.credencial_pvc.value}}">
+											{{form.credencial_pvc|as_crispy_field}}
+										</div>
+									</div>
+									<div class="col-3">
+										<div class="currency-wrap money"><span class="currency-code">$</span>
+											{{form.credencial_pvc_unitario|as_crispy_field}}
+										</div>
+									</div>
+									<div class="col-3">
+										<div class="currency-wrap"><span class="currency-code">$</span>
+											{{form.credencial_pvc_total|as_crispy_field}}
+										</div>
+									</div>
+								</div>
+								<div class="form-row">
+									<div class="col-3 v-align">Pendrives</div>
+									<div class="col-3">
+										<div class="form-group">
+											<input type="hidden" name="pendrive" value="{{form.pendrive.value}}">
+											{{form.pendrive|as_crispy_field}}
+										</div>
+									</div>
+									<div class="col-3">
+										<div class="currency-wrap"><span class="currency-code">$</span>
+											{{form.pendrive_unitario|as_crispy_field}}
+										</div>
+									</div>
+									<div class="col-3">
+										<div class="currency-wrap"><span class="currency-code">$</span>
+											{{form.pendrive_total|as_crispy_field}}
+										</div>
+									</div>
+								</div>
+								<div class="form-row">
+									<div class="col-3 v-align">CD</div>
+									<div class="col-3">
+										<div class="form-group">
+											<input type="hidden" name="cd" value="{{form.cd.value}}">
+											{{form.cd|as_crispy_field}}
+										</div>
+									</div>
+									<div class="col-3">
+										<div class="currency-wrap"><span class="currency-code">$</span>
+											{{form.cd_unitario|as_crispy_field}}
+										</div>
+									</div>
+									<div class="col-3">
+										<div class="currency-wrap"><span class="currency-code">$</span>
+											{{form.cd_total|as_crispy_field}}
+										</div>
+									</div>
+								</div>
+								<div class="form-row">
+									<div class="col-3 v-align">Otros materiales</div>
+									<div class="col-3">
+										<div class="form-group">
+											<input type="hidden" name="otros_materiales" value="{{form.otros_materiales.value}}">
+											{{form.otros_materiales|as_crispy_field}}
+										</div>
+									</div>
+									<div class="col-3">
+										<div class="currency-wrap money"><span class="currency-code">$</span>
+											{{form.otros_materiales_unitario|as_crispy_field}}
+										</div>
+									</div>
+									<div class="col-3">
+										<div class="currency-wrap"><span class="currency-code">$</span>
+											{{form.otros_materiales_total|as_crispy_field}}
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="card">
+				<div class="card-header border-bottom border-success" id="heading8">
+					<a style="cursor: pointer" data-toggle="collapse" data-target="#collapse8" aria-expanded="false"
+						aria-controls="collapse8">
+						<h5 class="mb-0">
+							SERVICIO DE ALIMENTACION DEL EVENTO<i class="fas fa-angle-down float-right"></i>
+						</h5>
+					</a>
+				</div>
+				<div id="collapse8" class="collapse" aria-labelledby="heading8" data-parent="#accordion">
+					<div class="card-body">
+						<div class="row">
+							<div class="col-xl-1"></div>
+							<div class="col-xl-10">
+								<div class="form-row">
+									<div class="col-3"></div>
+									<div class="col-3">
+										<div class="form-group">
+											<h5 class="text-center">Datos</h5>
+										</div>
+									</div>
+									<div class="col-3">
+										<h5 class="text-center">Valor Unitario</h5>
+									</div>
+									<div class="col-3">
+										<h5 class="text-center">Valor Total</h5>
+									</div>
+								</div>
+								<div class="form-row">
+									<div class="col-2 v-align">Breaks</div>
+									<div class="col-3">
+										<div class="form-group">
+											<input type="hidden" name="break_evento" value="{{form.break_evento.value}}">
+											{{form.break_evento|as_crispy_field}}
+										</div>
+									</div>
+									<div class="col-1">
+										{{form.break_evento_dias|as_crispy_field}}
+									</div>
+									<div class="col-3">
+										<div class="currency-wrap"><span class="currency-code">$</span>
+											{{form.break_evento_unitario|as_crispy_field}}
+										</div>
+									</div>
+									<div class="col-3">
+										<div class="currency-wrap"><span class="currency-code">$</span>
+											{{form.break_evento_total|as_crispy_field}}
+										</div>
+									</div>
+									<input type="hidden" id="break_participantes" class="valor-total"
+										data-total="id_break_evento_total" data-depend="True"
+										data-field="id_break_evento_unitario">
+
+								</div>
+								<div class="form-row">
+									<div class="col-2 v-align">Almuerzo</div>
+									<div class="col-3">
+										<div class="form-group">
+											<input type="hidden" name="almuerzo_evento" value="{{form.almuerzo_evento.value}}">
+											{{form.almuerzo_evento|as_crispy_field}}
+										</div>
+									</div>
+									<div class="col-1">
+										{{form.almuerzo_evento_dias|as_crispy_field}}
+									</div>
+									<div class="col-3">
+										<div class="currency-wrap"><span class="currency-code">$</span>
+											{{form.almuerzo_evento_unitario|as_crispy_field}}
+										</div>
+									</div>
+									<div class="col-3">
+										<div class="currency-wrap"><span class="currency-code">$</span>
+											{{form.almuerzo_evento_total|as_crispy_field}}
+										</div>
+									</div>
+									<input type="hidden" id="almuerzo_participantes" class="valor-total"
+										data-total="id_almuerzo_evento_total" data-depend="True"
+										data-field="id_almuerzo_evento_unitario">
+
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="card">
+				<div class="card-header border-bottom border-success" id="heading9">
+					<a style="cursor: pointer" class="collapsed" data-toggle="collapse" data-target="#collapse9"
+						aria-expanded="false" aria-controls="collapse9">
+						<h5 class="mb-0">
+							CEREMONIAS<i class="fas fa-angle-down float-right"></i>
+						</h5>
+					</a>
+				</div>
+				<div id="collapse9" class="collapse" aria-labelledby="heading9" data-parent="#accordion">
+					<div class="card-body">
+						<div class="row">
+							<div class="col-xl-1"></div>
+							<div class="col-xl-10">
+								<div class="form-row">
+									<div class="col-3"></div>
+									<div class="col-3">
+										<div class="form-group">
+											<h5 class="text-center">Datos</h5>
+										</div>
+									</div>
+									<div class="col-3">
+										<h5 class="text-center">Valor Unitario</h5>
+									</div>
+									<div class="col-3">
+										<h5 class="text-center">Valor Total</h5>
+									</div>
+								</div>
+								<div class="form-row">
+									<div class="col-3 v-align">Ceremonia clausura</div>
+									<div class="col-3">
+										<div class="form-group">
+											<input type="hidden" name="ceremonia" value="{{form.ceremonia.value}}">
+											{{form.ceremonia|as_crispy_field}}
+										</div>
+									</div>
+									<div class="col-3">
+										<div class="currency-wrap money"><span
+												class="currency-code">$</span>{{form.ceremonia_unitario|as_crispy_field}}
+										</div>
+									</div>
+									<div class="col-3">
+										<div class="currency-wrap"><span
+												class="currency-code">$</span>{{form.ceremonia_total|as_crispy_field}}
+										</div>
+									</div>
+									<input type="hidden" id="ceremonia_participantes" data-total="id_ceremonia_total"
+										data-depend="True" data-field="id_ceremonia_unitario">
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="card">
+				<div class="card-header border-bottom border-success" id="heading10">
+					<a style="cursor: pointer" class="collapsed" data-toggle="collapse" data-target="#collapse10"
+						aria-expanded="false" aria-controls="collapse10">
+						<h5 class="mb-0">
+							APORTACIONES<i class="fas fa-angle-down float-right"></i>
+						</h5>
+					</a>
+				</div>
+				<div id="collapse10" class="collapse" aria-labelledby="heading10" data-parent="#accordion">
+					<div class="card-body">
+						<div class="row">
+							<div class="col-xl-1"></div>
+							<div class="col-xl-10">
+								<div class="form-row">
+									<div class="col-3"></div>
+									<div class="col-3">
+										<div class="form-group">
+											<h5 class="text-center">Datos</h5>
+										</div>
+									</div>
+									<div class="col-3">
+										<h5 class="text-center">Valor Unitario</h5>
+									</div>
+									<div class="col-3">
+										<h5 class="text-center">Valor Total</h5>
+									</div>
+								</div>
+								<div class="form-row">
+									<div class="col-3 v-align">Aportación ESPOL</div>
+									<div class="col-3">
+										<div class="form-group">
+											<div class="currency-wrap"><span
+													class="currency-code">%</span>{{form.aportacion_espol_porcentaje|as_crispy_field}}
+											</div>
+										</div>
+									</div>
+									<div class="col-3">
+										<div class="form-group">
+											<div class="currency-wrap"><span
+													class="currency-code">$</span>{{form.aportacion_espol_unitario|as_crispy_field}}
+											</div>
+										</div>
+									</div>
+									<div class="col-3">
+										<div class="currency-wrap"><span
+												class="currency-code">$</span>{{form.aportacion_espol_total|as_crispy_field}}
+										</div>
+									</div>
+								</div>
+								<div class="form-row">
+									<div class="col-3 v-align">Aportación ESPOLTECH</div>
+									<div class="col-3">
+										<div class="form-group">
+											<div class="currency-wrap"><span
+													class="currency-code">%</span>{{form.aportacion_espoltech_porcentaje|as_crispy_field}}
+											</div>
+										</div>
+									</div>
+									<div class="col-3">
+										<div class="form-group">
+											<div class="currency-wrap"><span
+													class="currency-code">$</span>{{form.aportacion_espoltech_unitario|as_crispy_field}}
+											</div>
+										</div>
+									</div>
+									<div class="col-3">
+										<div class="currency-wrap"><span
+												class="currency-code">$</span>{{form.aportacion_espoltech_total|as_crispy_field}}
+										</div>
+									</div>
+								</div>
+								<div class="form-row">
+									<div class="col-3 v-align">Aportación Ministerio de Finanzas</div>
+									<div class="col-3">
+										<div class="form-group">
+											<div class="currency-wrap"><span
+													class="currency-code">%</span>{{form.aportacion_ministerio_porcentaje|as_crispy_field}}
+											</div>
+										</div>
+									</div>
+									<div class="col-3">
+										<div class="form-group">
+											<div class="currency-wrap"><span
+													class="currency-code">$</span>{{form.aportacion_ministerio_unitario|as_crispy_field}}
+											</div>
+										</div>
+									</div>
+									<div class="col-3">
+										<div class="currency-wrap"><span
+												class="currency-code">$</span>{{form.aportacion_ministerio_total|as_crispy_field}}
+										</div>
+									</div>
+								</div>
+								<div class="form-row">
+									<div class="col-3 v-align">Aportación FUNDAESPOL</div>
+									<div class="col-3">
+										<div class="form-group">
+											<div class="currency-wrap"><span
+													class="currency-code">%</span>{{form.aportacion_fundaespol_porcentaje|as_crispy_field}}
+											</div>
+										</div>
+									</div>
+									<div class="col-3">
+										<div class="form-group">
+											<div class="currency-wrap"><span
+													class="currency-code">$</span>{{form.aportacion_fundaespol_unitario|as_crispy_field}}
+											</div>
+										</div>
+									</div>
+									<div class="col-3">
+										<div class="currency-wrap"><span
+												class="currency-code">$</span>{{form.aportacion_fundaespol_total|as_crispy_field}}
+										</div>
+									</div>
+								</div>
+								<div class="form-row">
+									<div class="col-3 v-align">Aportación Facultades</div>
+									<div class="col-xl-2 col">
+										<input type="hidden" name="aportacion_facultad" value="{{form.aportacion_facultad.value}}">
+										{{form.aportacion_facultad}}
+									</div>
+									<div class="col-xl-1 col">
+										<div class="form-group">
+											<div class="currency-wrap"><span
+													class="currency-code">%</span>{{form.aportacion_facultad_porcentaje_unitario|as_crispy_field}}
+											</div>
+										</div>
+									</div>
+									<div class="col-3">
+										<div class="form-group">
+											<div class="currency-wrap"><span
+													class="currency-code">$</span>{{form.aportacion_facultad_unitario|as_crispy_field}}
+											</div>
+										</div>
+									</div>
+									<div class="col-3">
+										<div class="currency-wrap"><span
+												class="currency-code">$</span>{{form.aportacion_facultad_total|as_crispy_field}}
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="card">
+				<div class="card-header border-bottom border-success" id="heading11">
+					<a style="cursor: pointer" class="collapsed" data-toggle="collapse" data-target="#collapse11"
+						aria-expanded="false" aria-controls="collapse11">
+						<h5 class="mb-0">
+							VARIOS<i class="fas fa-angle-down float-right"></i>
+						</h5>
+					</a>
+				</div>
+				<div id="collapse11" class="collapse" aria-labelledby="heading11" data-parent="#accordion">
+					<div class="card-body">
+						<div class="row">
+							<div class="col-xl-1"></div>
+							<div class="col-xl-10">
+								<div class="form-row">
+									<div class="col-3"></div>
+									<div class="col-3">
+										<div class="form-group">
+											<h5 class="text-center">Datos</h5>
+										</div>
+									</div>
+									<div class="col-3">
+										<h5 class="text-center">Valor Unitario</h5>
+									</div>
+									<div class="col-3">
+										<h5 class="text-center">Valor Total</h5>
+									</div>
+								</div>
+								<div class="form-row">
+									<div class="col-3 v-align">Movilización interna (ciudad)</div>
+									<div class="col-3">
+									</div>
+									<div class="col-3">
+										<div class="form-group">
+											<div class="currency-wrap money"><span
+													class="currency-code">$</span>{{form.movilizacion_interna_unitario|as_crispy_field}}
+											</div>
+										</div>
+									</div>
+									<div class="col-3">
+										<div class="currency-wrap"><span
+												class="currency-code">$</span>{{form.movilizacion_interna_total|as_crispy_field}}
+										</div>
+									</div>
+
+								</div>
+								<div class="form-row">
+									<div class="col-3 v-align">Cafeteria y limpieza</div>
+									<div class="col-3">
+										<input type="hidden" name="cafeteria_limpieza" value="{{form.cafeteria_limpieza.value}}">
+										{{form.cafeteria_limpieza}}
+									</div>
+									<div class="col-3">
+										<div class="form-group">
+											<div class="currency-wrap"><span
+													class="currency-code">$</span>{{form.cafeteria_limpieza_unitario|as_crispy_field}}
+											</div>
+										</div>
+									</div>
+									<div class="col-3">
+										<div class="currency-wrap"><span
+												class="currency-code">$</span>{{form.cafeteria_limpieza_total| as_crispy_field}}
+										</div>
+									</div>
+
+									<input type="hidden" id="n_dias_participantes"
+										data-total="id_cafeteria_limpieza_total" data-depend="True"
+										data-field="id_cafeteria_limpieza_unitario">
+								</div>
+								<div class="form-row">
+									<div class="col-3 v-align">Imprevistos</div>
+									<div class="col-3">
+										<div class="currency-wrap"><span class="currency-code">%</span>
+											{{form.imprevisto_porcentaje|as_crispy_field}}
+										</div>
+									</div>
+									<div class="col-3">
+										<div class="form-group">
+											<div class="currency-wrap"><span
+													class="currency-code">$</span>{{form.imprevisto_unitario|as_crispy_field}}
+											</div>
+										</div>
+									</div>
+									<div class="col-3">
+										<div class="currency-wrap"><span
+												class="currency-code">$</span>{{form.imprevisto_total|as_crispy_field}}
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="my-3">
+		<div class="card">
+			<div class="card-body">
+				<div class="row">
+					<div class="col-xl-1"></div>
+					<div class="col-xl-10">
+						<div class="form-row">
+							<div class="col-9 v-align">
+								<h5 class="float-right">TOTAL EGRESOS VARIABLES</h5>
+							</div>
+							<div class="col-3">
+								<div class="form-group">
+									<div class="currency-wrap">
+										<span
+											class="currency-code">$</span>{{form.total_egresos_variables|as_crispy_field}}
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="row px-md-5 my-md-4">
+		<div class="col-9 col-xl-10 v-align">
+			<h5 class="float-right">TOTAL EGRESOS</h5>
+		</div>
+		<div class="col-3 col-xl-2">
+			<div class="form-group">
+				<div class="currency-wrap">
+					<span class="currency-code">$</span>{{form.total_egresos|as_crispy_field}}
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="campo col-xl-12 mt-2 p-2 pl-3">
+			<h5 class="black-text text-uppercase mb-0">Resumen presupuesto</h5>
+		</div>
+	</div>
+	<div class="row darkwhite-bg py-2">
+		<div class="col-xl-2"></div>
+		<div class="col-xl-8">
+			<hr class="border border-success">
+			<div class="form-row">
+				<div class="col-3 v-align">Nombre del evento</div>
+				<div class="col-9">
+					<div class="form-group">
+						<input type="text" readonly id="resumen_nombre_evento" class="form-control textInput myinput">
+					</div>
+				</div>
+			</div>
+			<div class="form-row">
+				<div class="col-3 v-align">Total Ingresos</div>
+				<div class="col-3">
+					<div class="form-group">
+						<div class="currency-wrap">
+							<span class="currency-code">$</span>
+							<input type="text" readonly id="resumen_ingreso"
+								class="pr-3 form-control textInput text-currency myinput">
+						</div>
+					</div>
+				</div>
+				<div class="col-3 v-align">Precio del evento</div>
+				<div class="col-3">
+					<div class="currency-wrap"><span class="currency-code">$</span>
+						<input type="text" readonly id="resumen_precio_evento"
+							class="pr-3 punto form-control textInput myinput text-currency">
+					</div>
+				</div>
+			</div>
+			<div class="form-row">
+				<div class="col-3 v-align">Total Egresos</div>
+				<div class="col-3">
+					<div class="form-group">
+						<div class="currency-wrap"><span class="currency-code">$</span>
+							<input type="text" readonly id="resumen_egreso"
+								class="pr-3 form-control textInput text-currency myinput">
+						</div>
+					</div>
+				</div>
+				<div class="col-3 v-align">Utilidad del evento (dólares)</div>
+				<div class="col-3">
+					<div class="currency-wrap"><span class="currency-code">$</span>
+						{{form.utilidad |as_crispy_field}}
+					</div>
+				</div>
+			</div>
+			<div class="form-row">
+				<div class="col-3 v-align">Total Egresos fijos</div>
+				<div class="col-3">
+					<div class="form-group">
+						<div class="currency-wrap"><span class="currency-code">$</span>
+							<input type="text" readonly id="resumen_egreso_fijo"
+								class="pr-3 form-control textInput text-currency myinput">
+						</div>
+					</div>
+				</div>
+				<div class="col-3 v-align">Margen de contribución (%)</div>
+				<div class="col-3">
+					<div class="currency-wrap"><span class="currency-code">%</span>
+						{{form.margen_contribucion |as_crispy_field}}
+					</div>
+				</div>
+			</div>
+			<div class="form-row">
+				<div class="col-3 v-align">Total Egresos variables</div>
+				<div class="col-3">
+					<div class="form-group">
+						<div class="currency-wrap"><span class="currency-code">$</span>
+							<input type="text" readonly id="resumen_egreso_variable"
+								class="pr-3 form-control textInput text-currency myinput">
+						</div>
+					</div>
+				</div>
+				<div class="col-3 v-align">No. participantes</div>
+				<div class="col-3">
+					<input type="text" readonly id="resumen_n_participantes"
+						class="pr-3 form-control textInput text-currency myinput">
+				</div>
+			</div>
+			<div class="form-row">
+				<div class="col-3 v-align">Egresos variables unit.</div>
+				<div class="col-3">
+					<div class="currency-wrap"><span class="currency-code">$</span>
+						{{form.egreso_variable_unit | as_crispy_field}}
+					</div>
+				</div>
+				<div class="col-3 v-align">Punto de equilibrio</div>
+				<div class="col-3">
+					<div class="form-group">
+						{{form.punto_equilibrio | as_crispy_field}}
+					</div>
+				</div>
+			</div>
+
+			<hr class="border border-success">
+			<div class="form-row">
+				<div class="col-3">
+					<h5>Resumen Facultades</h5>
+				</div>
+				<div class="col-3">No. Cursos</div>
+				<div class="col-3">Valor por curso</div>
+				<div class="col-3">Valor Total</div>
+			</div>
+			<div class="form-row">
+				<div class="col-3 v-align">Participacion</div>
+				<div class="col-3">
+					{{form.n_cursos | as_crispy_field}}
+				</div>
+				<div class="col-3">
+					<div class="form-group">
+						<div class="currency-wrap"><span class="currency-code">$</span>
+							<input type="text" readonly id="resumen_aporte_facultad"
+								class="pr-3 form-control textInput text-currency" data-total="id_participacion_total"
+								data-depend="True" data-field="id_n_cursos">
+						</div>
+					</div>
+				</div>
+				<div class="col-3">
+					<div class="form-group">
+						<div class="currency-wrap"><span class="currency-code">$</span>
+							{{form.participacion_total | as_crispy_field}}
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="form-row">
+				<div class="col-3 v-align">Pago a docentes</div>
+				<div class="col-3"></div>
+				<div class="col-3">
+					<div class="form-group">
+						<div class="currency-wrap"><span class="currency-code">$</span>
+							{{form.pago_docente_unitario|as_crispy_field}}
+						</div>
+					</div>
+				</div>
+				<div class="col-3">
+					<div class="form-group">
+						<div class="currency-wrap"><span class="currency-code">$</span>
+							{{form.pago_docente_total | as_crispy_field}}
+						</div>
+					</div>
+				</div>
+			</div>
+			<hr class="border">
+			<div class="form-row">
+				<div class="col-12 v-align">
+					<div class="form-group">
+						{{form.observaciones|as_crispy_field}}
+					</div>
+				</div>
+				<div class="col-12 v-align d-none">
+					<div class="form-group">
+						{{form.motivo_anular|as_crispy_field}}
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-xl-2"></div>
+	</div>
+
+
+
+	<div class="row mt-3">
+		<div class="col-12">
+			<button type="submit" disabled style="display: none" aria-hidden="true"></button>
+			{% if form.estado.value == "Anulada" %}
+			<hr>
+			<div class="form-group">
+				{{form.motivo_anular|as_crispy_field}}
+			</div>
+			<hr>
+			{% else %}
+			<a class="btn btn-secondary green-bg" data-toggle='modal' data-target="#presupuestoAgregarCenter"
+				href='#'>Guardar</a>
+			<a class="btn btn-secondary" href="{% url 'index_presupuestos' %}">Cancelar</a>
+			{% endif %}
+			<a class="btn btn-secondary float-right ml-1" href="#"><i class="fas fa-print"></i> Imprimir</a>
+			{% if form.estado.value == "Grabado" %}
+				<a href="#" data-toggle='modal' data-target="#presupuestoEnviarCenter" class="btn btn-success darkgreen-bg float-right">Enviar solicitud</a>
+			{% endif %}
+		</div>
+	</div>
+	{{ form.media }}
+
+	<div class="modal fade" id="presupuestoAgregarCenter" tabindex="-1" role="dialog" aria-labelledby="ordenTitle"
+		aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="presupuestoTitle">Confirmación</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body" id="modal-confirmacion">
+					¿Está seguro/a que desea continuar? Verifíque los datos ingresados antes de proceder.
+					<br>
+					NOTA: En caso de que algún campo no se haya llenado, ciertos valores se vaciarán para su ingreso
+					nuevamente
+				</div>
+				<div class="modal-footer">
+					<button class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+					<button type="submit" id ="enviar" class="btn btn-secondary green-bg mr-3">Confirmar</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="modal fade" id="presupuestoEnviarCenter" tabindex="-1" role="dialog" aria-labelledby="enviarTitle"
+	aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="enviarTitle"><strong>ALERTA</strong></h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				{% if not form.active.value %}
+				<strong>Existe una versión más reciente de este presupuesto de evento.</strong>
+				<br>
+				{% endif %}
+				¿Está segura/o de enviar esta versión del presupuesto de evento?
+			</div>
+			<div class="modal-footer">
+				<button class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+				<button type="submit" id="env-sol" class="btn btn-secondary green-bg mr-3">Confirmar</button>
+			</div>
+		</div>
+	</div>
+</div>
+</form>
+
+{% endblock %}
+
+{% block extrafooter %}
+<script src="{% static 'js/select2.min.js' %}"></script>
+<script src="{% static 'js/money_formater.js' %}"></script>
+<script src="{% static 'js/presupuestos.js' %}"></script>
+
+<script>
+	$('#env-sol').click(function (e) {
+		e.preventDefault();
+		$("#id_estado").val("Solicitud Enviada");
+		$('#id_fecha_envio').val(GetCurrentDate());
+		$(".currency-wrap input").each(function(e){
+			$(this).val(unformatNumber($(this).val()));
+		})
+		$("#form").trigger("submit");
+	});
+
+	$("#enviar").click(function(e){
+		e.preventDefault();
+		$(this).attr("disabled",true);
+		$(".currency-wrap input").each(function(e){
+			$(this).val(unformatNumber($(this).val()));
+		})
+		$("#form").trigger("submit");
+	});
+</script>
+
+<script>
+	$('input[name="version"]').change(function (e) {
+		var actual = +$('#version_hack').val();
+		if (+e.target.value > actual + 1) {
+			e.target.value = actual + 1;
+		} else if (e.target.value < actual) {
+			e.target.value = actual;
+		}
+	})
+
+	var field_instructor = 0;
+
+	$("#remove_inst").click(function (e) {
+		if (field_instructor > 1) {
+			$('#div_hora_' + field_instructor).addClass("d-none");
+			$('#costo' + field_instructor).val('');
+			$('#hora' + field_instructor).val('');
+			$('#total' + field_instructor).val('');
+			$('#impuesto_select_' + field_instructor).prop('checked', false);
+			$('#impuesto_total_' + field_instructor).val('');
+			$('#porcentaje' + field_instructor).val('');
+			field_instructor--;
+			CostoInstructores();
+		}
+	});
+
+	$("#add_inst").click(function (e) {
+		if (field_instructor < 5) {
+			field_instructor++;
+			$('#div_hora_' + field_instructor).removeClass("d-none");
+		}
+	});
+
+	$("input[type=number]").on('change', function (e) {
+		if ($(this).val() < 0) {
+			$(this).val('');
+		}
+	});
+
+	$(".costo-hora").change(CostoInstructores);
+
+
+	$(".total-impuesto").change(CostoImpuesto);
+	$(".total-honorario").change(CostoImpuesto);
+	$(".horas-honorario").change(CostoImpuesto);
+	$(".porcentaje-honorario").change(CostoImpuesto);
+	$(".porcentaje-impuesto").change(CostoImpuesto);
+
+
+	$("#id_descuento_maximo").change(function (e) {
+		$(this).val(parseInt($(this).val()));
+		if ($(this).val() > 10) {
+			$(this).val(100);
+		}
+		CalcularIngresos();
+	});
+
+
+	function InitCostoHoras() {
+		$.each({{ costo_horas }}, function(index, value) {
+			$('#costo' + (index + 1)).attr('required', true).val(formatNumber(value)).trigger('change');
+		});
+
+		$.each({{ impuesto_select }}, function (index, value) {
+			$('#impuesto_select_' + (index + 1)).prop('checked', value == 1 ? true : false).trigger('change');
+		});
+
+		$.each({{ valor_total }}, function (index, value) {
+			$('#total' + (index + 1)).val(formatNumber(value)).trigger('change');
+		});
+
+		$.each({{ horas_instructores }}, function (index, value) {
+			field_instructor++;
+			$("#div_hora_" + (index + 1)).removeClass('d-none');
+			$('#hora' + (index + 1)).val(value).trigger('change');
+		});
+
+		$.each({{ honorario_instructores }}, function (index, value) {
+			$('#porcentaje' + (index + 1)).val(value).trigger('change');
+		});
+
+		$.each({{ impuesto_total }}, function (index, value) {
+			$('#impuesto_total_' + (index + 1)).val(formatNumber(value)).trigger('change');
+		});
+
+		$.each({{ impuesto_porcentaje }}, function (index, value) {
+			$('#impuesto_porcentaje_' + (index + 1)).val(value).trigger('change');
+		});
+	};
+
+
+	function ResumenValores() {
+		$("#resumen_egreso").val($("#id_total_egresos").val());
+		$("#resumen_egreso_variable").val($("#id_total_egresos_variables").val());
+		$("#resumen_egreso_fijo").val($("#id_total_egresos_fijos").val());
+		$('#resumen_n_participantes').val($("#id_n_participantes").val());
+		$('#resumen_aporte_facultad').val($("#id_aportacion_facultad_total").val());
+		$('#resumen_precio_evento').val($("#id_ingreso_neto_individual").val());
+		$('#resumen_ingreso').val($("#id_ingreso_neto_total").val());
+	}
+
+	$(document).ready(function (e) {
+		InitCostoHoras();
+		CostoInstructores();
+		CostoImpuesto();
+		ResumenValores();
+		load_data("{{form.estado.value}}" === "Grabado" ? 0 : 1);
+		load_data_eventos("{{form.estado.value}}");
+		$(".currency-wrap input").addClass('text-right');
+		$("#id_n_participantes").trigger('change');
+
+		if ("{{form.estado.value}}" === "Autorizada con evento") {
+			$("#codigo_evento").attr("disabled", true);
+			$("#nombre_evento").attr("disabled", true);
+		}
+	});
+</script>
+{%endblock extrafooter%}

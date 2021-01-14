@@ -1,0 +1,24 @@
+[
+	{
+		"model": "orden_pago.Centro_Costos",
+		"pk": 1,
+		"fields": {
+			"nombre": "ESPOLTECH",
+			"espol": 8.00,
+			"espoltech": 5.00,
+			"ministerio": 0.50,
+			"fundaespol": 0.00
+		}
+	},
+	{
+		"model": "orden_pago.Centro_Costos",
+		"pk": 2,
+		"fields": {
+			"nombre": "FUNDESPOL",
+			"espol": 10.00,
+			"espoltech": 0.00,
+			"ministerio": 0.00,
+			"fundaespol": 4.50
+		}
+	}
+]

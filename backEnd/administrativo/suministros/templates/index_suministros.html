@@ -1,0 +1,162 @@
+{% extends 'base_administrativo.html' %}
+{% load static %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+{% load humanize %}
+{% load my_tags %}
+{% load l10n %}
+{% block title %}{{ "EC - INGRESO SUMINISTROS" }}{% endblock title %}
+{% block extraheader %}
+{% endblock extraheader %}
+{% block content %}
+
+<div class="row mb-2 d-flex white-bg">
+	<div class="col-9 v-align">
+		<h2>CONSULTA <span class="darkgreen-text">INGRESO SUMINISTROS</span></h2>
+	</div>
+	<div class="col-3 col-xl-3 v-align">
+		<a class="btn btn-secondary green-bg float-right" href="{% url 'suministros_view' %}"><i class="fas fa-plus"></i>
+			Agregar
+			nuevo</a>
+	</div>
+</div>
+
+
+<div class="row darkwhite-bg pb-2">
+	<div class="col-12 col-xl-12">
+		<form method="get" id="forma_test" novalidate>
+			{% csrf_token %}
+			<div class="row mb-2">
+				<div class="campo p-2 pl-3 col-12">
+					<h5 class="black-text text-uppercase mb-0">Información</h5>
+				</div>
+			</div>
+
+
+			<div class="form-row">
+
+                <div class="col-3">
+					{{ filter.form.cod_suministro|as_crispy_field }}
+				</div>
+
+				<div class="col-3">
+					{{ filter.form.proveedor_id|as_crispy_field }}
+				</div>
+
+				<div class="col-6">
+					{{ filter.form.proveedor_nom|as_crispy_field }}
+				</div>
+			</div>
+
+			<div class="form-row">
+
+				<div class="col-8">
+					{{ filter.form.fecha_facturacion}}
+				</div>
+				
+				<div class="col-4">
+					{{ filter.form.centro_costos|as_crispy_field }}
+				</div>
+				
+			</div>	
+			
+
+
+
+
+
+			<div class="form-group">
+				<button type="submit" class="btn btn-secondary green-bg float-right">
+					<i class="fas fa-search"></i> Buscar</button>
+				{{ filter.form.media }}
+			</div>
+
+
+		</form>
+
+	</div>
+</div>
+
+<div class="row mt-4">
+	<div class="col-12">
+		<table id="dtBasicExample" class="table table-responsive-md border-bottom">
+			
+			<thead class="white-text darkgreen-bg">
+				<tr>
+					<th scope="col">Código</th>
+					<th scope="col">Fecha</th>
+					<th scope="col">Ruc / CC Proveedor</th>
+					<th scope="col">Nombre Proveedor</th>
+					<th scope="col">Nº Factura</th>
+					<th scope="col">Fecha Factura</th>
+
+					<th scope="col">Subtotal</th>
+					<th scope="col">IVA</th>
+					<th scope="col">Total</th>
+                    <th scope="col">Observaciones</th>
+                    <th scope="col">Centro de Costos</th>
+
+					<th>Acciones</th>
+				</tr>
+            </thead>
+            {% if suministros %}
+			<tbody>
+				{% for j in suministros %}
+				<tr class="text-center">
+                    <td scope="row">{{j.cod_suministro}}</td>
+					<td scope="row">{{j.fecha}}</td>
+					<td scope="row">{{j.proveedor.ruc}}</td>
+                    <td scope="row" class="funcion2">{{j.proveedor.razon}}</td>
+                    <td scope="row">{{j.numero_factura}}</td>
+                    <td scope="row">{{j.fecha_facturacion}}</td>
+                    
+					<td scope="row" style="text-align:right">${{j.subtotal|floatformat:2|intcomma}}</td>
+
+					<td scope="row" style="text-align:right">${{j.valor_iva|floatformat:2|intcomma}}</td>
+					<td scope="row" style="text-align:right">${{j.total|floatformat:2|intcomma}}</td>
+					<td scope="row">{{j.observaciones}}</td>
+					<td scope="row">{{j.centro_costos}}</td>
+					<td scope="row">
+
+						
+						<a class="m-auto btn btn-secondary btn-sm" href="{% url 'suministro_editar' j.id %}"><i class="fas fa-edit"></i></a>
+
+						
+						
+					</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+
+			{% else %}
+			<h2>No hay elementos que mostrar</h2>
+			{% endif %}
+		</table>
+	</div>
+</div>
+
+
+
+
+
+
+
+
+
+{% block extrafooter %}
+<script src="{% static 'js/table.js' %}"></script>
+<script src="{% static 'js/fecha_suministros.js' %}"></script>
+
+<script type="text/javascript">
+
+	$(document).ready(function(){
+		$('#dtBasicExample td.funcion2').each(function(){
+				$(this).css('text-transform','uppercase');				
+			}
+		);
+	});
+	
+</script>
+{% endblock extrafooter %}
+
+{% endblock %}

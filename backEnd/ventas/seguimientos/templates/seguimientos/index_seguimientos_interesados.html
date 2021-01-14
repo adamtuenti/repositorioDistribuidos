@@ -1,0 +1,216 @@
+{% extends 'base_ventas.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% load staticfiles %}
+{% block title %}{{ "EC - Seguimiento Interesados" }}{% endblock title %}
+{% block content %}
+<div class="row mb-2 d-flex white-bg">
+    <div class="col-12 v-align">
+        <h2>CONSULTAS <span class="darkgreen-text">SEGUIMIENTO INTERESADOS</span></h2>
+    </div>
+</div>
+<div class="row darkwhite-bg py-2">
+    <div class="col-12">
+        <form action="" method="get">
+            <div class="form-row ">
+
+                <div class="col-2">
+                    {{ filter.form.cod_evento|as_crispy_field }}
+                </div>
+
+                <div class="col-10">
+                    {{ filter.form.nombre_evento|as_crispy_field }}
+                </div>
+
+            </div>
+            <div class="form-row ">
+                <div class="col-3">
+                    {{ filter.form.estado_seguimiento|as_crispy_field }}
+                </div>
+                <div class="col-3">
+                    {{ filter.form.canal_de_contacto|as_crispy_field }}
+                </div>
+                <div class="col-1">
+                    {{ filter.form.exito|as_crispy_field }}
+                </div>
+                <div class="col-3">
+                    {{ filter.form.asesor|as_crispy_field }}
+                </div>
+            </div>
+            <div class="form-row ">
+                <div class="col-3">
+                    {{ filter.form.inters__nombre|as_crispy_field }}
+                </div>
+                <div class="col-3">
+                    {{ filter.form.inters__apellido|as_crispy_field }}
+                </div>
+                <div class="col-3">
+                    {{ filter.form.inters__celular|as_crispy_field }}
+                </div>
+                <div class="col-3">
+                    {{ filter.form.inters__correo|as_crispy_field }}
+                </div>
+            </div>
+            <div class="form-row ">
+                <div class="col-4">
+                    {{ filter.form.estado_participante|as_crispy_field }}
+                </div>
+                <div class="col-8">
+                    {{ filter.form.fecha_seguimiento}}
+                </div>
+            </div>
+            <div class="form-row ">
+                <div class="col-8">
+                    {{ filter.form.fecha_registro}}
+                </div>
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-secondary green-bg float-right"><i class="fas fa-search"></i>
+                    Buscar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<div class="row mt-2 ">
+    <div class="col-12 col-xl-12">
+        <table id="dtBasicExample" class="table table-responsive">
+            <thead class="darkgreen-bg white-text">
+                <tr>
+                    <th>N°</th>
+                    <th>Fecha Seguimiento</th>
+                    <th>Código Evento</th>
+                    <th>Nombre Evento Interés</th>
+                    <th>Nombre del Participante</th>
+                    <th>Observación</th>
+                    <th>Celular</th>
+                    <th>Correo Eléctrico</th>
+                    <th>Canal de contacto</th>
+                    <th>Estado seguimiento</th>
+                    <th>Estado del Participante</th>
+                    <th>Éxito</th>
+                    <th>Asesor/a</th>
+                    <th>Fecha Registro</th>
+                    {% comment %} <th scope="col">Fecha Por Contactar</th>
+                    <th scope="col">Fecha Sin Respuesta</th>
+                    <th scope="col">Fecha Contactado</th>
+                    <th scope="col">Fecha Contacto Inválido</th> {% endcomment %}
+
+                    <th>Acciones</th>
+
+                </tr>
+                {% if filter.qs %}
+            <tbody>
+                {% for instancia in filter.qs %}
+                <tr class="text-center">
+                    <td>{{instancia.n_registro_interesado}}</td>
+                    <td>{{instancia.fecha_seguimiento}}</td>
+                    <td>{{instancia.cod_evento}}</td>
+                    <td scope="row">
+                        <div class="col-auto text-truncate">
+                            {{instancia.nombre_evento}}
+                        </div>
+                    </td>
+                    <td>{{instancia.inters.nombre | upper}} {{instancia.inters.apellido | upper}}</td>
+                    <td>{{instancia.observaciones}}</td>
+                    <td>{{instancia.inters.celular}}</td>
+                    <td>{{instancia.inters.correo}}</td>
+                    <td>{{instancia.canal_de_contacto}}</td>
+                    {% if instancia.estado_seguimiento == "PCTC" %}
+                    <td class="bg-warning" scope="row">{{instancia.get_estado_seguimiento_display}}</td>
+                    {% else %}
+                    <td scope="row">{{instancia.get_estado_seguimiento_display}}</td>
+                    {% endif %}
+                    <td>{{instancia.get_estado_participante_display}}</td>
+                    <td>{{instancia.exito}}</td>
+                    <td scope="row">{{instancia.asesor}}</td>
+                    <td>{{instancia.fecha_registro}}</td>
+                    {% comment %} <td scope="row">{{instancia.fecha_porcontactar|default_if_none:""}}</td>
+                    <td scope="row">{{instancia.fecha_sinrespuesta|default_if_none:""}}</td>
+                    <td scope="row">{{instancia.fecha_contactado|default_if_none:""}}</td>
+                    <td scope="row">{{instancia.fecha_contactoinvalido|default_if_none:""}}</td>
+                    {% endcomment %}
+                    <td>
+                        <div class="col-auto text-truncate text-center">
+
+                            {% if user.pk == instancia.asesor.pk %}
+                            <a class="btn btn-secondary btn-sm"
+                                href="{% url 'seguimiento_interesados_editar' instancia.pk %}"><i
+                                    class="fas fa-edit"></i></a>
+                            {% else %}
+                            <a href='#' class="btn btn-secondary btn-sm" data-toggle='modal'
+                                data-user='{{instancia.asesor}}' data-target="#segCenter"
+                                data-seg="{% url 'seguimiento_interesados_editar' instancia.pk %}">
+                                <i class="fas fa-edit"></i></a>
+                            {% endif%}
+                            {% comment %} <a onclick='eliminarSI({{ instancia.pk }});' class="btn btn-danger btn-sm"
+                                data-toggle='modal' data-target="#seguimientoInteresadoEliminar" href='#'><i
+                                    class="fas fa-trash"></i>
+                            </a> {% endcomment %}
+                        </div>
+                    </td>
+
+                </tr>
+                {% endfor %}
+            </tbody>
+            {% else %}
+            <h2>No hay elementos que mostrar</h2>
+            {% endif %}
+            </thead>
+        </table>
+    </div>
+</div>
+
+<div class="modal fade" id="segCenter" tabindex="-1" role="dialog" aria-labelledby="segTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="segTitle">Alerta</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="white-space: pre-line">
+
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <a class="btn btn-danger" href="">Continuar</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock content %}
+
+{% block extrafooter %}
+<script src="{% static 'js/table.js' %}"></script>
+<script src="{% static 'js/fecha_naturales.js' %}"></script>
+
+<script>
+
+    $('#segCenter').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget);
+        var recipient = button.data('seg');
+        var user = button.data('user');
+        var modal = $(this)
+        modal.find('.modal-body').text("Este seguimiento fue creado por " + user + ".\n¿Está seguro de querer editarlo?");
+        modal.find('a').attr('href', recipient);
+    })
+
+    function eliminarSI(id) {
+        $.ajax({
+            url: "{% url 'seguimiento_interesados_confirmar_eliminar' %}",
+            data: {
+                'pk': id,
+            },
+            success: function (data) {
+                $("#sie").html(data)
+            }
+        });
+    };
+</script>
+
+{% endblock extrafooter %}

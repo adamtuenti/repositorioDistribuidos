@@ -1,0 +1,73 @@
+[
+    {
+      "model":"proveedores.Sector",
+      "pk": 1,
+      "fields": {
+        "nombre":"Agropecuario"
+      }
+    },
+  
+    {
+      "model":"proveedores.Sector",
+      "pk": 2,
+      "fields": {
+        "nombre":"Construcción"
+      }
+    },
+  
+    {
+      "model":"proveedores.Sector",
+      "pk": 3,
+      "fields": {
+        "nombre":"Manufactura"
+      }
+    },
+  
+    {
+      "model":"proveedores.Sector",
+      "pk": 4,
+      "fields": {
+        "nombre":"Salud"
+      }
+    },
+  
+    {
+      "model":"proveedores.Sector",
+      "pk": 5,
+      "fields": {
+        "nombre":"Transporte y Almacenamiento"
+      }
+    },
+  
+    {
+      "model":"proveedores.Sector",
+      "pk": 6,
+      "fields": {
+        "nombre":"Servicio"
+      }
+    },
+  
+    {
+      "model":"proveedores.Sector",
+      "pk": 7,
+      "fields": {
+        "nombre":"Financiero"
+      }
+    },
+  
+    {
+      "model":"proveedores.Sector",
+      "pk": 8,
+      "fields": {
+        "nombre":"Comercio"
+      }
+    },
+  
+    {
+      "model":"proveedores.Sector",
+      "pk": 9,
+      "fields": {
+        "nombre":"Minero y Energético"
+      }
+    }
+  ]

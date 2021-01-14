@@ -1,0 +1,18 @@
+<div class="modal-header">
+    <h5 class="modal-title" id="ordenTitle">Eliminar Seguimiento </h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<form id="snDel" method="POST" action="{% url 'seguimiento_natural_eliminar' seguimiento.pk %}" >
+    {% csrf_token %}
+
+    <div class="modal-body">
+        ¿Está seguro que desea eliminar el seguimiento?
+        
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+        <button class="btn btn-secondary green-bg mr-3" form="snDel" type="submit"> Eliminar</button>
+    </div>
+</form>

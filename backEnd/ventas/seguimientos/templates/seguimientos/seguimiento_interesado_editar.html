@@ -1,0 +1,128 @@
+{% extends "base_ventas.html" %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% load index %}
+
+{% block title %}{{ "EC - Seguimiento Interesados" }}{% endblock title %}
+
+{% block extraheader %}
+<link rel="stylesheet" href="{% static 'css/select2.min.css' %}" />
+<link rel="stylesheet" href="{% static 'css/select2-bootstrap.min.css' %}" />
+{% endblock extraheader %}
+
+{% block content %}
+<form method="POST" novalidate id="form-editSegNat" enctype="multipart/form-data"
+    data-event-url="{% url 'ajax_load_eventos_Natural' %}">
+    {% csrf_token %}
+    {% block editar %}
+
+    <div class="row mb-2">
+        <div class="col-6 col-xl-4 ml-0 v-align">
+            <h2 class="darkgreen-text text-uppercase mb-0">Editar Seguimiento Interesado</h2>
+        </div>
+        <input type="hidden" id='cod' value="{{form.cod_evento.value}}">
+        <input type="hidden" id='nom' value="{{form.nombre_evento.value}}">
+    </div>
+    {% endblock editar %}
+    <div class="row">
+		<div class="mt-2 campo p-2 pl-3 col-12">
+			<h5 class="black-text text-uppercase mb-0">Información Interesado</h5>
+		</div>
+	</div>
+    <div class="row darkwhite-bg py-2">
+        <div class="col-12">
+            <div class="form-row">
+                <div class="col-6 col-md-3 mb-0">
+                    {{ interesado.nombre|as_crispy_field }}
+                </div>
+                <div class="col-6 col-md-3 mb-0">
+                    {{ interesado.apellido|as_crispy_field }}
+                </div>
+                <div class="col-6 col-md-3 mb-0">
+                    {{ interesado.correo|as_crispy_field }}
+                </div>
+                <div class="col-6 col-md-3 mb-0">
+                    {{ interesado.celular|as_crispy_field }}
+                </div>
+            </div>    
+        </div>
+    </div>
+
+    <div class="row">
+		<div class="mt-2 campo p-2 pl-3 col-12">
+			<h5 class="black-text text-uppercase mb-0">Información Seguimiento</h5>
+		</div>
+	</div>
+
+    <div class="row darkwhite-bg py-2">
+        <div class="col-12">
+            <div class="form-row">
+                <div class="col-6 col-md-2 mb-0">
+                    {{ form.n_registro_interesado|as_crispy_field }}
+                </div>
+                <div class="col-6 col-md-2 mb-0">
+                    {{ form.fecha_registro|as_crispy_field }}
+                </div>
+                <div class="col-6 col-md-2 mb-0">
+                    {{ form.fecha_seguimiento|as_crispy_field }}
+                </div>
+                <div class="col-6 col-md-3 mb-0">
+                    {{ form.estado_seguimiento|as_crispy_field }}
+                </div>
+                
+                <div class="col-6 col-md-1 mb-0">
+                    {{ form.exito|as_crispy_field }}
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="col-6 col-md-4 mb-0">
+                    {{ form.canal_de_contacto|as_crispy_field }}
+                </div>
+                <div class="col-6 col-md-2 mb-0">
+                    {{ form.proximo_seguimiento|as_crispy_field }}
+                </div>
+               <div class="col-6 col-md-3 mb-0">
+                    {{ form.estado_participante|as_crispy_field }}
+                </div>
+                
+                
+            </div>
+            
+            <div class="form-row">
+                <div class="col-6 col-md-2 mb-0">
+                    {{ form.cod_evento|as_crispy_field }}
+                </div>
+                <div class="col-6 col-md-10 mb-0">
+                    {{ form.nombre_evento|as_crispy_field }}
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="col-6 col-md-12 mb-0">
+                    {{ form.observaciones|as_crispy_field }}
+                </div>
+            </div>
+            
+            
+
+            </div>
+        </div>
+    </div>
+    
+
+    <div class="col-12">
+        <button  type="submit" class="btn btn-secondary green-bg">Guardar</button>
+        <a class="btn btn-secondary" href="{% url 'index_seguimientos_interesados' %}">Cancelar</a>
+    </div>
+    
+</form>
+
+
+{% endblock content %}
+
+{% block extrafooter %}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
+<script src="{% static 'js/seguimiento_natural_editar.js' %}"></script>
+{% endblock extrafooter %}

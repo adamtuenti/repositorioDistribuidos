@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<meta http-equiv="content-type" content="text/html; charset=utf-8"> 
+<html>
+<head>
+    <title>Eventos ejecutados por diseño</title>
+     <style>
+
+        @page{
+         size: landscape;
+             @frame header_frame {
+                   -pdf-frame-content:header_content;
+                   left:0pt;
+                   width:100%;
+                   top:0pt;
+                   height:100pt;
+                   /*-pdf-frame-border = 1;*/
+             }
+
+             @frame img_content {
+                   -pdf-frame-content:img_content;
+                   left:10pt;
+                   width:300pt;
+                   top:10pt;
+                   height:100pt;
+                   
+             }
+
+             @frame footer_frame {
+                   -pdf-frame-content:footer_content;
+                   left:10pt;
+                   width:820pt;
+                   top:550pt;
+                   height:30pt;
+
+             }
+
+             @frame contenido_del_footer {
+                   -pdf-frame-content:contenido_del_footer;
+                   left:10pt;
+                   width:550pt;
+                   top:560pt;
+                   height:40pt;
+
+             }
+
+            @frame paginacion {
+                   -pdf-frame-content:paginacion;
+                   left:780pt;
+                   width:200pt;
+                   top:570pt;
+                   height:40pt;
+             }
+
+
+             @frame content_frame {
+                left:5pt;
+                width:830pt;
+                top:100pt;
+                height:325pt;
+                /*-pdf-frame-border = 1;*/
+             }
+
+             @frame imagen {
+                -pdf-frame-content: imagen;
+                left: 0pt; width:250pt; top: 5pt; height: 165pt;
+                /*-pdf-frame-border = 1;*/
+            }
+
+            @frame titulo {
+                -pdf-frame-content: titulo;
+                left: 640pt; width:250pt; top: 15pt; height: 165pt;
+                /*-pdf-frame-border = 1;*/
+            }
+
+            @frame codigo {
+                -pdf-frame-content: codigo;
+                left: 720pt; width:250pt; top: 35pt; height: 165pt;
+                /*-pdf-frame-border = 1;*/
+            }
+
+             @frame estandar {
+                -pdf-frame-content: estandar;
+                left: 10pt; width:800pt; top: 80pt; height: 140pt;
+               
+            }
+
+            @frame detalle_eventos {
+                -pdf-frame-content: detalle_eventos;
+                left: 10pt; width:800pt; top: 435pt; height: 400pt;
+               
+            }
+
+
+
+        }
+    </style>
+</head>
+<body>
+    <div id="header_content">
+            <img src="static/image/logo.png" id="imagen" alt="">
+
+            <div id="titulo">
+                <label style=" font-size:18px;font-family: serif;"> <strong>Eventos ejecutados por diseño</strong></label><br>
+            </div>
+            
+            <div id="codigo">
+                 <label style=" background-color:yellow; font-size: 16px;font-family: serif;"><strong>POEC0502 V7/B</strong></label>
+            </div>
+
+
+    </div>
+
+
+
+        <table class="table" style="border-collapse:collapse; border:0.4px solid black; table-layout:fixed;">
+            <thead >
+                <tr>
+                    <td style=" height: 35px; word-wrap:break-word; width:100px;" class='celda' style="width: 25px;"> <strong><center> N.- </center></strong></td>
+                    <td class='celda' > <strong><center> Codigo </center> </strong></td>
+                    <td class='celda' > <strong><center> Versión </center></strong></td>
+                    <td class='celda' > <strong><center> Nombre evento </center></strong></td>
+                    <td class='celda' > <strong><center> Area </center></strong></td>
+                    <td class='celda' > <strong><center> Especialidad </center></strong> </td>
+                    <td class='celda' > <strong> <center> Tipo Evento </center></strong> </td>
+                    <td class='celda' > <strong><center> Modalidad </center></strong></td>
+                    <td class='celda' ><strong><center> Tipo certificado </center></strong></td>
+                    <td class='celda' > <strong><center> Horas presenciales </center></strong></td>
+                    <td class='celda' > <strong><center> N° Horas autonomas </center></strong></td>
+                    <td class='celda' > <strong><center> Total horas </center></strong></td>
+                    <td class='celda' > <strong><center>Fecha <br> creación</center></strong></td>
+                </tr>
+            </thead>
+            <tbody>
+            {% for d in design %}
+                  <tr style="height: 40px;">
+                      <td style=" word-wrap:break-word; width:30px;" class='celda' ><center> {{d.pk}}</center></td>
+                      <td style=" word-wrap:break-word; width:80px;" class='celda'><center>{{d.codigo}}</center> </td>
+                      <td style=" word-wrap:break-word; width:60px;" class='celda'><center>{{d.version}}</center></td>
+                      <td style=" word-wrap:break-word; width:180px;" class='celda'> <center> {{d.nombre}} </center> </td>
+                      <td style=" word-wrap:break-word; width:120px;" class='celda'><center>{{d.area }}</center></td>
+                      <td style=" word-wrap:break-word; width:150px;" class='celda'><center>{{d.especialidad}}</center></td>
+                      <td style=" word-wrap:break-word; width:80px;" class='celda'><center>{{d.tipo_evento}}</center></td>
+                      <td style=" word-wrap:break-word; width:80px;" class='celda'><center>{{d.modalidad}}</center></td>
+                      <td style=" word-wrap:break-word; width:100px;" class='celda'><center>{{d.tipo_certificado}}</center></td>
+                      <td style=" word-wrap:break-word; width:70px;" class='celda'><center>{{d.horas_presenciales}}</center></td>
+                      <td style=" word-wrap:break-word; width:70px;" class='celda'><center>{{d.horas_autonomas}}</center>  </td>
+                      <td style=" word-wrap:break-word; width:50px;" class='celda'><center>{{d.horas_totales}}</center>  </td>
+                      <td style=" word-wrap:break-word; width:100px;" class='celda'><center>  {{d.fecha}}</center></td>  
+                  </tr>
+            {% endfor %}
+
+            </tbody>
+          </table>
+
+
+
+
+
+
+    
+
+    <div id="footer_content">
+      <table id="detalle_eventos" style="border-collapse:collapse; table-layout:fixed; font-size: 12px; ">
+            <tr style="height: 50px;">
+                  <td style="font-family:Arial;"><strong>Total diseños:</strong></td>
+                  <td style="width:300px;">{{cantidad_designs}}</td>
+                  <td style=""><strong>Modalidad por hora:</strong></td>
+                  <td style="width:300px;">Prescencial: {{modalidad_por_hora.0}} horas | Semi-prescencial: {{modalidad_por_hora.1}} horas | Virtual: {{modalidad_por_hora.2}} horas</td>
+            </tr>
+            <tr style="height: 50px;">
+                  <td style="font-family:Arial"><strong>Total Diseño por area:</strong></td>
+                  <td style="width:300px;">Σ total</td>
+                  <td style=""><strong>Total tipo certificado:</strong></td>
+                  <td style="width:300px;"> Aprobación: {{tipo_certificado_total.0}} | Participación: {{tipo_certificado_total.1}}</td>
+            </tr>
+
+            <tr style="height: 50px;">
+                  <td style="width:150px; font-family:Arial"><strong>Total tipo de evento</strong></td>
+                  <td style="width:350px;">Diplomados: {{ lista_tipo_evento.0 }} | Programas: {{lista_tipo_evento.1}} | Cursos: {{lista_tipo_evento.2}} | Talleres: {{lista_tipo_evento.3}} | Conferencias: {{lista_tipo_evento.4}} | Seminarios: {{lista_tipo_evento.5}} | Webinarios: {{lista_tipo_evento.6}} | Charlas: {{lista_tipo_evento.7}} | Módulos: {{lista_tipo_evento.6}}</td>
+                  <td style=" width: 150px;"></td>
+                  <td></td>
+            </tr>
+
+        </table>
+
+
+
+        <div id="separador">
+             <label style="color: #3c5634">///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////</label>
+        </div>
+
+        <div id="contenido_del_footer" style="font-size: 13px">
+            <label>CEC ESPOL,Campus Las Peñas, Campus Gustavo Galindo Velasco | Teléf:042269763 | 0960507588</label>
+            <br>
+            <label>Fecha impresión: {{fecha}} &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp  &nbsp  &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp Usuario: Nombre apellido</label>
+        </div>
+    
+        <div id="paginacion">
+            <label style="font-size: 13px">Pág <pdf:pagenumber> | <pdf:pagecount></label>
+        </div>
+    </div>
+
+        
+</body>
+</html>

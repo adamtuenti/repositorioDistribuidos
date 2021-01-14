@@ -1,0 +1,444 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<div id="app">
+    <form v-on:submit.prevent="subirCalificaciones">
+        <div class="row">
+            <div class="col-9 col-sm-9 col-xl-9">
+                <h3>NUEVO REGISTRO DE NOTAS <span class="darkgreen-text">PRIMERA EVALUACION</span></h3>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label for="codigo_evento" class="col-sm-2 col-form-label">Código Evento:</label>
+            <div class="col-sm-3">
+                <input id="codigo_evento" name="codigo_evento" type="text" class="form-control"
+                    oninvalid="this.setCustomValidity('Ingrese un codigo válido')" oninput="this.setCustomValidity('')"
+                    v-on:change="getInfo()" required>
+            </div>
+            <div class="col-sm-7">
+                <input id="nombre_evento" name="nombre_evento" type="text" class="form-control"
+                    oninvalid="this.setCustomValidity('Ingrese un apellido válido')" v-model="evento.nombre"
+                    oninput="this.setCustomValidity('')" required disabled>
+            </div>
+        </div>
+        <h4 class="darkgreen-text">Notas de primera evaluacion registradas</h4>
+        <div class="row mt-4">
+            <div class="col-16 col-xl-16 table-container">
+                <table class="table table-responsive table-bordered" id="tabla1">
+                    <thead class="white-text darkgreen-bg">
+                        <tr scope="col">
+                            <th scope="col">Codigo Evento Padre</th>
+                            <th scope="col">Nombre Evento Padre</th>
+                            <th scope="col">Codigo Evento</th>
+                            <th scope="col">Nombre Evento</th>
+                            <th scope="col">Fecha inicio</th>
+                            <th scope="col">Fecha fin</th>
+                            <th scope="col">Estado</th>
+                            <th scope="col">Tipo Evento</th>
+                            <th scope="col">Modalidad</th>
+                            <th scope="col">Fecha registro notas</th>
+                            <th scope="col">Docente</th>
+                            <th scope="col">Usuario</th>
+                            <th scope="col">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td scope="col">{evento.codigo_evento_padre}</td>
+                            <td scope="col">{evento.nombre_evento_Padre}</td>
+                            <td scope="col">{evento.codigo_evento}</td>
+                            <td scope="col">{evento.nombre}</td>
+                            <td scope="col">{evento.fecha_inicio}</td>
+                            <td scope="col">{evento.fecha_fin}</td>
+                            <td scope="col">{evento.estado}</td>
+                            <td scope="col">{evento.tipo_evento}</td>
+                            <td scope="col">{evento.modalidad}</td>
+                            <td scope="col">{evento.fecha_registro_notas1}</td>
+                            <td scope="col">{evento.docente.nombres} {evento.docente.apellidos}</td>
+                            <td scope="col">{evento.docente.nombres} {evento.docente.apellidos}</td>
+                            <td class="text-center" scope="col">
+                                <a href="" data-toggle="modal" data-target="#notas1evaluacion"><span
+                                        class="text-primary">Ver</span></a>
+                                <a href="" onclick="Aprobar('{evento.codigo_evento}')" data-toggle="modal"
+                                    data-target="#aprobacion"><span class="text-success">Aprobar</span></a>
+                                <a href="" data-toggle="modal" data-target="#rechazo"><span
+                                        class="text-danger">Rechazar</span></a>
+                            </td>
+
+                        </tr>
+                        <div class="modal fade" id="rechazo" tabindex="-1" role="dialog">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <!-- CUSTOM TITLE -->
+                                        <h5 class="modal-title"> Rechazo de notas </h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span> </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <!-- CUSTOM FORM -->
+                                        <label>Motivo de rechazo: </label>
+                                        <textarea value="rechazo" class="form-control" name="editor1"
+                                            id="motivo_rechazo" required></textarea>
+                                    </div>
+                                    <div class="modal-footer"><a href=""
+                                            onclick="Rechazar('{evento.codigo_evento}')">Rechazar</a> </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+        <div class="modal fade bs-example-modal-lg" id="notas1evaluacion" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <!-- CUSTOM TITLE -->
+                        <h5 class="modal-title"> Pre-visualizacion de notas </h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span> </button>
+                    </div>
+                    <div class="modal-body">
+                        <table class="table table-responsive table-bordered" id="tablanotas1">
+                            <thead class="white-text darkgreen-bg">
+                                <tr scope="col">
+                                    <th scope="col">No.</th>
+                                    <th scope="col">Nombre del Participante</th>
+                                    <th scope="col">Cedula</th>
+                                    <th scope="col">Calificacion</th>
+                                    <th scope="col">Asistencia</th>
+                                    <th scope="col">Tipo Certificado</th>
+                                    <th scope="col">Categoria</th>
+                                    <th scope="col">Tipo de nota</th>
+                                    <th scope="col">Fecha de emision</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template v-for="(persona,index) in participantes">
+                                    <template v-for="detalle in detalle_participantes">
+                                        <tr v-if="persona.id == detalle.id_participante">
+                                            <td scope="col">{index+1}</td>
+                                            <td scope="col">{persona.nombres} {persona.apellidos}</td>
+                                            <td scope="col">{persona.identificacion}</td>
+                                            <td scope="col">{detalle.nota_final1}</td>
+                                            <td scope="col">Asistencia</td>
+                                            <td scope="col">{diseno.tipo_certificado}</td>
+                                            <td scope="col">Categoria</td>
+                                            <td scope="col">Primera Evaluacion</td>
+                                            <td scope="col">{evento.fecha_registro_notas1}</td>
+                                        </tr>
+                                    </template>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <h4 class="darkgreen-text">Notas rectificadas</h4>
+        <div class="row mt-4">
+            <div class="col-16 col-xl-16 table-container">
+                <table class="table table-responsive table-bordered" id="tabla2">
+                    <thead class="white-text darkgreen-bg">
+                        <tr scope="col">
+                            <th scope="col">Codigo Evento Padre</th>
+                            <th scope="col">Nombre Evento Padre</th>
+                            <th scope="col">Codigo Evento</th>
+                            <th scope="col">Nombre Evento</th>
+                            <th scope="col">Fecha inicio</th>
+                            <th scope="col">Fecha fin</th>
+                            <th scope="col">Estado</th>
+                            <th scope="col">Tipo Evento</th>
+                            <th scope="col">Modalidad</th>
+                            <th scope="col">Fecha registro notas</th>
+                            <th scope="col">Docente</th>
+                            <th scope="col">Usuario</th>
+                            <th scope="col">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td scope="col">{evento.codigo_evento_padre}</td>
+                            <td scope="col">{evento.nombre_evento_Padre}</td>
+                            <td scope="col">{evento.codigo_evento}</td>
+                            <td scope="col">{evento.nombre}</td>
+                            <td scope="col">{evento.fecha_inicio}</td>
+                            <td scope="col">{evento.fecha_fin}</td>
+                            <td scope="col">{evento.estado}</td>
+                            <td scope="col">{evento.tipo_evento}</td>
+                            <td scope="col">{evento.modalidad}</td>
+                            <td scope="col">{evento.fecha_registro_notas1}</td>
+                            <td scope="col">{evento.docente.nombres} {evento.docente.apellidos}</td>
+                            <td scope="col">{evento.docente.nombres} {evento.docente.apellidos}</td>
+                            <td class="text-center" scope="col">
+                                <a href="" data-toggle="modal" data-target="#notasrectificacion"><span class="text-primary">Ver</span></a>
+                                <a href="" onclick="Aprobar('{evento.codigo_evento}')" data-toggle="modal"
+                                    data-target="#aprobacion"><span class="text-success">Aprobar</span></a>
+                                <a href="" data-toggle="modal" data-target="#rechazo"><span
+                                        class="text-danger">Rechazar</span></a>
+                            </td>
+
+                        </tr>
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+        <div class="modal fade bs-example-modal-lg" id="notasrectificacion" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <!-- CUSTOM TITLE -->
+                        <h5 class="modal-title"> Pre-visualizacion de notas </h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span> </button>
+                    </div>
+                    <div class="modal-body">
+                        <table class="table table-responsive table-bordered" id="tablanotas2">
+                            <thead class="white-text darkgreen-bg">
+                                <tr scope="col">
+                                    <th scope="col">No.</th>
+                                    <th scope="col">Nombre del Participante</th>
+                                    <th scope="col">Cedula</th>
+                                    <th scope="col">Calificacion</th>
+                                    <th scope="col">Asistencia</th>
+                                    <th scope="col">Tipo Certificado</th>
+                                    <th scope="col">Categoria</th>
+                                    <th scope="col">Tipo de nota</th>
+                                    <th scope="col">Fecha de rectificacion</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template v-for="(persona,index) in participantes">
+                                    <template v-for="detalle in detalle_participantes">
+                                        <tr v-if="(persona.id == detalle.id_participante) && detalle.rectificado=='Si'">
+                                            <td scope="col">{index+1}</td>
+                                            <td scope="col">{persona.nombres} {persona.apellidos}</td>
+                                            <td scope="col">{persona.identificacion}</td>
+                                            <td scope="col">{detalle.nota_final1}</td>
+                                            <td scope="col">Asistencia</td>
+                                            <td scope="col">{diseno.tipo_certificado}</td>
+                                            <td scope="col">Categoria</td>
+                                            <td scope="col">Rectificacion</td>
+                                            <td scope="col">{detalle.fecha_rectificado}</td>
+                                        </tr>
+                                    </template>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <h4 class="darkgreen-text">Notas mejoramiento</h4>
+        <div class="row mt-4">
+            <div class="col-16 col-xl-16 table-container">
+                <table class="table table-responsive table-bordered" id="tabla3">
+                    <thead class="white-text darkgreen-bg">
+                        <tr scope="col">
+                            <th scope="col">Codigo Evento Padre</th>
+                            <th scope="col">Nombre Evento Padre</th>
+                            <th scope="col">Codigo Evento</th>
+                            <th scope="col">Nombre Evento</th>
+                            <th scope="col">Fecha inicio</th>
+                            <th scope="col">Fecha fin</th>
+                            <th scope="col">Estado</th>
+                            <th scope="col">Tipo Evento</th>
+                            <th scope="col">Modalidad</th>
+                            <th scope="col">Fecha registro notas mejoramiento</th>
+                            <th scope="col">Docente</th>
+                            <th scope="col">Usuario</th>
+                            <th scope="col">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td scope="col">{evento.codigo_evento_padre}</td>
+                            <td scope="col">{evento.nombre_evento_Padre}</td>
+                            <td scope="col">{evento.codigo_evento}</td>
+                            <td scope="col">{evento.nombre}</td>
+                            <td scope="col">{evento.fecha_inicio}</td>
+                            <td scope="col">{evento.fecha_fin}</td>
+                            <td scope="col">{evento.estado}</td>
+                            <td scope="col">{evento.tipo_evento}</td>
+                            <td scope="col">{evento.modalidad}</td>
+                            <td scope="col">{evento.fecha_registro_mej}</td>
+                            <td scope="col">{evento.docente.nombres} {evento.docente.apellidos}</td>
+                            <td scope="col">{evento.docente.nombres} {evento.docente.apellidos}</td>
+                            <td class="text-center" scope="col">
+                                <a href="" data-toggle="modal" data-target="#notasmejoramiento"><span class="text-primary">Ver</span></a>
+                                <a href="" onclick="Aprobar('{evento.codigo_evento}')" data-toggle="modal"
+                                    data-target="#aprobacion"><span class="text-success">Aprobar</span></a>
+                                <a href="" data-toggle="modal" data-target="#rechazo"><span
+                                        class="text-danger">Rechazar</span></a>
+                            </td>
+
+                        </tr>
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+        <div class="modal fade bs-example-modal-lg" id="notasmejoramiento" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <!-- CUSTOM TITLE -->
+                        <h5 class="modal-title"> Pre-visualizacion de notas </h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span> </button>
+                    </div>
+                    <div class="modal-body">
+                        <table class="table table-responsive table-bordered" id="tablanotas3">
+                            <thead class="white-text darkgreen-bg">
+                                <tr scope="col">
+                                    <th scope="col">No.</th>
+                                    <th scope="col">Nombre del Participante</th>
+                                    <th scope="col">Cedula</th>
+                                    <th scope="col">Calificacion</th>
+                                    <th scope="col">Asistencia</th>
+                                    <th scope="col">Tipo Certificado</th>
+                                    <th scope="col">Categoria</th>
+                                    <th scope="col">Tipo de nota</th>
+                                    <th scope="col">Fecha emision</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template v-for="(persona,index) in participantes">
+                                    <template v-for="detalle in detalle_participantes">
+                                        <tr v-if="(persona.id == detalle.id_participante) && (detalle.nota_mej != 0 && detalle.nota_mej != null)">
+                                            <td scope="col">{index+1}</td>
+                                            <td scope="col">{persona.nombres} {persona.apellidos}</td>
+                                            <td scope="col">{persona.identificacion}</td>
+                                            <td scope="col">{detalle.nota_mej}</td>
+                                            <td scope="col">Asistencia</td>
+                                            <td scope="col">{diseno.tipo_certificado}</td>
+                                            <td scope="col">Categoria</td>
+                                            <td scope="col">Mejoramiento</td>
+                                            <td scope="col">{detalle.fecha_registro_mej}</td>
+                                        </tr>
+                                    </template>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="aprobacion" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <!-- CUSTOM TITLE -->
+                        <h5 class="modal-title"> Notificación </h5>
+                    </div>
+                    <div class="modal-body">
+                        <!-- CUSTOM FORM -->
+                        <label>Se han aprobado las notas</label>
+                    </div>
+                    <div class="modal-footer"><a href="">Aceptar</a> </div>
+                </div>
+            </div>
+        </div>
+        <hr>
+    </form>
+</div>
+<!-- </form> -->
+{% endblock %}
+{% block specific_scripts %}
+<script>
+    function Aprobar(id) {
+        axios.defaults.xsrfCookieName = 'csrftoken'
+        axios.defaults.xsrfHeaderName = "X-CSRFTOKEN"
+        axios.patch('/academico/api/design/' + id + '/',
+            { estado: "Aprobado" }).then((response) => {
+            }).catch((err) => {
+                console.log(err.response)
+            })
+    }
+    function Rechazar(id, motivo) {
+        axios.defaults.xsrfCookieName = 'csrftoken'
+        axios.defaults.xsrfHeaderName = "X-CSRFTOKEN"
+        motivo = document.getElementById('motivo_rechazo').value
+        axios.patch('/academico/api/design/' + id + '/',
+            { estado: "Rechazado", motivo_rechazo: motivo }).then((response) => {
+            }).catch((err) => {
+                console.log(err.response)
+            })
+
+    }
+    const app = new Vue({
+        el: '#app',
+        delimiters: ["{", "}"],
+        data: {
+            evento: { docente: {} },
+            diseno: {},
+            detalle_participantes: [],
+            participantes: [],
+        },
+        mounted: function () {
+            axios.defaults.xsrfCookieName = 'csrftoken'
+            axios.defaults.xsrfHeaderName = "X-CSRFTOKEN"
+        },
+        methods: {
+            getInfo: function () {
+                let codigo = $("#codigo_evento").val();
+                axios.get("/academico/api/event/evento/" + codigo + "/").then((response) => {
+                    this.evento = response.data;
+                    axios.get("/api/docente/").then((response2) => {
+                        for (doc of response2.data) {
+                            if (this.evento.docente == doc.id) {
+                                this.evento.docente = doc;
+                            }
+                        }
+                    })
+                    this.getDiseno();
+                }).catch((err) => {
+                    console.log(err);
+                })
+
+
+            },
+            getDiseno: function () {
+                axios.get("/academico/api/design/" + this.evento['diseno'] + "/").then((response) => {
+                    this.diseno = response.data;
+                    this.getIdParticipantes();
+                }).catch((err) => {
+                    console.log(err);
+                })
+            },
+            getIdParticipantes: function () {             //CAMBIAR RUTA DE API, SE ESTA USANDO TABLA PARTICIPANTE PROVISIONAL PARA HACER PRUEBAS
+                axios.get('/api/detalleparticipante/').then((response) => {
+                    for (elem of response.data) {
+                        if (elem['id_evento'] == $("#codigo_evento").val()) {
+                            this.detalle_participantes.push(elem);
+                        }
+                    }
+                    this.getParticipantes();
+                }).catch((err) => {
+                    console.log(err);
+                })
+            },
+            getParticipantes: function () {             //CAMBIAR RUTA DE API, SE ESTA USANDO TABLA PARTICIPANTE PROVISIONAL PARA HACER PRUEBAS
+                axios.get('/api/participante/').then((response) => {
+                    for (part of this.detalle_participantes) {
+                        for (elem of response.data) {
+                            if (elem['id'] == part['id_participante']) {
+                                this.participantes.push(elem);
+                            }
+                        }
+                    }
+                }).catch((err) => {
+                    console.log(err);
+                })
+            },
+
+        }
+    })
+
+</script>
+{% endblock %}

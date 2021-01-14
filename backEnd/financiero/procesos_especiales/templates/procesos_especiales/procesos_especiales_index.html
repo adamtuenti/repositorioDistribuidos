@@ -1,0 +1,242 @@
+{% extends 'base_financiero.html' %}
+
+
+{% load crispy_forms_tags %}
+{% load static %}
+{% load staticfiles %}
+
+
+
+{% block title %}{{ "EC - Procesos Especiales" }}{% endblock title %}
+{% block extraheader %}
+<link rel="stylesheet" href="{% static 'css/select2.min.css' %}" />
+<link rel="stylesheet" href="{% static 'css/select2-bootstrap.min.css' %}" />
+{% endblock extraheader %}
+
+
+{% block content %}
+<!-- <div class="row mb-2 d-flex white-bg">
+    <div class="col-9 v-align">
+        <h2>CREACIÓN <span class="darkgreen-text">PROCESOS ESPECIALES</span></h2>
+    </div>
+    <div class="col-3 v-align">
+        <a class="btn btn-secondary green-bg float-right" href="{% url 'presupuesto_anual_nuevo' %}"><i class="fas fa-plus"></i>
+			Agregar Nuevo</a>
+
+    </div>
+</div> -->
+<div class="row justify-content-between darkwhite-bg py-2">
+
+    <div class="col-auto v-align">
+        <h2 class="mb-0">CREACIÓN <span class="darkgreen-text">PROCESOS ESPECIALES</span></h2>
+    </div>
+    <div class="col-auto">
+        <a onclick ="CambiarPart();"class="btn btn-secondary btn-sm btn-block green-bg" data-toggle='modal' data-target="#CambiarParticipante" href="#">Cambio de
+            participante</a>
+    </div>
+    <div class="col-auto">
+        <a onclick ="CambiarEvent();" id="boton_evento" class="btn btn-secondary btn-sm btn-block green-bg" data-toggle='modal' data-target="#CambiarEvento"
+            href="#">Cambio de eventos</a></li>
+    </div>
+    <div class="col-auto">
+        <a class="btn btn-secondary btn-sm btn-block green-bg" href="{% url 'crear_devolucion' %}">Devolución de Valores</a>
+    </div>
+    <div class="col-auto">
+        <a class="btn btn-secondary btn-sm btn-block green-bg" href="{% url 'crear_cupon' %}">Cupo Gratis</a>
+    </div>
+</div>
+<br>
+<div class="row mb-2 d-flex white-bg">
+    <div class="col-9 v-align">
+        <h2>CONSULTAS <span class="darkgreen-text">PROCESOS ESPECIALES</span></h2>
+    </div>
+</div>
+<div class="row darkwhite-bg py-2">
+    <div class="col-12 col-xl-12">
+        <form method="GET" id="form_filter">
+            {% csrf_token %}
+            <div class="form-row">
+                <div class="col-4 col-xl-2">
+                    {{ filter.form.procesoparticipante__cod_evento|as_crispy_field }}
+                </div>
+                <div class="col-4 col-xl-4">
+                    {{ filter.form.procesoparticipante__nombre_evento|as_crispy_field }}
+                </div>
+
+            </div>
+            <div class="form-row">
+                <div class="col-4 col-xl-2">
+                    {{ filter.form.procesoparticipante__orden__ruc_ci|as_crispy_field }}
+                </div>
+                <div class="col-4 col-xl-4">
+                    {{ filter.form.procesoparticipante__orden__razon_nombres|as_crispy_field }}
+                </div>
+
+            </div>
+            <div class="form-row">
+                <div class="col-4 col-xl-2">
+                    {{ filter.form.estado|as_crispy_field }}
+                </div>
+                <div class="col-4 col-xl-2">
+                    {{ filter.form.tipo_nota|as_crispy_field }}
+                </div>
+                <div class="col-4 col-xl-2">
+                    {{ filter.form.categoria|as_crispy_field }}
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="col-4 col-xl-2">
+                    {{filter.form.fechas_emision}}
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-secondary green-bg float-right">
+                <i class="fas fa-search"></i> Buscar</button>
+            {{ filter.form.media }}
+        </form>
+    </div>
+</div>
+<div class="row my-2 white-bg">
+    <!-- <div class="col-9 v-align">
+        <h2>LISTADO <span class="darkgreen-text">PROCESOS ESPECIALES</span></h2>
+    </div> -->
+    <div class="col-3 v-align">
+        <!--<a class="btn btn-secondary green-bg float-right" href="{% url 'presupuesto_anual_nuevo' %}"><i class="fas fa-plus"></i>
+			Agregar Nuevo</a>-->
+
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12 col-xl-12">
+        <table id="dtBasicExample" class="table border-bottom table-responsive-md">
+            <thead class="white-text darkgreen-bg ">
+                <tr>
+                    <th scope="col">Nº Orden</th>
+                    <th scope="col">Fecha Emisión</th>
+                    <th scope="col">Categoría</th>
+                    <th scope="col">Tipo de Orden</th>
+                    <th scope="col">Concepto</th>
+                    <th scope="col">Código Evento</th>
+                    <th scope="col">Valor</th>
+                    <th scope="col">Estado</th>
+                    <th scope="col">Fecha Aprobación</th>
+                    <th scope="col">Acciones</th>
+                </tr>
+            </thead>
+            {% if proceso %}
+            <tbody id="PEtabla">
+                {% for p in proceso %}
+                <tr >
+                    <td scope="row" class="text-center">{{p.cod_proceso}}</td>
+                    <td scope="row" class="text-center">{{p.fecha_emision}}</td>
+                    <td scope="row" class="text-center">{{p.get_categoria_display}}</td>
+                    <td scope="row" class="text-center">{{p.get_tipo_nota_display}}</td>
+                    <td scope="row" class="text-left">
+                        {{p.concepto}}
+                    </td>
+                    <td scope="row" class="text-center">
+                        {% for part in p.procesoparticipante_set.all%}
+                        <span class={{part.cod_evento}}>{{part.cod_evento}}</span>
+                        <br>
+                        {% endfor %}
+                    </td>
+                    <!-- <td scope="row">
+                        {% for part in p.procesoparticipante_set.all%}
+                        <span class={{part.cod_evento}}>{{part.valor_evento}}</span>
+                        <br>
+                        {% endfor %}
+                    </td> -->
+                    <td scope="row" class="text-center">
+                        {% for part in p.procesoparticipante_set.all%}
+                        <span class={{part.cod_evento}}>{{part.valor}}</span>
+                        <br>
+                        {% endfor %}
+                    </td>
+
+                    <td scope="row" class="text-center">{{p.get_estado_display}}</td>
+                    <td scope="row" class="text-center">{{p.fecha_aprobacion|default_if_none:""}}</td>
+                    <td scope="row" class="text-center">
+                        <a class="btn btn-secondary btn-sm" href="{% url 'proceso_especial_editar' p.id %}">
+                            <i class="fas fa-edit"></i></a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            {% else %}
+            <h2>No hay elementos que mostrar</h2>
+            {% endif %}
+        </table>
+    </div>
+</div>
+
+<div class="modal fade" id="CambiarParticipante" role="dialog" aria-labelledby="ordenTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div id="cambpart" class="modal-content">
+           
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="CambiarEvento" role="dialog" aria-labelledby="ordenTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div id="cambevent" class="modal-content">
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extrafooter %}
+<script src="{% static 'js/select2.min.js' %}"></script>
+<script src="{% static 'js/table.js' %}"></script>
+<script src="{% static 'js/campos_fecha.js' %}"></script>
+<script src="{% static 'js/proceso_especial_tabla.js' %}"></script>
+<script src="{% static 'js/eventoDoc_cambEvent.js' %}"></script>
+<script src="{% static 'js/eventoDoc_cambPart.js' %}"></script>
+<script>
+    function CambiarPart() {
+        $.ajax({
+            url: "{% url 'cambiarParticipante_modal' %}",
+            beforeSend: function(){
+				// Handle the beforeSend event
+				var loading=$("<img>")
+				loading.addClass("img-fluid m-auto")
+				loading.css({"width":"50%","height": "auto"})
+				loading.attr("id","id_loading")
+				loading.attr('src',"https://miro.medium.com/max/1080/0*DqHGYPBA-ANwsma2.gif")
+				$("#seguimientoInteresado .modal-content").html(loading);
+			},
+            success: function (data) {
+                $("#cambpart").html(data)
+                $.getScript( "{% static 'js/cambio_parte.js' %}" )
+            }
+        });
+    };
+</script> 
+
+<script>
+    function CambiarEvent() {
+        $.ajax({
+            url: "{% url 'cambiarEvento_modal' %}",
+            beforeSend: function(){
+				// Handle the beforeSend event
+				var loading=$("<img>")
+				loading.addClass("img-fluid m-auto")
+				loading.css({"width":"50%","height": "auto"})
+				loading.attr("id","id_loading")
+				loading.attr('src',"https://miro.medium.com/max/1080/0*DqHGYPBA-ANwsma2.gif")
+				$("#seguimientoInteresado .modal-content").html(loading);
+			},
+            success: function (data) {
+                console.log("Exitoso el renderizado de cambiar evento");
+                $("#cambevent").html(data)
+                $.getScript( "{% static 'js/cambio_event.js' %}" )
+                
+                
+            }
+        });
+    };
+</script> 
+
+{% endblock extrafooter %}

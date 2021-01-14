@@ -1,0 +1,7 @@
+<option value="">---------</option>
+<!-- <option value="123">123</option>
+<option value="456">456</option>
+<option value="789">789</option> -->
+{% for evento in eventos %}
+<option value="{{ evento.codigo_evento }}" name="{{ evento.pk }}">{{ evento.codigo_evento }}</option>
+{% endfor %}

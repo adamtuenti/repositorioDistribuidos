@@ -1,0 +1,296 @@
+{% extends 'base_ventas.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% load staticfiles %}
+{% block title %}{{ "EC - Menú Ventas" }}{% endblock title %}
+{% block extraheader %}
+<style type="text/css">
+    .not {
+        height: 277px;
+    }
+    .scrollable {
+        height: 277px;
+        overflow-y: scroll;
+    }
+    
+    .ev{
+        height: 26.5px;
+    }
+
+    .ind {
+        height: 83px;
+    }
+
+    .gg{
+        height: 47.2px;
+    }
+</style>
+{% endblock extraheader %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12 col-xl not m-xl-3 border border-dark">
+        <div class="row border-bottom border-dark">
+            <div class="col-12 py-2 lightgreen-bg darkgreen-text">
+                <i class="fas fa-exclamation-triangle"></i>
+                <strong>Alertas ({% now "F" %})</strong>
+            </div>
+        </div>
+        <div class="row  gg border-bottom border-dark">
+            <div class="col-10 v-align">
+                Propuestas ENVIADAS
+            </div>
+            <div class="col v-align text-center">
+                <strong class="darkgreen-text">{{propuestas_mensual_enviadas}}</strong>
+            </div>
+        </div>
+        <div class="row  gg border-bottom border-dark">
+            <div class="col-10 v-align">
+                Propuestas ACEPTADAS
+            </div>
+            <div class="col v-align text-center">
+                <strong class="darkgreen-text">{{propuestas_mensual_aceptadas}}</strong>
+            </div>
+        </div>
+        <div class="row gg border-bottom border-dark">
+            <div class="col-10 v-align">
+                Interesados POR CONTACTAR
+            </div>
+            <div class="col v-align text-center">
+                <strong class="darkgreen-text">{{seguimientos_mensual_interesados}}</strong>
+            </div>
+        </div>
+        <div class="row  gg border-bottom border-dark">
+            <div class="col-10 v-align">
+                Personas Naturales POR CONTACTAR
+            </div>
+            <div class="col v-align text-center">
+                <strong class="darkgreen-text">{{seguimientos_mensual_natural}}</strong>
+            </div>
+        </div>
+        <div class="row gg  ">
+            <div class="col-10 v-align">
+                Empresas POR CONTACTAR
+            </div>
+            <div class="col v-align text-center">
+                <strong class="darkgreen-text">{{seguimientos_mensual_empresa}}</strong>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-xl my-3 border border-dark scrollable">
+        <div class="row border-bottom border-dark">
+            <div class="col-12 py-2 lightgreen-bg darkgreen-text">
+                <i class="fas fa-search"></i>
+                <strong>Próximos Seguimientos</strong>
+                <!-- <button class="btn btn-success btn-sm float-right" disabled="disabled">Por contactar</button> -->
+                <span class="rounded ml-3 p-1 border green-bg white-text">
+                    Por contactar
+                </span>
+                <br>
+                <strong>Hoy: <span class="">{{seguimientos_hoy}}</span></strong>
+            </div>
+        </div>
+        {% for seg in proximos_seguimientos %}
+        {% if forloop.last %}
+        <div class="row">
+        {% else %}
+        <div class="row border-bottom border-dark">
+        {% endif%}
+            <div class="col-12 py-2">
+                <strong>{{seg.pers_natural.nombres}} {{seg.pers_natural.apellidos}}</strong>
+                <br> 
+                {{seg.canal_de_contacto}} 
+                <br>
+                {{seg.nombre_evento}}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="col-12 col-xl m-xl-3">
+        <div class="row border not border-dark">
+            <div class="col">
+                <div class="row py-2 lightgreen-bg darkgreen-text border-bottom border-dark">
+                    <div class="col-10">
+                        <strong>{% now "F/Y" %}</strong>
+                    </div>
+                    <div class="col-2 text-center"><strong>N°</strong></div>
+                </div>
+                <div class="row ev py-1 border-bottom border-dark">
+                    <div class="col-10">Eventos abiertos planificados</div>
+                    <div class="col text-center"><strong class="darkgreen-text">{{eventos.evento_abierto_planificado}}</strong></div>
+                </div>
+                <div class="row ev py-1 border-bottom border-dark">
+                    <div class="col-10">Eventos abiertos ejecutados</div>
+                    <div class="col text-center"><strong class="darkgreen-text">{{eventos.evento_abierto_ejecutado}}</strong></div>
+                </div>
+                <div class="row ev py-1 border-bottom border-dark">
+                    <div class="col-10">Eventos abiertos en ejecución</div>
+                    <div class="col text-center"><strong class="darkgreen-text">{{eventos.evento_abierto_activo}}</strong></div>
+                </div>
+
+                <div class="row ev py-1 border-bottom border-dark">
+                    <div class="col-10">Eventos corporativos planificados</div>
+                    <div class="col text-center"><strong class="darkgreen-text">{{eventos.evento_corporativo_planificado}}</strong></div>
+                </div>
+                <div class="row ev py-1 border-bottom border-dark">
+                    <div class="col-10">Eventos corporativos ejecutados </div>
+                    <div class="col text-center"><strong class="darkgreen-text">{{eventos.evento_corporativo_ejecutado}}</strong></div>
+                </div>
+                <div class="row ev py-1 border-bottom border-dark">
+                    <div class="col-10">Eventos corporativos en ejecución </div>
+                    <div class="col text-center"><strong class="darkgreen-text">{{eventos.evento_corporativo_activo}}</strong></div>
+                </div>
+                <div class="row ev py-1 border-bottom border-dark">
+                    <div class="col-10">Participantes en Formación</div>
+                    <div class="col text-center"><strong class="darkgreen-text">{{eventos.participantes_en_formacion}}</strong></div>
+                </div>
+                <div class="row ev py-1 border-bottom border-dark">
+                    <div class="col-10">Eventos sin presupuesto asignado</div>
+                    <div class="col text-center"><strong class="darkgreen-text">{{eventos.evento_sin_presupuesto}}</strong></div>
+                </div>
+                <div class="row ev py-1">
+                    <div class="col-10">Clientes In-House</div>
+                    <div class="col text-center"><strong class="darkgreen-text">{{eventos.cliente_in_house}}</strong></div>
+                </div>
+            </div>
+        </div>
+        {% comment %} <div class="row my-1"></div>
+        <div class="row border border-dark">
+            <div class="col">
+                <div class="row py-2 lightgreen-bg darkgreen-text border-bottom border-dark">
+                    <div class="col-10">
+                        <strong>{{mes}}/{{año}}</strong>
+                    </div>
+                    <div class="col-2"><strong>N°</strong></div>
+                </div>
+                <div class="row py-1 border-bottom border-dark">
+                    <div class="col-10">Eventos corporativos planificados</div>
+                    <div class="col"><strong class="darkgreen-text">{{evento_corporativo_planificado}}</strong></div>
+                </div>
+                <div class="row py-1 border-bottom border-dark">
+                    <div class="col-10">Eventos corporativos ejecutados </div>
+                    <div class="col"><strong class="darkgreen-text">{{evento_corporativo_ejecutado}}</strong></div>
+                </div>
+                <div class="row py-1 border-bottom border-dark">
+                    <div class="col-10">Eventos corporativos activos </div>
+                    <div class="col"><strong class="darkgreen-text">{{evento_corporativo_activo}}</strong></div>
+                </div>
+                <div class="row py-1">
+                    <div class="col-10">Clientes In-House</div>
+                    <div class="col"><strong class="darkgreen-text">{{cliente_in_house}}</strong></div>
+                </div>
+            </div>
+        </div> {% endcomment %}
+    </div>
+</div>
+
+<br>
+
+<h2 class="mb-0 darkgreen-text"><strong>Próximos eventos abiertos (<span class="text-warning">
+    {% if eventosProximos %}
+        {{ eventosProximos.count }}
+    {% else %}
+        0
+    {% endif %}
+</span>)</strong></h2>
+<div class="row">
+    <div class="col-xl-1"></div>
+    <div id="listaEP" class="col-12 col-xl-10 m-xl-3 border border-dark scrollable" data-part-url="{% url 'menu_eventos_proximos_partC' %}">
+        <div class="row border-bottom border-dark lightgreen-bg">
+            <div class="row col-12 py-2  darkgreen-text text-center">
+                <div class="col-2">
+                    <strong>F. Inicio</strong>
+                </div>
+                <div class="col-4">
+                    <strong>Evento</strong>
+                </div>
+                <div class="col-2">
+                    <strong>Modalidad</strong>
+                </div>
+                <div class="col-1">
+                    <strong>Meta</strong>
+                </div>
+                <div class="col-2">
+                    <strong>Participantes</strong>
+                </div>
+                <div class="col-1">
+                    <strong>Pendientes</strong>
+                </div>
+            </div>
+        </div>
+        {% if eventosProximos %}
+            {% for eventoP in eventosProximos %}
+            <div class="row border-bottom border-dark">
+                <div class="row col-12 py-2">
+                    <div class="col-2 py-2 text-center">{{eventoP.evento.fecha_inicio}}</div>
+                    <div id="{{eventoP.evento.codigo_evento}}" class="col-4 py-2 nombreEP">{{eventoP.evento.nombre}}</div>
+                    <div class="col-2 py-2 text-center">{{eventoP.evento.modalidad}}</div>
+                    <div id="eq{{eventoP.evento.codigo_evento}}" class="col-1 py-2 text-center">{{eventoP.punto_equilibrio}}</div>
+                    <div id="reg{{eventoP.evento.codigo_evento}}" class="col-2 py-2 text-center"></div>
+                    <div id="pen{{eventoP.evento.codigo_evento}}" class="col-1 py-2 text-center"></div>
+                </div>
+            </div>
+            {% endfor %}
+            
+        {% endif %}
+    </div>
+</div>
+
+<br>
+
+<h2 class="mb-0 darkgreen-text"><strong>Propuestas aceptadas en el mes (<span class="text-warning">
+    {% if propuestas %}
+        {{ propuestas.count }}
+    {% else %}
+        0
+    {% endif %}
+</span>)</strong></h2>
+<div class="row">
+    <div class="col-xl-1"></div>
+    <div id="listaP" class="col-12 col-xl-10 m-xl-3 border border-dark scrollable">
+        <div class="row border-bottom border-dark lightgreen-bg">
+            <div class="row col-12 py-2  darkgreen-text text-center">
+                <div class="col-1">
+                    <strong>Nº</strong>
+                </div>
+                <div class="col-4">
+                    <strong>Empresa</strong>
+                </div>
+                <div class="col-1">
+                    <strong>Nº Cursos</strong>
+                </div>
+                <div class="col-2">
+                    <strong>Participantes</strong>
+                </div>
+                <div class="col-2">
+                    <strong>Fecha Inicio</strong>
+                </div>
+                <div class="col-2">
+                    <strong>Cód. Propuesta</strong>
+                </div>
+            </div>
+        </div>
+        {% if propuestas %}
+            {% for propuesta in propuestas %}
+            <div class="row border-bottom border-dark">
+                <div class="row col-12 py-2">
+                    <div class="col-1 py-2 text-center numO"></div>
+                    <div class="col-4 py-2">{{propuesta.razon_nombres}}</div>
+                    <div class="col-1 py-2 text-center">{{propuesta.cantidad_cursos}}</div>
+                    <div class="col-2 py-2 text-center">{{propuesta.numero_participantes}}</div>
+                    <div class="col-2 py-2 text-center">{{propuesta.fecha_inicio_estimada}}</div>
+                    <div class="col-2 py-2 text-center">{{propuesta.cod_propuesta}}</div>
+                </div>
+            </div>
+            {% endfor %}
+            
+        {% endif %}
+    </div>
+   
+</div>
+
+{% endblock content %}
+
+{% block extrafooter%}
+<script src="{% static 'js/eventosP_propuestas.js' %}"></script>
+{% endblock extrafooter %}

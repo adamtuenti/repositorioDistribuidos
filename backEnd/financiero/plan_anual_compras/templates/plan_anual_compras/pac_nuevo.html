@@ -1,0 +1,228 @@
+{% extends 'base_financiero.html' %}
+
+{% load crispy_forms_tags %}
+
+{% load static %}
+{% load staticfiles %}
+{% block title %}{{ "EC - Plan Anual de Compras Registro" }}{% endblock title %}
+
+{% block extraheader %}
+<link rel="stylesheet" href="{% static 'css/select2.min.css' %}" />
+<link rel="stylesheet" href="{% static 'css/select2-bootstrap.min.css' %}" />
+<link rel="stylesheet" href="{% static 'css/pac.css' %}" />
+{% endblock extraheader %}
+
+
+{% block content %}
+<form id="form" method="post" data-tipo-url="{% url 'ajax_load_partida'%}"
+	data-producto-url="{% url 'ajax_load_producto'%}" data-suministro="{% url 'productos_view' %}" novalidate>
+	{% csrf_token %}
+	<div class="row mb-2">
+		<div class="col-12 col-xl-5">
+			<h2 class="text-uppercase darkgreen-text">
+				{% block regedit %}
+				Registro Plan Anual de Compras
+				{% endblock regedit %}
+			</h2>
+		</div>
+		<div class="col-xl-7 col-12">
+			<div class="form-row">
+				<div class="col-xl-5 col"></div>
+				<input type="hidden" name="estado" value="{{form.estado.value}}">
+				<div class="col-xl-4 col">{{ form.estado |as_crispy_field}}</div>
+				<div class="col-xl-3 col">{{ form.fecha |as_crispy_field}}</div>
+				{{form.fecha_envio}}
+				{{form.fecha_aprobado}}
+				{{ form.fecha_anulado }}
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="mt-2 campo p-2 pl-3 col-12">
+			<h5 class="black-text text-uppercase mb-0">Información básica</h5>
+		</div>
+	</div>
+	<div class="row darkwhite-bg py-2">
+		<div class="col-12">
+			<div class="form-row">
+				<div class="col-3 col-xl-2">
+					<input type="hidden" name="año" value="{{form.año.value}}">
+					{{ form.año|as_crispy_field }}
+				</div>
+				<div class="col-12 col-xl-8">
+					{{ form.nombre|as_crispy_field }}
+				</div>
+				<div class="col-12 col-xl-2">
+					<input type="hidden" name="centro_costos" value="{{form.centro_costos.value}}">
+					{{ form.centro_costos|as_crispy_field }}
+				</div>
+			</div>
+		</div>
+	</div>
+	{% block tablas %}
+
+	<div class="row">
+		<div class=" campo p-2 pl-3 col-12">
+			<h5 class="black-text text-uppercase mb-0">Producto/Servicio</h5>
+		</div>
+	</div>
+	<div class="row mt-4">
+		<div class="col-12">
+			<table id="dtBasicExample" class="table table-responsive table-sm border-bottom">
+				<thead class="white-text darkgreen-bg">
+					<tr>
+						<th>#</th>
+						<th>Código</th>
+						<th>Partida Presupuestaria</th>
+						<th>Tipo de Compra</th>
+						<th>Detalle del Producto</th>
+						<th>Cantidad Anual</th>
+						<th>Unidad de Medida</th>
+						<th>Costo Unitario</th>
+						<th>Subtotal</th>
+						<th>Valor Total</th>
+						<th>Periodo</th>
+						<th>Acciones</th>
+					</tr>
+				</thead>
+			</table>
+			<a class="btn btn-secondary green-bg" data-toggle="modal" href="#"
+				data-target="#productoModalCenter"><i class="fas fa-plus"></i> Agregar Nuevo</a>
+		</div>
+	</div>
+	<div class="modal fade" id="productoModalCenter" tabindex="-1" role="dialog"
+		aria-labelledby="productoModalCenterTitle" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="productoModalCenterTitle">Nuevo Producto/Servicio/Suministro</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<div class="form-row">
+						{{formset.egreso}}
+						<div class="col-6 col-xl-3">
+							<label for="codigo" class="col-form-label  requiredField">Código</label>
+							<select class="select2 form-control {%if formset.egreso.errors %}is-invalid {%endif%}" id="codigo"></select>
+							{% for error in formset.egreso.errors%}
+								<p id="error_{{forloop.counter}}_id_egreso" class="invalid-feedback">
+									<strong>{{error}}</strong>
+								</p>
+							{%endfor%}
+						</div>
+						<div class="col-6 col-xl-9">
+							<label for="partida" class="col-form-label  requiredField">Partida Presupuestaria</label>
+							<select class="select2 form-control" id="partida"></select>
+						</div>
+					</div>
+					<div class="form-row">
+						<div class="col-4 col-xl-3">
+							{{ formset.tipo_compra|as_crispy_field }}
+						</div>
+						<div class="col col-xl-6">
+							{{ formset.periodo|as_crispy_field }}
+						</div>
+					</div>
+					<div class="form-row">
+						<div class="col-12 col-xl-9">
+							{{ formset.producto }}
+							<label for="id_descripcion" class="col-form-label  requiredField">Descripción <span class="asteriskField">*</span></label>
+							<input type="text" class="form-control {%if formset.descripcion.errors %}is-invalid {%endif%}" id="id_descripcion" name="descripcion" {%if formset.descripcion.value %}  value="{{formset.descripcion.value}}"{%endif%}>
+							<div class="d-none" id="select-descripcion">
+								<select class="form-control {%if formset.descripcion.errors %}is-invalid {%endif%}" ></select>
+							</div>
+							{% for error in formset.descripcion.errors%}
+								<p id="error_{{forloop.counter}}_id_descripcion" class="invalid-feedback">
+									<strong>{{error}}</strong>
+								</p>
+							{%endfor%}
+						</div>
+
+					</div>
+					<div class="row">
+						<div class="col-12 col-xl-8">
+							<div class="form-row">
+								<div class="col-4 col-xl-4">
+									<input type="hidden" id="unidad_medida" name="unidad_medida" value="{{formset.unidad_medida.value}}">
+									{{ formset.unidad_medida|as_crispy_field }}
+								</div>
+								<div class="col-4 col-xl-4">
+									{{ formset.cantidad_anual|as_crispy_field }}
+								</div>
+								<div class="col-4 col-xl-4">
+									<label for="id_costo_unitario" class="col-form-label ">Costo Unitario</label>
+
+									<div class="currency-wrap money"><span class="currency-code">$</span>
+										{{formset.costo_unitario | as_crispy_field}}
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-12 col-xl-8">
+							<div class="form-row">
+								<div class="col">
+									<label for="id_subtotal" class="col-form-label ">Subtotal</label>
+									<div class="currency-wrap">
+										<span class="currency-code">$</span>
+										{{formset.subtotal | as_crispy_field}}
+									</div>
+								</div>
+								<div class="col-auto">
+									<label for="id_iva" class="col-form-label">IVA</label>
+									<input type="hidden" id="iva" name="iva" value={{formset.iva.value}}>
+									<input type="checkbox" id="id_iva" name="iva" class="form-control">
+								</div>
+								<div class="col">
+									<label for="id_total" class="col-form-label ">Valor Total</label>
+									<div class="currency-wrap">
+										<span class="currency-code">$</span>
+										{{ formset.total|as_crispy_field }}
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+					<button type="submit" id="enviar" class="btn btn-secondary green-bg">Guardar</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="d-none">
+	{{form.motivo_anular}}
+	</div>
+	<div class="row mt-3">
+		<div class="col-12">
+			<a class="btn btn-secondary" href="{% url 'pac_index' %}"> Cancelar </a>
+		</div>
+	</div>
+	{% endblock tablas %}
+	{{ form.media }}
+</form>
+
+{%block forms%}
+{%endblock forms%}
+{% endblock content %}
+
+
+{%block extrafooter%}
+<script src="{% static 'js/select2.min.js' %}"></script>
+<script src="{% static 'js/dynamic-formset.js' %}"></script>
+<script src="{% static 'js/money_formater.js' %}"></script>
+<script>
+	$(document).on('click', '#enviar', function (e) {
+		e.preventDefault();
+		$(".currency-wrap input").each(function (e) {
+			$(this).val(unformatNumber($(this).val()));
+		})
+		$("#form").trigger("submit");
+	});
+</script>
+{%endblock extrafooter%}

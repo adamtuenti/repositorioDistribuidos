@@ -1,0 +1,152 @@
+{% extends 'base_financiero.html' %}
+
+{% load crispy_forms_tags %}
+{% load static %}
+{% load staticfiles %}
+{% block title %}{{ "EC - Plan Anual de Compras" }}{% endblock title %}
+
+{% block content %}
+
+<div class="row mb-2 d-flex white-bg">
+	<div class="col-9 v-align">
+		<h2>CONSULTAS <span class="darkgreen-text">PLAN ANUAL DE COMPRAS</span></h2>
+	</div>
+	<div class="col-3 v-align">
+		<a class="btn btn-secondary green-bg float-right" href="{% url 'pac_nuevo' %}"><i
+				class="fas fa-plus"></i>Agregar Nuevo</a>
+	</div>
+</div>
+<div class="row darkwhite-bg py-2">
+	<div class="col-12">
+		<form method="GET">
+			<div class="form-row">
+				<div class="col-3 col-xl-2">
+					{{ filter.form.año|as_crispy_field }}
+				</div>
+				<div class="col-3 col-xl-2">
+					{{ filter.form.fecha|as_crispy_field }}
+				</div>
+				<div class="col-6 col-xl-6">
+					{{ filter.form.nombre|as_crispy_field }}
+				</div>
+				<div class="col-3 col-xl-2">
+					{{ filter.form.centro_costos|as_crispy_field }}
+				</div>
+			</div>
+			<div class="form-row">
+				<div class="col-3 col-xl-2">
+					{{ filter.form.estado|as_crispy_field }}
+				</div>
+			</div>
+			<div>
+				<button type="submit" class="btn btn-secondary green-bg float-right"><i class="fas fa-search"></i>
+					Buscar</button>
+			</div>
+		</form>
+	</div>
+</div>
+<br>
+<div class="row mt-2">
+	<div class="col-12 col-xl-12">
+		<table id="dtBasicExample" class="table table-responsive-sm border-bottom">
+			<thead class="white-text darkgreen-bg">
+				<tr>
+					<th scope="col">Año</th>
+					<th scope="col">Fecha Elaboración</th>
+					<th scope="col">Nombre</th>
+					<th scope="col">Centro de Costo</th>
+					<th scope="col">Estado</th>
+					<th scope="col">Fecha Envío</th>
+					<th scope="col">Fecha Aprobación</th>
+					<!-- <th scope="col">Fecha Anulado</th> -->
+					<th scope="col">Acciones</th>
+				</tr>
+			</thead>
+			{% if pac_lista %}
+			<tbody>
+				{% for pac in filter.qs %}
+				<tr class="text-center">
+					<td scope="row">{{ pac.año }}</td>
+					<td scope="row">{{ pac.fecha }}</td>
+					<td scope="row">{{ pac.nombre }}</td>
+					<td scope="row">{{ pac.centro_costos }}</td>
+					<td scope="row">{{ pac.estado }}</td>
+					<td scope="row">{{ pac.fecha_envio |default_if_none:""}}</td>
+					<td scope="row">{{ pac.fecha_aprobado |default_if_none:""}}</td>
+					<!-- <td scope="row">{{pac.fecha_anulado|default_if_none:""}}</td> -->
+					<td scope="row">
+						<div class="col-auto text-truncate text-center">
+
+							<a class="btn btn-secondary btn-sm" href="{% url 'pac_editar' pac.id %}"><i
+									class="fas fa-edit"></i></a>
+							{% if pac.estado == 'Grabado' %}
+							<a href='javascript:;' onclick='eliminar({{ pac.id }});' class="btn btn-danger btn-sm"
+								data-toggle='modal' data-target="#pacEliminarCenter"><i class="fas fa-trash"></i></a>
+							{%endif%}
+						</div>
+					</td>
+				</tr>
+				{% endfor%}
+			</tbody>
+			{% else %}
+			<h2>No hay elementos que mostrar</h2>
+			{% endif %}
+		</table>
+	</div>
+	<div class="modal fade" id="pacEliminarCenter" tabindex="-1" role="dialog" aria-labelledby="pacTitle"
+		aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+			</div>
+		</div>
+	</div>
+
+
+	{% endblock %}
+
+	{% block extrafooter %}
+	<script src="{% static 'js/date-filter.js' %}"></script>
+	<script src="{% static 'js/table.js' %}"></script>
+	<script>
+		function GetCurrentDate() {
+			var today = new Date();
+			var dd = String(today.getDate()).padStart(2, '0');
+			var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+			var yyyy = today.getFullYear();
+
+			today = yyyy + '-' + mm + '-' + dd;
+			return today;
+		}
+	</script>
+	<script>
+
+		function eliminar(id) {
+			$.ajax({
+				url: "{% url 'pac_confirmar_eliminar' %}",
+				data: {
+					'pk': id
+				},
+				success: function (data) {
+					$(".modal-content").html(data)
+				}
+			});
+		};
+
+		$(document).on("change", '#id_motivo_anular', function () {
+			if ($(this).val().length > 20) {
+				$('#anular').attr('disabled', false);
+				$('#id_fecha_anulado').val(GetCurrentDate());
+			}
+			else {
+				$('#anular').attr('disabled', true);
+				$('#id_fecha_anulado').val(null);
+			}
+		})
+
+		$(document).ready(function (e) {
+			$(".fecha").each(function (e) {
+				TextToDate($(this));
+			})
+		});
+	</script>
+	{% endblock %}

@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<meta http-equiv="content-type" content="text/html; charset=utf-8"> 
+<html>
+<head>
+    <title>Reporte de asistencia</title>
+     <style>
+
+        @page{
+         size: landscape;
+             @frame header_frame {
+                   -pdf-frame-content:header_content;
+                   left:0pt;
+                   width:100%;
+                   top:0pt;
+                   height:100pt;
+                   /*-pdf-frame-border = 1;*/
+             }
+
+             @frame img_content {
+                   -pdf-frame-content:img_content;
+                   left:10pt;
+                   width:300pt;
+                   top:10pt;
+                   height:100pt;
+                   
+             }
+
+             @frame footer_frame {
+                   -pdf-frame-content:footer_content;
+                   left:10pt;
+                   width:820pt;
+                   top:545pt;
+                   height:30pt;
+
+             }
+
+             @frame contenido_del_footer {
+                   -pdf-frame-content:contenido_del_footer;
+                   left:10pt;
+                   width:550pt;
+                   top:560pt;
+                   height:40pt;
+
+             }
+
+            @frame paginacion {
+                   -pdf-frame-content:paginacion;
+                   left:790pt;
+                   width:200pt;
+                   top:580pt;
+                   height:40pt;
+             }
+
+
+             @frame content_frame {
+                left:10pt;
+                width:820pt;
+                top:225pt;
+                height:295pt;
+             }
+
+             @frame imagen {
+                -pdf-frame-content: imagen;
+                left: 0pt; width:250pt; top: 10pt; height: 165pt;
+                /*-pdf-frame-border = 1;*/
+            }
+
+            @frame titulo {
+                -pdf-frame-content: titulo;
+                left: 650pt; width:250pt; top: 10pt; height: 165pt;
+                /*-pdf-frame-border = 1;*/
+            }
+
+            @frame codigo {
+                -pdf-frame-content: codigo;
+                left: 725pt; width:250pt; top: 30pt; height: 165pt;
+                /*-pdf-frame-border = 1;*/
+            }
+
+             @frame estandar {
+                -pdf-frame-content: estandar;
+                left: 10pt; width:800pt; top: 80pt; height: 140pt;
+               
+            }
+
+        }
+    </style>
+</head>
+<body>
+    <div id="header_content">
+            <img src="static/image/logo.png" id="imagen" alt="">
+
+            <div id="titulo">
+                <label style=" font-size:25px;font-family: serif;"> <strong>Contacto Participante</strong></label><br>
+            </div>
+            
+            <div id="codigo">
+                 <label style=" background-color:yellow; font-size: 18px;font-family: serif;"><strong>POEC0502 V7/B</strong></label>
+            </div>
+
+            <div id="estandar">
+        
+     <table style='font-family: serif;' >
+       <tr ><td style="color: black;">______________________________________________________________________________________________________________</td></tr>
+            <tr >
+                <td style="font-family: serif; height: 30px; font-size: 15px;"><Strong>Programa:</Strong> {% block evento %}{% endblock evento %}</td>
+                <td style="font-family: serif; height: 30px; font-size: 15px;"><strong>Empresa:</strong> {% block empresa%} {% endblock empresa %}</td>
+            </tr>
+            <tr style="font-family: serif;height: 30px;font-size: 15px;">
+                <td><strong>Evento:</strong>{% block promocion2 %} {% endblock promocion2    %}</td>
+                <td style="font-family: serif;width: 250px;"><strong>Aula:</strong> {% block fecha_inicio %}{% endblock fecha_inicio%}</td>
+            </tr>
+
+            <tr style="font-family: serif;height: 30px; font-size: 15px;;">
+                <td><strong>Promoción:</strong> {% block promocion%}{% endblock promocion %}</td>
+                <td style="font-family: serif;width: 150px;"><strong>Fecha inicio:</strong>{% block fecha_fin2 %}{% endblock fecha_fin2%}</td>
+            </tr>
+            
+            <tr style="font-family: serif;height: 30px; font-size: 15px;">
+                <td style=""><strong>Tipo de capacitación:</strong>{% block docente %}{% endblock docente %}</td>
+                <td style=""><strong>Fecha Final:</strong>{% block duracion%} {% endblock duracion %}</td>
+            </tr>
+
+            <tr style="font-family: serif; height: 30px; font-size: 15px;">
+                <td style=" width: 500px;"><strong>Publico:</strong>{% block publico %}{% endblock publico %}</td>
+                <td style=" "><strong>Duracion:</strong>{% block fecha_fin %}{% endblock fecha_fin%}</td>
+            </tr>
+
+       </table>         
+    </div>
+
+    </div>
+
+
+
+        <table class="table" class="table"  style="border:0.5px solid black; ">
+                    <tr style="font-size: 15px;font-family: serif">
+                        <th style="width: 35px; height: 30px;"></th>
+                        <th style="width: 150px; height: 30px;"> <strong>Participante</strong></th>
+                        <th> <strong>E-mail</strong></th>
+                        <th> <strong>E-mail alternativo</strong> </th>
+                        <th> <strong>Celular</strong></th>
+                        <th><strong>Telefono domicilio</strong></th>
+                        <th><strong>Telefono trabajo</strong></th>
+                        <th><strong>Direccion</strong></th>
+                     </tr>
+                        
+                        <tr style="width: 35px; height: 30px; font-size: 13px; font-family: serif">
+                            <td><center> 1</center></td>
+                            <td><center>Luis Eduardo Ardila Macias</center> </td>
+                            <td><center>luis@gmail.com</center></td>
+                            <td><center>luis@gmail.com</center></td>
+                            <td><center>0963772798</center></td>
+                            <td><center>0978452215</center></td>
+                            <td><center>0926457854</center></td>
+                            <td><center>Duran</center></td>
+                        </tr>
+
+
+                </table>
+
+
+
+
+
+
+    
+
+    <div id="footer_content">
+        <div id="separador">
+             <label style="color: #3c5634">/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////</label>
+        </div>
+
+        <div id="contenido_del_footer" style="font-size: 13px">
+            <label>CEC ESPOL,Campus Las Peñas, Campus Gustavo Galindo Velasco | Teléf:042269763 | 0960507588</label>
+            <br>
+            <label>Fecha impresión: dd/mm/aaa &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp  &nbsp  &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp Usuario: Nombre apellido</label>
+        </div>
+    
+        <div id="paginacion">
+            <label style="font-size: 13px">Pág <pdf:pagenumber> | <pdf:pagecount></label>
+        </div>
+    </div>
+
+        
+</body>
+</html>

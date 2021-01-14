@@ -1,0 +1,316 @@
+{% extends "base_financiero.html" %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% load staticfiles %}
+{% block title %}{{ "EC - Orden de pago" }}{% endblock %}
+
+{%block extraheader%}
+<link rel="stylesheet" href="{% static 'css/select2.min.css' %}" />
+<link rel="stylesheet" href="{% static 'css/select2-bootstrap.min.css' %}" />
+{%endblock extraheader%}
+
+
+{% block content %}
+
+<form method="POST" id="ordenPagoForm" data-proveedor-url="{% url 'ajax_load_proveedor' %}"
+	data-evento-url="{% url 'ajax_load_all_eventos_presupuestos' %}" data-tipo-url="{% url 'ajax_load_partida'%}"
+	enctype="multipart/form-data" novalidate>
+	{% csrf_token %}
+	<div class="row mb-2">
+		<div class="col-xl-5 col-12 v-align">
+			<h2 class="text-uppercase darkgreen-text m-0">
+				{% block regedit%}
+				Edición Orden de Pago
+				{% endblock regedit%}
+			</h2>
+		</div>
+		<div class="col-12 col-xl-7">
+			<div class="form-row">
+				<div class="col-4">
+					{{ form.estado|as_crispy_field }}
+				</div>
+				<div class="col-4">
+					{{ form.cod_ord_pago|as_crispy_field }}
+				</div>
+				<div class="col-4">
+					{{ form.fecha|as_crispy_field }}
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="row darkwhite-bg py-2">
+		<div class="col-12">
+			<div class="form-row">
+				<div class="col-3">
+					{{form.n_tramite|as_crispy_field}}
+				</div>
+				<div class="col-3">
+					{{form.fecha_tramite|as_crispy_field}}
+				</div>
+				<div class="col-3">
+					{{form.fecha_pago|as_crispy_field}}
+				</div>
+				{{form.fecha_aprobacion}}
+				{{form.fecha_anulado}}
+				{{form.fecha_envio}}
+			</div>
+			<div class="form-row">
+				<div class="col-3 col-xl-2">
+                    <input type="hidden" name="tipo_proveedor" value="{{form.tipo_proveedor.value}}">
+					{{ form.tipo_proveedor|as_crispy_field }}
+				</div>
+				{{form.proveedor}}
+				<div class="col-xl-3 col-3" id="div_ruc-ci">
+					<label for="ruc_ci" class="col-form-label requiredField">RUC/CI</label>
+					<span class="asteriskField">*</span>
+                    <select class="select2 form-control {%if form.proveedor.errors %}is-invalid {%endif%}"
+                        disabled
+						id="ruc_ci"></select>
+					{% for error in form.proveedor.errors %}
+					<p class="invalid-feedback d-block">
+						<strong>{{ error }}</strong>
+					</p>
+					{% endfor %}
+				</div>
+				<div class="col" id="div_razon-nombre">
+					<label for="razon_nombre" class="col-form-label requiredField">Razón Social/Nombre</label>
+					<span class="asteriskField">*</span>
+					<select class="select2 form-control {%if form.proveedor.errors %}is-invalid {%endif%}"
+                    disabled
+                    id="razon_nombre"></select>
+					{% for error in form.proveedor.errors %}
+					<p class="invalid-feedback d-block">
+						<strong>{{ error }}</strong>
+					</p>
+					{% endfor %}
+				</div>
+			</div>
+			<div class="form-row">
+				<div class="col-4 col-xl-3">
+					<label for="codigo_evento" class="col-form-label requiredField">Código del Evento</label>
+					<span class="asteriskField">*</span>
+					<select class="select2 form-control {%if form.evento.errors %}is-invalid {%endif%}"
+                    disabled
+                    id="codigo_evento"></select>
+					{% for error in form.evento.errors %}
+					<p class="invalid-feedback d-block">
+						<strong>{{ error }}</strong>
+					</p>
+					{% endfor %}
+				</div>
+				<div class="col">
+					<div class="form-group">
+						<label for="nombre_evento" class="col-form-label requiredField">Nombre del Evento</label>
+						<span class="asteriskField">*</span>
+						<select class="select2 form-control {%if form.evento.errors %}is-invalid{%endif%}"
+                        disabled
+							id="nombre_evento"></select>
+						{% for error in form.evento.errors %}
+						<p class="invalid-feedback d-block">
+							<strong>{{ error }}</strong>
+						</p>
+						{% endfor %}
+					</div>
+				</div>
+				{{form.evento}}
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="campo col-12 p-2 pl-3">
+			<h5 class="black-text text-uppercase mb-0">Detalles del pago</h5>
+		</div>
+	</div>
+	<div class="row darkwhite-bg py-2">
+		<div class="col-12">
+			<div class="form-row">
+				<div class="col col-xl-2">
+                    <input type="hidden" name="centro_costos" value="{{form.centro_costos.value}}">
+					{{ form.centro_costos|as_crispy_field }}
+				</div>
+				{{ form.egreso }}
+				<div class="col col-xl-2">
+					<label for="codigo" class="col-form-label  requiredField">N° Partida</label>
+					<select class="select2 form-control {%if form.egreso.errors %}is-invalid {%endif%}"
+                    disabled
+                    id="codigo"></select>
+					{% for error in form.egreso.errors%}
+					<p id="error_{{forloop.counter}}_id_egreso" class="invalid-feedback">
+						<strong>{{error}}</strong>
+					</p>
+					{%endfor%}
+				</div>
+				<div class="col-12 col-xl-8">
+					<label for="partida" class="col-form-label  requiredField">Partida Presupuestaria</label>
+					<select class="select2 form-control {%if form.egreso.errors %}is-invalid {%endif%}"
+                    disabled
+                    id="partida"></select>
+					{% for error in form.egreso.errors%}
+					<p id="error_{{forloop.counter}}_id_egreso" class="invalid-feedback">
+						<strong>{{error}}</strong>
+					</p>
+					{%endfor%}
+				</div>
+			</div>
+			<div class="form-row">
+				<div class="col-4 col-xl-2">
+					{{form.fecha_comprobante | as_crispy_field}}
+				</div>
+				<div class="col-4 col-xl-2">
+					{{ form.n_comprobante|as_crispy_field }}
+				</div>
+				<div class="col-4 col-xl-2">
+                    <input type="hidden" name="forma_pago" value="{{form.forma_pago.value}}">
+					{{ form.forma_pago|as_crispy_field }}
+				</div>
+			</div>
+			<div class="form-row">
+				<div class="col-12 col-md-6">
+					{{ form.concepto|as_crispy_field }}
+				</div>
+			</div>
+			<div class="form-row">
+				<div class="col-2">
+					<label for="id_subtotal" class="col-form-label ">Subtotal 0%</label>
+					<div class="money currency-wrap">
+						<span class="currency-code">$</span>
+						{{form.subtotal|as_crispy_field}}
+					</div>
+				</div>
+				<div class="d-flex align-items-center">
+					<div class="col-auto">
+                        <input type="hidden" name="iva" value="{{form.iva.value}}">
+						{{form.iva |as_crispy_field}}
+					</div>
+				</div>
+				<div class="col-2">
+					<label for="id_valor_iva" class="col-form-label ">IVA</label>
+					<div class="currency-wrap">
+						<span class="currency-code">$</span>
+						{{form.valor_iva|as_crispy_field}}
+					</div>
+				</div>
+				<div class="col-2">
+					<label for="id_otros_cargos" class="col-form-label ">Otros Cargos</label>
+					<div class="money currency-wrap">
+						<span class="currency-code">$</span>
+						{{form.otros_cargos |as_crispy_field}}
+					</div>
+				</div>
+				<div class="col-2">
+					<label for="id_total" class="col-form-label ">Total</label>
+					<div class="currency-wrap">
+						<span class="currency-code">$</span>
+						{{form.total |as_crispy_field}}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="campo col-12 p-2 pl-3">
+			<h5 class="black-text text-uppercase mb-0">Documentos Adjuntos</h5>
+		</div>
+	</div>
+	<div class="row darkwhite-bg py-2">
+		<div class="col-12">
+			<div class="form-row" id="checkes">
+				{% for value, text in form.tipo_documentos.field.choices %}
+				<div class="col-xl-3 col-6 mb-2">
+					<div class="form-check form-check-inline">
+                        {% if value in form.tipo_documentos.value %}
+                        <input id="id_tipo_documentos_{{ forloop.counter0 }}" name="{{ form.tipo_documentos.name }}"
+							type="hidden" checked="checked" value="{{ value }}">
+                        {% endif %}
+						<input class="form-check-input {%if form.tipo_documentos.errors %}is-invalid {%endif%}"
+							id="id_tipo_documentos_{{ forloop.counter0 }}" name="{{ form.tipo_documentos.name }}"
+							type="checkbox" value="{{ value }}" {% if value in form.tipo_documentos.value %}
+                            checked="checked" {% endif %} disabled>
+						<label class="form-check-label">{{ text }}</label>
+					</div>
+				</div>
+				{% endfor %}
+				<div class="col-12">
+					{% for error in form.tipo_documentos.errors%}
+					<p class="invalid">
+						<strong>{{error}}</strong>
+					</p>
+					{%endfor%}
+				</div>
+			</div>
+			<div class="form-row">
+				<table class="table">
+					<div class="col-12">Archivos Actuales:</div>
+
+					<tbody>
+						{{ formset.management_form }}
+						{% for form in formset %}
+						<tr class="formset {%if not forloop.first %}d-none{%endif%}">
+							<td class="file">
+								{% for field in form.visible_fields %}
+									{# Include the hidden fields in the form #}
+									{% if forloop.first %}
+										{% for hidden in form.hidden_fields %}
+											{{ hidden }}
+										{% endfor %}
+									{% endif %}
+								{% endfor %}
+								<span class="d-none">{{form.file}}</span>
+								<a href="{{form.file.value.url}}" target="_blank">{{form.file.value.name}}</a>
+								{%for error in form.file.errors%}
+								<p class="invalid-feedback d-block">
+									<strong>{{ error }}</strong>
+								</p>
+								{%endfor%}
+							</td>
+						</tr>
+						{%endfor%}
+					</tbody>
+				</table>
+			</div>
+
+
+		</div>
+	</div>
+	<div class="row mt-3">
+		<div class="col-12">
+			<button type="submit" disabled style="display: none" aria-hidden="true"></button>
+			<a class="btn btn-secondary green-bg" data-toggle='modal' data-target="#ordenAgregarCenter" href='#'>Guardar</a>
+			<a class="btn btn-secondary" href="{% url 'orden_pago_lista' %}"> Cancelar </a>
+			{% if form.estado.value == "Grabado" %}
+			<button id="env-sol" class="btn btn-success darkgreen-bg float-right">Enviar solicitud</button>
+			{%endif%}
+		</div>
+	</div>
+
+	<div class="modal fade" id="ordenAgregarCenter" tabindex="-1" role="dialog" aria-labelledby="ordenTitle" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="ordenTitle">Confirmación</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body" id="modal-confirmacion">
+					¿Está seguro/a que desea continuar? Verifíque los datos ingresados antes de proceder.
+				</div>
+				<div class="modal-footer">
+					<button class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+					<button type="submit" id="enviar" class="btn btn-secondary green-bg mr-3">Confirmar</button>
+				</div>
+			</div>
+		</div>
+	</div>
+    {{ form.media }}
+</form>
+{% endblock %}
+
+{% block extrafooter %}
+<script src="{% static 'js/select2.min.js' %}"></script>
+<script src="{% static 'js/orden_pago.js' %}"></script>
+<script src="{% static 'js/money_formater.js' %}"></script>
+<script>
+	SetNum("{{files}}");
+</script>
+{% endblock extrafooter %}

@@ -1,0 +1,171 @@
+{% extends 'base_administrativo.html' %}
+{% load static %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+{% block title %}{{ "EC - Proveedores" }}{% endblock title %}
+{% block extraheader %}
+{% endblock extraheader %}
+{% block content %}
+
+<div class="row mb-2 d-flex white-bg">
+	<div class="col-9 v-align">
+		<h2>CONSULTAS <span class="darkgreen-text">PROVEEDORES</span></h2>
+	</div>
+	<div class="col-3 col-xl-3 v-align">
+		<a class="btn btn-secondary green-bg float-right" href="{% url 'proveedores_view' %}"><i class="fas fa-plus"></i>
+			Agregar
+			nuevo</a>
+	</div>
+</div>
+
+<div class="row darkwhite-bg pb-2">
+	<div class="col-12 col-xl-12">
+		<form method="get" id="forma_test" data-cities-url="{% url 'ajax_load_ciudades' %}" novalidate>
+			{% csrf_token %}
+			<div class="row mb-2">
+				<div class="campo p-2 pl-3 col-12">
+					<h5 class="black-text text-uppercase mb-0">Información Proveedor</h5>
+				</div>
+			</div>
+			<div class="form-row">
+				<div class="col-4">
+					{{ filter.form.tipo_proveedor|as_crispy_field }}
+				</div>
+				<div class="col-4">
+					{{ filter.form.ruc|as_crispy_field }}
+				</div>
+				<div class="col-4">
+					{{ filter.form.razon|as_crispy_field }}
+				</div>
+			</div>
+			<div class="form-row">
+				<div class="col-6">
+					{{ filter.form.sector|as_crispy_field }}
+				</div>
+				<div class="col-3">
+					{{ filter.form.provincia|as_crispy_field }}
+				</div>
+				<div class="col-3">
+					{{ filter.form.ciudad|as_crispy_field }}
+				</div>
+			</div>
+			<div class="form-row">
+
+				<div class="col-6 col-xl-6">
+					{{ filter.form.tipo_rubro|as_crispy_field }}
+				</div>
+				
+
+			</div>
+
+			<button type="submit" class="btn btn-secondary green-bg float-right">
+				<i class="fas fa-search"></i> Buscar</button>
+			{{ filter.form.media }}
+
+
+		</form>
+
+	</div>
+</div>
+
+<div class="row mt-4-md">
+	<div class="col-12">
+		<table id="dtBasicExample" class="table table-responsive border-bottom">
+			
+			<thead class="white-text darkgreen-bg">
+				<tr>
+					<th scope="col">Código de Proveedor</th>
+					<th scope="col">RUC</th>
+					<th scope="col">Nombre Proveedor</th>
+					<th scope="col">Tipo Proveedor</th>
+					<th scope="col">Sector</th>
+					<th scope="col">Rubro</th>
+					<th scope="col">Provincia</th>
+					<th scope="col">Ciudad</th>
+					<th scope="col">Teléfono</th>
+					<th scope="col">Celular</th>
+					<th scope="col">Correo</th>
+					<th scope="col">Dirección</th>
+					<th>Acciones</th>
+				</tr>
+			</thead>
+			{% if proveedores %}
+			<tbody>
+				{% for j in proveedores %}
+				<tr class="text-center">
+					<td scope="row">{{j.cod_proveedor}}</td>
+					<td scope="row">{{j.ruc}}</td>
+					<td scope="row">{{j.razon}}</td>
+					<td scope="row">{{j.tipo_proveedor}}</td>
+					<td scope="row">{{j.sector}}</td>
+					<td scope="row">{{j.tipo_rubro}}</td>
+					<td scope="row">{{j.provincia}}</td>
+					<td scope="row">{{j.ciudad}}</td>
+					<td scope="row">{{j.telefono}}</td>
+					<td scope="row">{{j.celular}}</td>
+					<td scope="row">{{j.correo}}</td>
+					<td scope="row">{{j.direccion}}</td>
+					<td scope="row">
+
+						
+						<a class="m-auto btn btn-secondary btn-sm" href="{% url 'editar_proveedor' pk=j.pk %}"><i class="fas fa-edit"></i></a>
+
+						
+						
+					</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+
+			{% else %}
+			<h2>No hay elementos que mostrar</h2>
+			{% endif %}
+		</table>
+	</div>
+</div>
+
+{% endblock %}
+
+{% block extrafooter %}
+
+<script type="text/javascript">
+	window.onload = function () {
+	  document.getElementById("id_cod_proveedor").readOnly = False;
+	};
+</script>
+
+<script src="{% static 'js/table.js' %}"></script>
+
+<script>
+	$("#id_provincia").change(function () {
+		var url = $("#forma_test").attr("data-cities-url");  // get the url of the `load_cities` view
+		var countryId = $(this).val();  // get the selected country ID from the HTML input
+
+		$.ajax({                       // initialize an AJAX request
+			url: url,                    // set the url of the request (= localhost:8000/hr/ajax/load-cities/)
+			data: {
+				'provincia': countryId       // add the country id to the GET parameters
+			},
+			success: function (data) {   // `data` is the return of the `load_cities` view function
+				$("#id_ciudad").html(data);  // replace the contents of the city input with the data that came from the server
+			}
+		});
+
+	});
+</script>
+
+
+<script>
+	function eliminar(id) {
+		$.ajax({
+			url: "{% url 'index_proveedores' %}",
+			data: { "pk": id },
+			success: function (data) {
+				$(".modal-content").html(data);
+			}
+		});
+	}
+
+</script>
+
+{% endblock %}

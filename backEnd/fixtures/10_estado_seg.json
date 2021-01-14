@@ -1,0 +1,29 @@
+[
+    {
+        "model":"seguimientos.EstadoSeguimiento",
+        "id":1,
+        "fields":{
+            "nombre":"Por contactar"
+        }
+    },
+    {
+        "model":"seguimientos.EstadoSeguimiento",
+        "id":2,
+        "fields":{
+            "nombre":"Sin respuesta"
+        }
+    },
+    {
+        "model":"seguimientos.EstadoSeguimiento",
+        "id":3,
+        "fields":{
+            "nombre":"Contactado"
+        }
+    },    {
+        "model":"seguimientos.EstadoSeguimiento",
+        "id":4,
+        "fields":{
+            "nombre":"Contacto inválido"
+        }
+    }
+]

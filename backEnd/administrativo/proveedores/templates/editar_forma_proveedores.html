@@ -1,0 +1,274 @@
+{% extends 'base_administrativo.html' %}
+
+{% load crispy_forms_tags %}
+
+
+{% load static %}
+{% load staticfiles %}
+
+{% block content %}
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" />
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/select2-bootstrap-theme/0.1.0-beta.10/select2-bootstrap.css" />
+
+
+	
+<div class="row mb-1">
+	<div class="col-xl-5 col-12 v-align">
+		<h2 class="text-uppercase darkgreen-text">
+			{% block regedit %}
+			Edición Proveedor
+			{% endblock regedit %}
+		</h2>
+	</div>
+</div>
+
+<form method="POST" action ="{% url 'editar_proveedor' object.id %}"  data-proveedor-url="{% url 'ajax_load_proveedor' %}" data-cities-url="{% url 'ajax_load_ciudades' %}" enctype="multipart/form-data" ,  data-persona-url="{% url 'ajax_load_personas' %}" data-confirmacion-url="{% url 'ajax_verificar_campos' %}"  data-proveedor-url="{% url 'ajax_load_proveedor' %}"
+data-info-url="{% url 'ajax_info_id' %}">
+	{% csrf_token %}
+
+	<div class="row mb-1">	
+		<div class="col-12 col-xl-7">
+			<div class="form-row">
+				<div class="col-3">
+					{{ form.cod_proveedor |as_crispy_field}}
+				</div>
+				<div class="col-4">
+					{{ form.fecha |as_crispy_field}}
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<div class="row">
+		<div class="campo col-12 mt-2 p-2 pl-3">
+			<h5 class="black-text mb-0 text-uppercase">Información Proveedor</h5>
+		</div>
+	</div>
+
+
+
+	<div class="row darkwhite-bg py-2">
+
+		
+		<div class="col-12">
+			<div class=" form-row">
+
+				
+
+				<div class="col-3">
+					{{form.tipo_proveedor|as_crispy_field}}
+					<small class="form-text text-muted">Seleccione el tipo de proveedor</small>
+				</div>
+				<div class="col-3">
+					{{ form.ruc|as_crispy_field}}
+				</div>
+				<div class="col-3">
+					{{ form.razon |as_crispy_field}}
+				</div>
+				
+				
+				<div class="col-6 col-xl-3">
+					{{ form.sector|as_crispy_field}}
+				</div>
+				<div class="col-6 col-xl-5">
+					{{ form.tipo_rubro|as_crispy_field}}
+				</div>
+				<div class="col-6 col-xl-4">
+					{{ form.representante|as_crispy_field}}
+				</div>
+			</div>
+			<div class="form-row">
+
+				<div class="col-3 col-xl-3">
+					{{ form.provincia|as_crispy_field}}
+				</div>
+				<div class="col-3 col-xl-3">
+					{{ form.ciudad|as_crispy_field}}
+				</div>
+				<div class="col-12 col-xl-6">
+					{{ form.direccion |as_crispy_field}}
+				</div>
+			</div>
+
+			<div class="form-row">
+
+				<div class="col-3 col-xl-3">
+					{{ form.telefono|as_crispy_field}}
+				</div>
+				<div class="col-3 col-xl-3">
+					{{ form.celular|as_crispy_field}}
+				</div>
+				<div class="col-12 col-xl-6">
+					{{ form.correo |as_crispy_field}}
+				</div>
+				<div class="col-12">
+					{{ form.observaciones |as_crispy_field}}
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="campo col-12 mt-2 p-2 pl-3">
+					<h5 class="black-text mb-0 text-uppercase">Contacto Empresa</h5>
+				</div>
+			
+			</div>
+
+
+			<br>
+			<a id="agregar_contacto"  class="text-white btn btn-secondary green-bg" onclick= "contactos()">Agregar contacto</a>
+
+			<br>
+
+			<div class="row mt-4">
+                <div class="col-12 m-0">
+                    <table id="dtBasicExample" class="table table-responsive-md border-bottom">            
+                        <thead class="white-text darkgreen-bg m-0">
+                            <tr>
+                                <th scope="col" style="width: 140px">Cédula</th>
+                                <th scope="col" style="width: 140px"> Nombre</th>
+                                <th scope="col" style="width: 140px">Apellidos </th>
+                                <th scope="col" style="width: 140px">Cargo</th>
+                                <th scope="col" style="width: 140px">Teléfono</th>
+                                <th scope="col" style="width: 140px">Celular</th>
+                                <th scope="col" style="width: 250px">Correo Electrónico</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+
+            <div class="row mt-1">
+                <div class="col-12">
+                    <table id="dtcontactouno" class="table table-responsive-md ">
+                            <tr class="text-center" id='form_contacto_uno'>
+                                <td scope="row" style="width: 140px">{{ form.ci_contacto_uno|as_crispy_field}}</td>
+                                <td scope="row" style="width: 140px">{{ form.nombre_contacto_uno|as_crispy_field}}</td>
+                                <td scope="row" style="width: 140px">{{ form.apellidos_contacto_uno |as_crispy_field}}</td>
+                                <td scope="row" style="width: 140px">{{ form.cargo_contacto_uno |as_crispy_field}}</td>
+                                <td scope="row" style="width: 140px">{{ form.telefono_contacto_uno|as_crispy_field}}</td>
+                                <td scope="row" style="width: 140px">{{ form.celular_contacto_uno |as_crispy_field}}</td>
+                                <td scope="row" style="width: 250px">{{ form.correo_contacto_uno |as_crispy_field}}</td>
+                            </tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="row mt-1">
+                <div class="col-12">
+                    <table id="dtcontactodos" class="table table-responsive-md">
+                            <tr class="text-center" id='form_contacto_dos' style='display:none' >
+                                <td scope="row" style="width: 140px">{{ form.ci_contacto_dos|as_crispy_field}}</td>
+                                <td scope="row" style="width: 140px">{{ form.nombre_contacto_dos|as_crispy_field}}</td>
+                                <td scope="row" style="width: 140px">{{ form.apellidos_contacto_dos |as_crispy_field}}</td>
+                                <td scope="row" style="width: 140px">{{ form.cargo_contacto_dos |as_crispy_field}}</td>
+                                <td scope="row" style="width: 140px">{{ form.telefono_contacto_dos|as_crispy_field}}</td>
+                                <td scope="row" style="width: 140px">{{ form.celular_contacto_dos |as_crispy_field}}</td>
+                                <td scope="row" style="width: 250px">{{ form.correo_contacto_dos |as_crispy_field}}</td>
+                            </tr>
+                    </table>
+                </div>
+            </div>
+            <div class="row mt-1">
+                <div class="col-12">
+                    <table id="dtcontactotres" class="table table-responsive-md">
+            
+                          <tr class="text-center" id='form_contacto_tres' style='display:none' >
+                                <td scope="row" style="width: 140px">{{ form.ci_contacto_tres|as_crispy_field}}</td>
+                                <td scope="row" style="width: 140px">{{ form.nombre_contacto_tres|as_crispy_field}}</td>
+                                <td scope="row" style="width: 140px">{{ form.apellidos_contacto_tres |as_crispy_field}}</td>
+                                <td scope="row" style="width: 140px">{{ form.cargo_contacto_tres |as_crispy_field}}</td>
+                                <td scope="row" style="width: 140px">{{ form.telefono_contacto_tres|as_crispy_field}}</td>
+                                <td scope="row" style="width: 140px">{{ form.celular_contacto_tres |as_crispy_field}}</td>
+								<td scope="row" style="width: 250px">{{ form.correo_contacto_tres |as_crispy_field}}</td>
+                            </tr>
+                    </table>
+                </div>
+            </div>
+		</div>
+	</div>
+
+	{{ form.media }}
+    <div class="row mt-3 crear">
+		<div class="col-12">
+			<button type="submit" class="btn btn-secondary green-bg mr-3 hack">Confirmar</button>
+		  	<a class="btn btn-secondary" href="{% url 'index_proveedores' %}"> Cancelar </a>
+		</div>
+	</div>
+
+	
+<!-- 	
+	  <div class="modal fade" id="proveedor_confirmar" tabindex="-1" role="dialog" aria-labelledby="ordenTitle"
+					aria-hidden="true">
+						<div class="modal-dialog modal-dialog-centered" role="document">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="reporteTitle">Confirmación</h5>
+										<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+											<span aria-hidden="true">&times;</span>
+									</button>
+								</div>
+								<div class="modal-body" id="modal-confirmacion">
+									¿Está seguro/a que desea continuar? Verifíque los datos ingresados antes de proceder.
+								</div>
+								<div class="modal-footer">
+									<button class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+									<button type="submit" class="btn btn-secondary green-bg mr-3 hack">Confirmar</button>
+								</div>
+							</div>
+						</div>
+					</div> -->
+</form>
+
+
+
+
+{% endblock %}
+
+{% block extrajs %}
+
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/js/bootstrap.min.js"></script>
+
+{% endblock %}
+
+
+
+
+
+{% block extrafooter %}
+
+<script type="text/javascript">
+	window.onload = function () {
+	document.getElementById("id_fecha").readOnly = true;
+	};
+</script>
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
+
+<script src="{% static 'js/contactos.js' %}"></script>
+<script>
+	$("#id_provincia").change(function () {
+		var url = $("#form_test").attr("data-cities-url");  // get the url of the `load_cities` view
+		var provinciaId = $(this).val();  // get the selected country ID from the HTML input
+
+		$.ajax({                       // initialize an AJAX request
+			url: url,                    // set the url of the request (= localhost:8000/hr/ajax/load-cities/)
+			data: {
+				'provincia': provinciaId       // add the country id to the GET parameters
+			},
+			success: function (data) {   // `data` is the return of the `load_cities` view function
+				$("#id_ciudad").html(data);  // replace the contents of the city input with the data that came from the server
+			}
+		});
+
+	});
+</script>
+{% endblock extrafooter %}
+
+
+

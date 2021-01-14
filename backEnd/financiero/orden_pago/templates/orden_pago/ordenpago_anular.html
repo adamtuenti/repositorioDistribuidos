@@ -1,0 +1,26 @@
+<div class="modal-header">
+    <h5 class="modal-title" id="ordenpagoTitle">Anulación de orden de pago {{object.cod_ord_pago}}</h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<form method="POST" action="{% url 'ordenpago_eliminar' object.id %}" >
+    {% csrf_token %}
+
+    <div class="modal-body">
+        ¿Está seguro que desea eliminar la Orden de Pago?
+        <br>
+        Código: {{object.cod_ord_pago}}
+        <br>
+        Beneficiario: {{object.proveedor.razon}}{{object.proveedor.nombre}}
+        <br>
+        <br>
+        Ingrese el motivo de la anulación
+        {{ form.motivo_anular }}
+        {{ form.fecha_anulado }}
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+        <button id="anular" class="btn btn-secondary green-bg mr-3" type="submit" disabled> Anular </button>
+    </div>
+</form>

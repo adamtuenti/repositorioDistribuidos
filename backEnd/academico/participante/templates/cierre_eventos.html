@@ -1,0 +1,192 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+<div class="row">
+    <div class="col-9 col-sm-9 col-xl-9">
+        <h3>CIERRE DE <span class="darkgreen-text">EVENTOS</span></h3>
+    </div>
+</div>
+<form id="cierre" onsubmit="return validate()" action="{% url 'cierre_eventos' %}" method="POST" >
+    {% csrf_token %}
+<div class="form-group row">
+    <label for="codigo_evento" class="col-sm-2 col-form-label">Código Evento:</label>
+    <div class="col-sm-3">
+        <input id="codigo_evento" name="codigo_evento" type="text" class="form-control"
+            oninvalid="this.setCustomValidity('Ingrese un codigo válido')" oninput="this.setCustomValidity('')"
+            onchange="llenarNombre()" required>
+    </div>
+    <div class="col-sm-7">
+        <input id="nombre_evento" name="nombre_evento" type="text" class="form-control"
+            oninvalid="this.setCustomValidity('Ingrese un apellido válido')" oninput="this.setCustomValidity('')"
+            required disabled>
+    </div>
+</div>
+<div class="row">
+    <label for="estado" class="col-sm-3 col-form-label">Estado del Evento:</label>
+    <div class="col-sm-3">
+        <select name="estado" id="estado" class="browser-default custom-select"
+            oninvalid="this.setCustomValidity('Seleccione una de las opciones de la lista')" required>
+            <option value="" selected disabled>Estado</option>
+            <option value="Ejecutado">Ejecutado</option>
+            <option value="No ejecutado">No ejecutado</option>
+            <option value="Anulado">Anulado</option>
+        </select>
+    </div>
+</div>
+<div class="form-group row">
+    <label for="fac" class="col-sm-2 col-form-label">Facilitador 1ra evaluacion:</label>
+    <div class="col-sm-3">
+        <input id="fac" name="fac" type="text" class="form-control"
+            oninvalid="this.setCustomValidity('Ingrese un codigo válido')" oninput="this.setCustomValidity('')" required
+            disabled>
+    </div>
+    <div class="col-sm-7">
+        <input id="nombre_fac" name="nombre_fac" type="text" class="form-control"
+            oninvalid="this.setCustomValidity('Ingrese un apellido válido')" oninput="this.setCustomValidity('')"
+            required disabled>
+    </div>
+</div>
+<div class="form-group row">
+    <label for="co" class="col-sm-2 col-form-label">Cofacilitador:</label>
+    <div class="col-sm-3">
+        <input id="co" name="co" type="text" class="form-control"
+            oninvalid="this.setCustomValidity('Ingrese un codigo válido')" oninput="this.setCustomValidity('')" required
+            disabled>
+    </div>
+    <div class="col-sm-7">
+        <input id="nombre_co" name="nombre_co" type="text" class="form-control"
+            oninvalid="this.setCustomValidity('Ingrese un apellido válido')" oninput="this.setCustomValidity('')"
+            required disabled>
+    </div>
+</div>
+<div class="form-group row">
+    <label for="fac_mej" class="col-sm-2 col-form-label">Facilitador mejoramiento:</label>
+    <div class="col-sm-3">
+        <input id="fac_mej" name="fac_mej" type="text" class="form-control"
+            oninvalid="this.setCustomValidity('Ingrese un codigo válido')" oninput="this.setCustomValidity('')"
+            onchange="llenarNombre()" required disabled>
+    </div>
+    <div class="col-sm-7">
+        <input id="nombre_facmej" name="nombre_facmej" type="text" class="form-control"
+            oninvalid="this.setCustomValidity('Ingrese un apellido válido')" oninput="this.setCustomValidity('')"
+            required disabled>
+    </div>
+</div>
+<div class="row mt-4">
+    <div class="col-16 col-xl-16 table-container">
+        <table class="table table-responsive table-bordered" id="tablacierre">
+        <thead class="white-text darkgreen-bg">
+            <tr scope="col">
+                <th scope="col">Código</th>
+                <th scope="col">Nombre</th>
+                <th scope="col">Fecha inicio</th>
+                <th scope="col">Fecha fin</th>
+                <th scope="col">Estado</th>
+                <th scope="col">Duración</th>
+                <th scope="col">Notas 1era evaluacion</th>
+                <th scope="col">Fecha registro (1era)</th> 
+                <th scope="col">Notas mejoramiento</th>
+                <th scope="col">Fecha registro (mej)</th> 
+                <th scope="col">Asistencias</th>  
+                <th scope="col">Fecha cierre</th>  
+                <th scope="col">Satisfaccion</th>   
+                <th scope="col">Usuario</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td scope="rol" class="codigo_evento"></td>
+                <td scope="rol" class="nombre_evento"></td>
+                <td scope="rol" class="inicio"></td>
+                <td scope="rol" class="fin"></td>
+                <td scope="rol" class="estado"></td>
+                <td scope="rol" class="duracion"></td>
+                <td scope="rol" class="notas_1"></td>
+                <td scope="rol" class="fecha_1"></td>
+                <td scope="rol" class="notas_2"></td>
+                <td scope="rol" class="fecha_2"></td>
+                <td scope="rol" class="asistencias"></td>
+                <td scope="rol" class="fecha_cierre"></td>
+                <td scope="rol" class="satisfaccion"></td>
+                <td scope="rol" class="usuario"></td>
+            </tr>
+        </tbody>
+        </table>
+        </div>
+        </div>
+        
+<hr>
+
+    <div class="form-group col-md-10">
+            <h4 class="darkgreen-text">Generación de cierre</h4>
+            <div>
+                <input id="asistencias" type="checkbox" name="a" value="asistencias" onchange="habilitarBotones()">Cierre de asistencias<br>
+                <input id="calificaciones" type="checkbox" name="a" value="calificaciones" >Cierre de calificaciones<br>
+                <input id="informes" type="checkbox" name="a" value="informes" >Habilitar informes de cierre<br>
+                <input id="certificados" type="checkbox" name="a" value="certificados" >Generar certificados<br>
+                <input id="notificaciones" type="checkbox" name="a" value="notificaciones" >Notificaciones académicas<br>
+                
+            </div>
+</div>
+<hr>
+<button type="submit" class="btn btn-success btn-lg submit">Generar cierre</button>
+</form>
+<!-- </form> -->
+{% endblock %}
+{% block specific_scripts %}
+<script>
+    var bandera = false;
+    function habilitarBotones(){
+        if (document.getElementById('asistencias').checked){
+            console.log(document.getElementById('informes').disabled)
+            if(document.getElementById('informes').disabled){
+                bandera=true;
+                console.log(bandera);
+                document.getElementById('informes').disabled = false;
+                document.getElementById('certificados').disabled = false;
+                document.getElementById('notificaciones').disabled = false;
+            }
+        }else{
+            console.log(bandera);
+            if(bandera){
+                document.getElementById('informes').disabled = true;
+                document.getElementById('certificados').disabled = true;
+                document.getElementById('notificaciones').disabled = true;
+            }
+        }
+    }
+    function llenarNombre() {
+        let codigo = $("#codigo_evento").val();
+        $.ajax({
+            url: "/academico/api/event/evento/"+codigo+"/",
+            data: {},
+            success: function (data) {
+                console.log(data);
+                $("#nombre_evento").val(data['nombre']);
+                $.ajax({
+                url: "/academico/api/event/docente/"+data['docente']+'/',
+                dataa: {},
+                success: function(dataa) {
+                    $("#fac").val(dataa['numero_de_cedula']);
+                    $("#nombre_fac").val(dataa['nombres']+' '+dataa['apellidos']);
+                  }
+                });
+                $(".nombre_evento").text(data['nombre']);
+                $(".codigo_evento").text(codigo);
+                $(".inicio").text(data['fecha_inicio']);
+                $(".fin").text(data['fecha_fin']);
+                $(".duracion").text(data['duracion']);
+                if(!data['cierre_asistencias']){
+                    document.getElementById('informes').disabled = true;
+                    document.getElementById('certificados').disabled = true;
+                    document.getElementById('notificaciones').disabled = true;
+                }
+            },
+            error: function(){
+                $("#nombre_evento").val("");
+            }
+        });
+    }
+</script>
+{% endblock %}

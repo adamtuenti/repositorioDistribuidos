@@ -1,0 +1,274 @@
+{% extends 'base_administrativo.html' %}
+
+{% load crispy_forms_tags %}
+
+
+{% load static %}
+{% load staticfiles %}
+
+{% block content %}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" />
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/select2-bootstrap-theme/0.1.0-beta.10/select2-bootstrap.css" />
+<div class="row mb-2">
+	<div class="col-xl-5 col-12 v-align">
+		<h2 class="text-uppercase darkgreen-text">
+			{% block regedit %}
+			Registro Egreso de Suministros
+			{% endblock regedit %}
+		</h2>
+	</div>
+	<div class="col-12 col-xl-7">
+		<div class="form-row">
+			<div class="col-6">
+				{{ form.cod_suministro_egreso |as_crispy_field}}
+			</div>
+			<div class="col-6">
+				{{ form.fecha |as_crispy_field}}
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="row">
+	<div class="campo col-12 mt-2 p-2 pl-3">
+		<h5 class="black-text mb-0 text-uppercase">Información Ingreso</h5>
+	</div>
+</div>
+
+<form method="post" id="Calificacion_proveedorForm"  
+	data-evento-url="{% url 'ajax_load_all_eventos_presupuestos' %}" data-proveedor-url="{% url 'ajax_load_proveedor' %}" data-tipo-url="{% url 'ajax_load_partida'%}"
+	data-producto-url="{% url 'load_productosS'%}" data-productoInd-url="{% url 'load_producto_datalleS'%}"
+	enctype="multipart/form-data" novalidate>
+	{% csrf_token %}
+
+	{% if error %}
+		<h2>{{error}}</h2>
+
+	{% else %}
+	<div class="row darkwhite-bg py-2">
+        <div class="col-12">
+
+
+
+            <div class="form-row">
+                    <div class="col-3">
+                        {{ form.fecha_egreso|as_crispy_field}}
+                    </div>
+                    <div class="col-3">
+                        {{ form.tipo_consumo|as_crispy_field}}
+                    </div>
+
+                    <div class="col-3">
+                        {{ form.usuario|as_crispy_field}}
+                    </div>
+                    
+                    <div class="col-3">
+                        {{ form.area|as_crispy_field}}
+                    </div>
+            </div>
+            
+			<div class=" form-row">
+				<div class="col-4 col-xl-3">
+					<label for="codigo_evento" class="col-form-label requiredField">Código del Evento</label>
+					<span class="asteriskField">*</span>
+					<select class="select2 form-control {%if form.evento.errors %}is-invalid {%endif%}"
+						id="codigo_evento"></select>
+					{% for error in form.evento.errors %}
+					<p class="invalid-feedback d-block">
+						<strong>{{ error }}</strong>
+					</p>
+					{% endfor %}
+				</div>
+				<div class="col">
+					<div class="form-group">
+						<label for="nombre_evento" class="col-form-label requiredField">Nombre del Evento</label>
+						<span class="asteriskField">*</span>
+						<select class="select2 form-control {%if form.evento.errors %}is-invalid{%endif%}"
+							id="nombre_evento"></select>
+						{% for error in form.evento.errors %}
+						<p class="invalid-feedback d-block">
+							<strong>{{ error }}</strong>
+						</p>
+						{% endfor %}
+					</div>
+				</div>
+				{{form.evento}}
+			</div>
+
+
+
+    
+            <div class="form-row">
+				<div class="col-1">
+					{{ form.cantidad_participantes|as_crispy_field}}
+				</div>
+                <div class="col-11">
+                    {{ form.observaciones|as_crispy_field}}
+                </div>
+			</div>
+			
+			<br>
+
+            <table class="table table-responsive-md border-bottom">
+				{{ formset.management_form|crispy }}
+					{% for form in formset.forms %}
+							<tr class="{% cycle 'row1' 'row2' %} form-control form-row formset_row-{{ formset.prefix }}">
+								{% for field in form.visible_fields %}
+								<td scope="row">
+									{# Include the hidden fields in the form #}
+									{% if forloop.first %}
+										{% for hidden in form.hidden_fields %}
+											{{ hidden }}
+										{% endfor %}
+									{% endif %}
+									{{ field.errors.as_ul }}
+									{{ field|as_crispy_field }}
+								</td>
+								{% endfor %}
+							</tr>
+					{% endfor %}
+				</table>
+            <br>
+
+
+
+            
+
+        </div>
+    </div>
+
+    <br>
+    <div class="row mb-2">
+        <div class="col">
+            <div class=" float-right">
+                <div class="col-auto v-align ml-auto">
+            <a id="add" class="text-white btn btn-secondary green-bg btn-sm"><i
+                class="fas fa-plus"></i>   Agregar Item</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+        <div id="tabla" class="col-12">
+            <table id="productos-table" class="table table-responsive-md border-bottom">
+                <thead class="darkgreen-bg white-text">
+                    <tr>
+                        <th>Nombre Producto</th>
+                        <th>Unidad Medida</th>
+                        <th>Estado</th>
+                        <th>Controlable S/N</th>
+                        <th>Stock Vigente</th>
+                        <th>Cantidad solicitada</th>
+                        <th>Cantidad despachada</th>
+                        <th>Acciónes</th>
+                    </tr>
+                </thead>
+                
+                <tbody id="productoTableBody">
+                    
+                </tbody>
+            </table>
+        </div>
+    
+
+
+
+
+
+    {% endif %}
+
+    {{ form.media }}
+    
+    <br>
+    <br>
+
+        <div class="row mt-3 crear">
+            <div class="col-12">
+            <a class="btn btn-secondary green-bg" data-toggle='modal' data-target="#suministro_confirmar"
+            href='#'>Siguiente</a>
+            <a class="btn btn-secondary" href="{% url 'index_suministros_egreso' %}"> Cancelar </a>
+            </div>
+        </div>
+
+	
+	
+	    <div class="modal fade" id="suministro_confirmar" tabindex="-1" role="dialog" aria-labelledby="ordenTitle"
+					aria-hidden="true">
+						<div class="modal-dialog modal-dialog-centered" role="document">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="reporteTitle">Confirmación</h5>
+										<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+											<span aria-hidden="true">&times;</span>
+									</button>
+								</div>
+								<div class="modal-body" id="modal-confirmacion">
+									¿Está seguro/a que desea continuar? Verifíque los datos ingresados antes de proceder.
+								</div>
+								<div class="modal-footer">
+									<button class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+									<button type="submit" class="btn btn-secondary green-bg mr-3 hack">Confirmar</button>
+								</div>
+							</div>
+						</div>
+					</div>
+
+
+	<table id="tableProSum" class="table table-responsive-md border-bottom " >
+						{{ sumepro.management_form|crispy }}
+				
+						{% for form in sumepro.forms %}
+				<div class="col-6 col-xl-6" id='id_ti_tercerniveldp' style='display:none'>
+						<tr class="{% cycle 'row1' 'row2' %} form-control pt form-row sumepro_row-{{ sumepro.prefix }}" style='display:none'>
+							{% for field in form.visible_fields %}
+							<td scope="row">
+								{# Include the hidden fields in the form #}
+								{% if forloop.first %}
+								{% for hidden in form.hidden_fields %}
+								{{ hidden }}
+								{% endfor %}
+								{% endif %}
+								{{ field.errors.as_ul }}
+								{{ field|as_crispy_field }}
+							</td>
+							{% endfor %}
+						</tr>
+						{% endfor %}
+				
+					</table>
+			
+</form>
+
+
+{% endblock %}
+
+{% block extrajs %}
+
+<!-- <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/js/bootstrap.min.js"></script> -->
+
+{% endblock %}
+
+
+
+
+
+{% block extrafooter %}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
+<script src="{% static 'js/select2.min.js' %}"></script>
+<script src="{% static 'js/listaProveedores.js' %}"></script>
+<script src="{% static 'js/contactos.js' %}"></script>
+<script src="{% static 'js/table_producto_egreso.js' %}"></script>
+<script src="{% static 'js/suministros_egreso_form.js' %}"></script>
+
+{{ form.numbers }}
+<!-- <script src="{% static 'js/proforma_nuevo.js' %}"></script>
+<script src="{% static 'js/proforma_form.js' %}"></script>
+<script src="{% static 'js/proforma_money.js' %}"></script>
+<script src="{% static 'js/proforma_files.js' %}"></script> -->
+
+{% endblock extrafooter %}

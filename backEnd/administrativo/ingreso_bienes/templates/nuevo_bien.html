@@ -1,0 +1,187 @@
+{% extends 'base_administrativo.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% load staticfiles %}
+{% block title %}{{ "EC - INGRESO BIENES" }}{% endblock title %}
+{% block extraheader %}
+{% endblock extraheader %}
+
+{% block content %}
+
+<div class="row mb-2 d-flex white-bg">
+
+    <div class="col-xl-5 col-12 v-align">
+        <h2 class="text-uppercase darkgreen-text">
+            {% block regedit %}
+            Nuevo bien
+            {% endblock regedit %}
+        </h2>
+    </div>
+
+    <div class="col-12 col-xl-7">
+        <div class=" form-row">
+            <div class="col-6">
+                {{form.cod_activo|as_crispy_field}}
+            </div>
+            <div class="col-6">
+                {{ form.fecha|as_crispy_field}}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="campo col-12 mt-2 p-2 pl-3">
+        <h5 class="black-text mb-0 text-uppercase">Información Ingreso</h5>
+    </div>
+</div>
+<form method="POST" action="{% url 'nuevo_bien' %}">
+    {% csrf_token %}
+
+    <div class="darkwhite-bg py-2">
+        <div class="form-row">
+            <div class="col-6 col-xl-3">
+                {{ form.cod_bien|as_crispy_field}}
+            </div>
+            <div class="col-6 col-xl-5">
+                {{ form.nombre|as_crispy_field}}
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="col-6 col-xl-4">
+                {{ form.marca|as_crispy_field}}
+            </div>
+            <div class="col-6 col-xl-4">
+                {{ form.modelo|as_crispy_field}}
+            </div>
+            <div class="col-6 col-xl-4">
+                {{ form.n_serie|as_crispy_field}}
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="col-6 col-xl-4">
+                {{ form.tipo_bien|as_crispy_field}}
+            </div>
+            <div class="col-6 col-xl-4">
+                {{ form.categoria|as_crispy_field}}
+            </div>
+            <div class="col-6 col-xl-4">
+                {{ form.estado|as_crispy_field}}
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="col-6 col-xl-3">
+                {{ form.inventario|as_crispy_field}}
+            </div>
+            <div class="col-6 col-xl-3">
+                {{ form.iva|as_crispy_field}}
+            </div>
+            <div class="col-6 col-xl-3">
+                {{ form.cod_inventariound|as_crispy_field}}
+            </div>
+            <div class="col-6 col-xl-3">
+                {{ form.cod_Espoltech|as_crispy_field}}
+            </div>
+            <div class="col-6 col-xl-3">
+                {{ form.fecha_compra|as_crispy_field}}
+            </div>
+
+        </div>
+        <div class="form-row">
+            <div class="col-6 col-xl-4">
+                {{ form.frecuencia_mantenimiento|as_crispy_field}}
+            </div>
+            <div class="col-6 col-xl-4">
+                {{ form.preventivo|as_crispy_field}}
+            </div>
+            <div class="col-6 col-xl-4">
+                {{ form.correctivo|as_crispy_field}}
+            </div>
+            <div class="col-12">
+                {{ form.caracteristicas |as_crispy_field}}
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="col-6 col-md-3">
+                {{ form.subtotal}}
+                <label for="sub_total" class="col-form-label">Subtotal</label>
+                <div class="currency-wrap">
+                    <span class="currency-code">$</span>
+                    <input type="text" id="subtotal" class="form-control-plaintext text-right form-control" readonly>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                {{ form.valor_iva}}
+                <label for="sub_total" class="col-form-label">Subtotal IVA</label>
+                <div class="currency-wrap">
+                    <span class="currency-code">$</span>
+                    <input type="text" id="valor_iva" class="form-control-plaintext text-right form-control" readonly>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                {{ form.descuento}}
+                <label for="iva" class="col-form-label">Descuento</label>
+                <div class="currency-wrap">
+                    <span class="currency-code">$</span>
+                    <input type="text" id="descuento" class="form-control-plaintext text-right form-control" readonly>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                {{ form.total}}
+                <label for="valor_total" class="col-form-label">Total</label>
+                <div class="currency-wrap">
+                    <span class="currency-code">$</span>
+                    <input type="text" id="total" class="form-control-plaintext text-right form-control" readonly>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="col-12">
+                {{ form.observaciones |as_crispy_field}}
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="col-3 col-xl-5">
+                {{ form.ubicacion_inicial|as_crispy_field}}
+            </div>
+            <div class="col-3 col-xl-3">
+                {{ form.centro_costos|as_crispy_field}}
+            </div>
+            <div class="col-6 col-xl-5">
+                {{ form.ubicacion_final |as_crispy_field}}
+            </div>
+            <div class="col-6 col-xl-3">
+                {{ form.fecha_inventario |as_crispy_field}}
+            </div>
+
+        </div>
+
+</div>
+
+        {{ form.media }}
+        <div class="row mt-3 crear">
+            <div class="col-12">
+                <!-- <a class="btn btn-secondary green-bg" data-toggle='modal' data-target="#producto_confirmar"
+                          href='#'>Siguiente</a> -->
+                <button type="submit" class="btn btn-secondary green-bg mr-3 hack">Confirmar</button>
+                <!-- <button class='btn btn-secondary green-bg mr-3 hack' type='submit'>Confirmar</button> -->
+                <button class='btn btn-secondary' type='button' data-dismiss='modal'>Cancelar</button>
+            </div>
+        </div>
+    </div>
+    {% block extrafooter %}
+
+    <script type="text/javascript">
+        window.onload = function () {
+            document.getElementById("id_fecha").readOnly = true;
+        };
+    </script>
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
+    {% endblock extrafooter %}
+    {% endblock content %}

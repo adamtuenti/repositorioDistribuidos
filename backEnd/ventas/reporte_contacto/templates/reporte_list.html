@@ -1,0 +1,127 @@
+{% extends "base_ventas.html" %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% block title %}{{ "EC - Reporte Contacto" }}{% endblock title %}
+
+{% block extraheader %}
+{% endblock extraheader %}
+
+{% block content %}
+<div class="row mb-2 d-flex white-bg">
+    <div class="col-9 v-align">
+        <h2>CONSULTAS <span class="darkgreen-text">REPORTE DE CONTACTO</span></h2>
+    </div>
+    <div class="col-3 col-xl-3 v-align">
+        <a class="btn btn-secondary green-bg float-right" href="{% url 'reporte_nuevo' %}"><i class="fas fa-plus"></i>
+            Agregar
+            nuevo</a>
+    </div>
+</div>
+<div class="row darkwhite-bg py-2">
+    <div class="col-12">
+        <form action="" method="get">
+            <div class="form-row ">
+                <div class="col-6 col-md-4 mb-0 ">
+                    {{ filter.form.cod_reporte|as_crispy_field }}
+                </div>
+                <div class="col-6 col-md-4 mb-0 ">
+                    {{ filter.form.fecha|as_crispy_field }}
+                </div>
+            </div>
+            <div class="form-row ">
+                <div class="col-6 col-md-4 mb-0 ">
+                    {{ filter.form.ruc_ci|as_crispy_field }}
+                </div>
+                <div class="col-6 col-md-4 mb-0 ">
+                    {{ filter.form.razon_nombres|as_crispy_field }}
+                </div>
+            </div>
+            <div class="form-row ">
+                <div class="col-6 col-md-4 mb-0 ">
+                    {{ filter.form.tipo_empresa|as_crispy_field }}
+                </div>
+                <div class="col-6 col-md-4 mb-0 ">
+                    {{ filter.form.sector|as_crispy_field }}
+                </div>
+                <div class="col-6 col-md-4 mb-0 ">
+                    {{ filter.form.canal_de_contacto|as_crispy_field }}
+                </div>
+            </div>
+            
+            <button type="submit" class="btn btn-secondary green-bg float-right">
+                <i class="fas fa-search"></i> Buscar</button>
+                
+        </form>
+
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+
+        <table id="dtBasicExample" class="table table-responsive-md border-bottom">
+            <thead class="white-text darkgreen-bg">
+                <tr>
+                    <th scope="col">Código del reporte</th>
+                    <th scope="col">RUC</th>
+                    <th scope="col">Empresa</th>
+                    <th scope="col">Fecha</th>
+                    <th scope="col">Canal</th>
+                    <th scope="col">Acciones</th>
+                </tr>
+            </thead>
+            {% if filter.qs %}
+
+            <tbody>
+
+                {% for reporte in filter.qs %}
+                <tr class="text-center">
+                    <td scope="row">{{reporte.cod_reporte}}</td>
+                    <td scope="row">{{reporte.ruc_ci}}</td>
+                    <td scope="row">{{reporte.razon_nombres| upper}}</td>
+                    <td scope="row">{{reporte.fecha}}</td>
+                    <td scope="row">{{reporte.canal_de_contacto}}</td>
+                    <td scope="row">
+                        <a class="btn btn-secondary btn-sm" href="{% url 'reporte_editar' reporte.pk %}"><i
+                                class="fas fa-edit"></i></a>
+                     
+                        
+                    </td>
+                </tr>
+                {% endfor %}
+
+
+            </tbody>
+            {% else %}
+            <h2>No hay elementos que mostrar</h2>
+            {% endif %}
+        </table>
+
+    </div>
+</div>
+<div class="modal fade" id="ordenEliminarCenter" tabindex="-1" role="dialog" aria-labelledby="ordenTitle"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block extrafooter%}
+<script src="{% static 'js/table.js' %}"></script>
+<script src="{% static 'js/reporte_fecha.js' %}"></script>
+<script>
+    function eliminar(id) {
+        $.ajax({
+            url: "{% url 'reportecontacto_confirmar_eliminar' %}",
+            data: {
+                'pk': id
+            },
+            success: function (data) {
+                $(".modal-content").html(data)
+            }
+        });
+    };
+</script>
+{% endblock extrafooter %}

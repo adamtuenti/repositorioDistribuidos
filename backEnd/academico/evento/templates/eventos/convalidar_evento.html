@@ -1,0 +1,491 @@
+{% extends "base.html" %}
+{% load static %}
+{% block specific_head %}
+<style type="text/css"></style>
+{% endblock %}
+{% block content %}
+
+<style type="text/css">
+  
+  #consulta {
+        background-color: #F2F2F2;
+    }
+
+</style>
+
+            <div class="alert alert-success alert-dismissible" role="alert">
+              <button type="button" class="close" data-dismiss = "alert" aria-label = "Close">
+                <span aria-hidden = "true">&times;</span>
+              </button>
+              <label id="mensaje_success" style="font-weight: bold;">Convalidacion registrada</label>
+            </div>
+    <!--
+     <div class="alert alert-danger alert-dismissible" role="alert">
+      <button type="button" class="close" data-dismiss = "alert" aria-label = "Close">
+        <span aria-hidden = "true">&times;</span>
+      </button>
+      <label><strong id="mensaje_success">El evento seleccionado debe estar en estado ejecutado</strong></label>
+      </div>
+    -->
+
+<div class="row mb-2" id="consulta">
+  <div class="col-12 col-xl-12">
+    <h2 class="text-uppercase darkgreen-text">
+       CONVALIDAR EVENTOS 
+    </h2>
+  </div>
+</div>
+<div class="row mb-2">	
+	<div class="col-2">
+		<label class="h6" for="identificacion">Participante</label>
+	</div>
+	<div class="col-4">
+    <form id="formulario_convalidacion" action="{% url 'convalidarEvento' %}" method="POST">{% csrf_token %} 
+      <input type="text" id="identificacion" name="identificacion" required autocomplete="off" class="form-control validacion_simultanea" placeholder="Cedula participante">
+    </form>
+	</div>
+	<div class="col-4">
+		<input type="text" name="nombre_participante" id="nombre_participante" placeholder="Nombre participante" class="form-control text-center"  readonly>
+	</div>
+</div>
+
+<div class="row mb-2" id="consulta">
+  <div class="col-12 col-xl-12">
+    <h6 class="darkgreen-text">
+       <strong>Motivo Convalidación</strong> 
+    </h6>
+  </div>
+</div>
+<hr style="height:5px;border:none; color: #49714B;background-color:#49714B;">
+
+<div class="row mb-2" >
+ 	<div class="col-3">
+ 		<div class="form-group">
+ 			<label class="form-check-label" valor="Contenido y carga horaria similar" id="motivoTextto" >Contenido y carga horaria similar</label>
+          <input type="checkbox" value="Contenido y carga horaria similar" class="h6" name="motivo_standar" id="motivo_standar">
+ 		</div>
+	</div>
+	<div class="col-xl-5">
+		<input type="text" class=" form-control" required form="formulario_convalidacion" placeholder="Otro motivo.." name="motivo" id="motivo">
+	</div>
+	<div class="col-xl-4">
+		    <select form="formulario_convalidacion" class="form-control" id="conv_seleccion" name="conv_seleccion">
+			     <option value="Convalidación interna">Convalidación interna</option>
+			     <option value="Convalidación historica">Convalidación historica</option>
+		    </select>
+	</div>
+</div>
+
+<div id="convalidacion_interna">
+	
+
+
+<div class="row mb-2" id="consulta">
+  <div class="col-12 col-xl-12">
+    <h6 class="darkgreen-text">
+       <strong>ORIGEN: Eventos cursados</strong> 
+    </h6>
+  </div>
+</div>
+<hr style="height:5px;border:none; color: #49714B;background-color:#49714B;">
+
+<div class="row mb-2">	
+	<div class="col-2">
+		<label class="h6" for="identificacion">Evento</label>
+	</div>
+	<div class="col-2">
+		    <input type="text" form="formulario_convalidacion" id="codigo" required="true" name="codigo" autocomplete="off" class="form-control validacion_simultanea" placeholder="Codigo">
+  </div>
+	<div class="col-8">
+		<input type="text" name="nombre_evento" id="nombre_evento" placeholder="Nombre del evento" class="form-control text-center"  readonly>
+	</div>
+</div>
+
+<div class="row mb-2">
+	<div class="col-2 ">
+		<label class="h6" for="identificacion">Estado del evento</label>
+	</div>
+	<div class="col-4 ">
+		<input type="text" class="form-control" name="estado" placeholder="Estado del evento" id="estado" readonly>
+	</div>
+</div>
+
+  <table class="table table-responsive table-bordered" id="tablaEventosOrigen">
+        <thead class="white-text darkgreen-bg">
+            <tr scope="col">
+              <th scope="col">Nº</th>
+                <th scope="col">Código curso</th>
+                <th scope="col">Nombre curso</th>
+                <th scope="col">Código diseño</th>
+                <th scope="col">Cod programa</th>
+                <th scope="col">Nombre evento</th>
+                <th scope="col">Certificado recibido</th>
+                <th scope="col">Fecha inicio</th>
+                <th scope="col">Fecha fin</th>
+                <th scope="col">Duración</th>
+            </tr>
+        </thead>
+        <tbody id="eventos_origen">
+        </tbody>
+         </table> 
+
+
+<div class="row mb-2" id="consulta">
+  <div class="col-12 col-xl-12">
+    <h6 class="darkgreen-text">
+       <strong>DESTINO: Evento a convalidar</strong> 
+    </h6>
+  </div>
+</div>
+<hr style="height:5px;border:none; color: #49714B;background-color:#49714B;">
+
+<div class="row mb-2">	
+	<div class="col-2">
+		<label class="h6" for="codigo_convalidar">Evento</label>
+	</div>
+	<div class="col-2">
+		    <input type="text" form="formulario_convalidacion" id="codigo_convalidar" required="true"  name="codigo_convalidar" autocomplete="off" class="form-control" placeholder="Codigo">
+  </div>
+	<div class="col-8">
+		<input type="text" name="nombre_evento_convalidar" id="nombre_evento_convalidar" placeholder="Nombre del evento a convalidar" class="form-control text-center"  readonly>
+	</div>
+
+</div>
+
+<div class="row mb-2">
+	<div class="col-2 ">
+		<label class="h6" for="estado_convalidar">Estado del evento</label>
+	</div>
+		<div class="col-4 ">
+      <input type="text" class="form-control" name="estado_convalidar" placeholder="Estado del evento" id="estado_convalidar" readonly>
+    </div>
+</div>
+<div class="row mt-4">
+	<div class="col-16 col-xl-16 table-container">
+		<table class="table table-responsive table-bordered" id="tablaEventosDestino">
+        <thead class="white-text darkgreen-bg">
+            <tr scope="col">
+            	<th scope="col">Nº</th>
+                <th scope="col">Código curso</th>
+                <th scope="col">Nombre curso</th>
+                <th scope="col">Código diseño</th>
+                <th scope="col">Cod programa</th>
+                <th scope="col">Nombre evento</th>
+                <th scope="col">Certificado recibido</th>
+                <th scope="col">Fecha inicio</th>
+                <th scope="col">Fecha fin</th>
+                <th scope="col">Duración</th>
+                <th scope="col">Acciones</th>
+            </tr>
+        </thead>
+        <tbody id="eventos_destino">
+              
+    	 </tbody>
+    </table>
+	</div>
+</div>
+
+</div>
+
+<br><br>
+
+<div id="convalidacion_historica">
+	
+
+
+<div class="shadow" id="consulta">
+
+<div class="row mb-2">
+	<div class="col-12">
+    <h4 class="text-uppercase darkgreen-text">
+        CONVALIDACIÓN EVENTOS HISTORICOS CEC
+    </h4>
+  </div>
+</div>
+<div class="row mb-2">
+   <div class="col-1">
+   	<label class="h6">Evento</label>
+  </div>
+  <div class="col-xl-2">
+        <input type="text" form="formulario_convalidacion" name="codigo_evento_historico" class="form-control" id="codigo_evento_historico" placeholder="Codigo">  	
+  </div>
+   <div class="col-xl-8">
+   	<input class="form-control" type="text" name="nombre_evento_historico" id="nombre_evento_historico" readonly placeholder="Nombre del evento">
+  </div>
+</div>
+
+<div class="row mb-2">
+   <div class="col-1">
+   	<label class="h6">Tipo Evento</label>
+  </div>
+  <div class="col-xl-2">
+    <input class="form-control" type="text" name="tipo_evento_historico" id="tipo_evento_historico" readonly placeholder="Estado del evento">
+  </div>
+
+  <div class="col-1">
+   	<label class="h6">F. Inicio</label>
+  </div>
+   <div class="col-xl-3">
+   	<input class="form-control" type="text" name="fInicio" id="fInicio" readonly placeholder="Fecha inicio">
+  </div>
+   <div class="col-1">
+   	<label class="h6">F. Fin</label>
+  </div>
+   <div class="col-xl-3">
+   	<input class="form-control" type="text" name="fechaFin" id="fechaFin" readonly placeholder="Fecha fin">
+  </div>
+</div>
+
+<div class="row mb-2">
+   <div class="col-1">
+   	<label class="h6">Tipo Certificado</label>
+  </div>
+  <div class="col-xl-2">
+    <input class="form-control" type="text" readonly name="tipo_certificado_historico" id="tipo_certificado_historico" readonly placeholder="Tipo certificado">
+  </div>
+
+  <div class="col-1">
+   	<label class="h6">Modalidad</label>
+  </div>
+
+   <div class="col-xl-3">
+    <input class="form-control" type="text" readonly name="modalidad_historico" id="modalidad_historico" readonly placeholder="Modalidad">
+  </div>
+
+   <div class="col-1">
+   	<label class="h6">Duración</label>
+  </div>
+   <div class="col-xl-3">
+   	<input class="form-control" type="text" readonly name="duracion_historico" id="duracion_historico" placeholder="Duración">
+  </div>
+</div>
+
+<div class="row mb-2">
+   <div class="col-1">
+   	<label class="h6">Intitución</label>
+  </div>
+   <div class="col-xl-8">
+   	    <input class="form-control" form="formulario_convalidacion" type="text" name="institucion_historico" id="institucion_historico" placeholder="Intitución del evento">
+  </div>
+</div>
+<div class="row mb-2">
+
+</div>
+<div class="row mb-2">
+   <div class="col-xl-8">
+
+        <input class="form-control" accept="image/jpeg,image/png,application/pdf" form="formulario_convalidacion" type="file" name="archivo_historico" id="archivo_historico" placeholder="Seleccione un archivo">
+  </div>
+</div>
+
+<div class="row mb-2">
+	 <div class="col-xl-8">
+  </div>
+   <div class="col-xl-3">
+    <input type="submit" form="formulario_convalidacion" class="btn darkgreen-bg text-light float-right btn-block" value="Guardar" />
+  </div>
+</div>
+
+<div class="row mb-2">
+	
+</div>
+<div class="row mb-2">
+  
+</div>
+
+
+</div>
+
+</div>
+
+                         
+
+                             
+
+{% endblock content %}
+
+{% block specific_scripts %}
+
+<script type="text/javascript" src="{% static 'js/convalidar_eventos.js' %}"></script>
+
+<script type="text/javascript">
+
+
+      $('#formulario_convalidacion').on('submit',function(event) {
+        event.preventDefault();
+          if ($('#nombre_participante').val().length === 0 || $('#nombre_participante').val() == 'Identificación no registrada') {
+              $('#identificacion').addClass('is-invalid');
+              $('#nombre_participante').addClass('is-invalid');
+              setTimeout(function(){
+                          $("#identificacion").removeClass('is-invalid');
+                          $("#nombre_participante").removeClass('is-invalid');
+                      },2000);
+              return;
+          }
+          
+          if ($('#nombre_evento').val().length === 0 && $('#conv_seleccion').val() == 'Convalidación interna') {
+             $('#nombre_evento').addClass('is-invalid');
+              $('#codigo').addClass('is-invalid');
+              setTimeout(function(){
+                          $("#nombre_evento").removeClass('is-invalid');
+                          $("#codigo").removeClass('is-invalid');
+                      },2000);
+              return; 
+          }
+
+          if ($('#nombre_evento_historico').val().length === 0  && $('#conv_seleccion').val() == 'Convalidación historica' ) {
+              $('#nombre_evento_historico').addClass('is-invalid');
+              $('#codigo_evento_historico').addClass('is-invalid');  
+                  setTimeout(function(){
+                          $("#nombre_evento_historico").removeClass('is-invalid');
+                          $("#codigo_evento_historico").removeClass('is-invalid');
+                      },2000);
+                  return; 
+          }
+
+              var formulario = document.getElementById('formulario_convalidacion');
+              var datos = new FormData(formulario);
+              fetch("../GuardarConvalidacion/",{
+              method: 'POST',
+          /*headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },*/
+              body: datos
+              })
+              .then(res => res.json())
+              .then(data => {
+                $('#mensaje_success').val(data['mensaje_success']);
+                $('.alert-success').show();
+              })
+      });
+    
+
+
+	$(document).ready(function() {
+
+    $('.alert-success').hide();
+    $('.alert-danger').hide();
+
+
+
+    $('#codigo_evento_historico').on('keyup', function(){
+       eventoHistorico();
+   });
+
+
+		$('.js-example-basic-single').select2();
+
+		$('#motivo_standar').on('change', function(event) {
+			event.preventDefault();
+			if(this.checked) {
+				$("#motivo").prop('readonly', true);
+        $("#motivo").val('');
+				$("#motivo").val('Contenido y carga horaria similar');
+      }else{
+        $("#motivo").prop('readonly', false);
+        $("#motivo").val('');
+      }
+		});	
+
+		$('#convalidacion_historica').hide();
+
+		$('#conv_seleccion').on('change', function (e) {
+    		var optionSelected = $("option:selected", this);
+    		var valueSelected = this.value;
+    		if (valueSelected == 'Convalidación historica') {
+
+    			$('#convalidacion_historica').css("display", "block");
+    			$('#convalidacion_interna').css("display", "none");
+
+          $('#codigo').removeAttr('required',true);
+          $('#codigo_convalidar').removeAttr('required',true);
+
+          $('#codigo_evento_historico').attr('required',true);
+          $('#institucion_historico').attr('required',true);
+          $('#archivo_historico').attr('required',true);
+
+    		}else{
+
+    			$('#convalidacion_interna').css("display", "block");
+    			$('#convalidacion_historica').css("display", "none");
+          $('#codigo').attr('required',true);
+          $('#codigo_convalidar').attr('required',true);
+          $('#codigo_evento_historico').removeAttr('required',true);
+          $('#institucion_historico').removeAttr('required',true);
+          $('#archivo_historico').removeAttr('required',true);
+
+    		}
+		});
+
+		
+    $('#motivo').on('keyup',function() {
+        $('#motivo_convalidacion').val($('#motivo').val());
+    });
+
+		$('#identificacion').on('keyup', function(){
+      buscar_participante();
+      if( $('#codigo').val().length >= 5){
+        buscar_evento();
+      }
+      if ($('#codigo_evento_historico').val().length >= 4) {
+        eventoHistorico();
+      }
+
+		});
+
+    $('#codigo').on('keyup', function(){
+        buscar_evento();
+    });
+
+     $('#codigo_convalidar').on('keyup', function(){
+
+        buscar_eventoDestino();
+    });
+
+
+   
+     function eventoHistorico() {
+       if ($('#codigo_evento_historico').val().length >= 5) {
+          var identificacion = $('#identificacion').val();
+          var cod = $('#codigo_evento_historico').val();
+              fetch("../api_participantesEventos/",{
+                method: 'POST',
+                headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({identificacion:identificacion,codigo:cod})
+        })
+        .then(res => res.json())
+        .then(data => {
+          // console.log(data);
+          if (data['nombre'] != undefined) {
+              $('#nombre_evento_historico').val(data['nombre']);
+              $('#tipo_evento_historico').val(data['tipo_evento']);  
+              $('#fInicio').val(data['fecha_inicio']);
+              $('#fechaFin').val(data['fecha_fin']);
+              $('#tipo_certificado_historico').val(data['certificado_recibido']);
+              $('#modalidad_historico').val(data['modalidad']);  
+              $('#duracion_historico').val(data['duracion']);
+          }else{
+              $('#nombre_evento_historico').val('');
+              $('#tipo_evento_historico').val('');  
+              $('#fInicio').val('');
+              $('#fechaFin').val('');
+              $('#tipo_certificado_historico').val('');
+              $('#modalidad_historico').val('');  
+              $('#duracion_historico').val(''); 
+          }
+        })
+       }
+     }
+
+
+	});
+
+
+
+</script>
+
+{% endblock specific_scripts %}

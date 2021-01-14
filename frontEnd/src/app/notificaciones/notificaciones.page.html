@@ -1,0 +1,24 @@
+<ion-header>
+  <ion-toolbar class="toolhead">
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Notificaciones</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <ion-list lines="full">
+    <button style="width: 100%;">
+      <ion-item (click)="alertDetalle(i)" *ngFor="let list of listNotificaciones;let i = index" [attr.data-index]="i">
+        <ion-avatar slot="start">
+          <ion-img [src]="list.imagen"></ion-img>
+        </ion-avatar>
+        <ion-label>
+          <h3>{{list.titulo}}</h3>
+          <p>{{list.descripcion}}</p>
+          <p>{{list.fecha}}</p>
+        </ion-label>
+      </ion-item>
+    </button>
+  </ion-list>
+</ion-content>

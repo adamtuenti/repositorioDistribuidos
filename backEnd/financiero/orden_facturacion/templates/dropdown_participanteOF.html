@@ -1,0 +1,4 @@
+<option value="">---------</option>
+{% for p in personas %}
+<option value="{{ p.cedula }}" >{{ p.cedula }} - {{ p.nombres }} {{ p.apellidos }}</option>
+{% endfor %}

@@ -1,0 +1,27 @@
+{% extends 'base_ventas.html' %}
+
+{% block content %}
+<div class="row justify-content-md-center mt-5">
+    <form method="POST" action="{% url 'natural_nuevo_t' %}">
+        {% csrf_token %}
+        <h3>¿Está seguro que desea guardar los datos?</h3><br>
+        {% if vacios %}<h5>Faltan los siguientes campos: </h5>{% endif %}
+        {% for field in form %}
+            {% if not field.value %}
+                <li>{{ field.label }}</li>
+            {% endif %}
+            {{ field.as_hidden }}
+        {% endfor %}
+
+        <div class="col">
+            <div class="row justify-content-center">
+                    <a class="btn btn-secondary" href="javascript:history.back()"> Cancelar </a>
+                    <button class="btn btn-secondary green-bg ml-3" type="submit"> Confirmar </button>
+
+            </div>
+        </div>
+    </form>
+</div>
+
+
+{% endblock %}

@@ -1,0 +1,207 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<form id="addLocutor" onsubmit="return validate()" action="{% url 'crearUsuario' %}" method="POST"
+    enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="row">
+        <div class="col-9 col-sm-9 col-xl-9">
+            <h3>REGISTRO DE <span class="darkgreen-text">USUARIO</span></h3>
+        </div>
+    </div>
+    
+    <h4><span class="darkgreen-text">Datos personales:</span></h4>
+    <!-- Nombre del usuario -->
+    <div class="form-group row">
+        <label for="nombre" class="col-sm-1 col-form-label">Nombres:</label>
+        <div class="col-sm-5">
+            <input id="nombre" name="nombre" type="text" class="form-control"
+                oninvalid="this.setCustomValidity('Ingrese un nombre válido')" oninput="this.setCustomValidity('')" required>
+        </div>
+        <label for="apellido" class="col-sm-1 col-form-label">Apellidos:</label>
+        <div class="col-sm-5">
+            <input id="apellido" name="apellido" type="text" class="form-control"
+                oninvalid="this.setCustomValidity('Ingrese un apellido válido')" oninput="this.setCustomValidity('')" required>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="user" class="col-sm-1 col-form-label">Usuario:</label>
+        <div class="col-sm-3">
+            <input id="user" name="username" type="text" class="form-control"
+                oninvalid="this.setCustomValidity('Ingrese un username válido')" oninput="this.setCustomValidity('')" required>
+        </div>
+        <label for="email" class="col-sm-2 col-form-label">Correo electrónico:</label>
+        <div class="col-sm-6">
+            <input id="email" name="email" type="email" class="form-control"
+                oninvalid="this.setCustomValidity('Ingrese una direccion válida')" oninput="this.setCustomValidity('')" required>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="cedula" class="col-sm-1 col-form-label">Cédula:</label>
+        <div class="col-sm-3">
+        <input id="cedula" name="cedula" type="tel" pattern="[0-9]{10}" class="form-control"
+            oninvalid="this.setCustomValidity('Ingrese una cédula válida')" oninput="this.setCustomValidity('')" required>
+        </div>
+        <label for="telefono" class="col-sm-1 col-form-label">Teléfono:</label>
+        <div class="col-sm-3">  
+        <input id="telefono" name="telefono" type="tel" pattern="[0-9]{9,10}" class="form-control"
+            oninvalid="this.setCustomValidity('Ingrese un telefono válido')" oninput="this.setCustomValidity('')" required>
+        </div>
+        <label for="sexo" class="col-sm-1 col-form-label">Sexo:</label>
+        <div class="col-sm-3">
+            <select name="sexo" id="sexo" class="custom-select"
+            oninvalid="this.setCustomValidity('Seleccione una de las opciones de la lista')"
+            oninput="this.setCustomValidity('')" required>
+                <option value="" selected disabled>Sexo</option>
+                <option value="Masculino">Masculino</option>
+                <option value="Femenino">Femenino</option>
+            </select>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="area" class="col-sm-1 col-form-label">Área:</label>
+        <div class="col-sm-3">
+            <select name="area" id="area" class="custom-select"
+            oninvalid="this.setCustomValidity('Seleccione una de las opciones de la lista')"
+            oninput="this.setCustomValidity('')" required>
+                <option value="" selected disabled>Área</option>
+                <option value="Académico">Académico</option>
+                <option value="Financiero">Financiero</option>
+            </select>
+        </div>
+        <label for="cargo" class="col-sm-1 col-form-label">Cargo:</label>
+        <div class="col-sm-3">
+            <select name="cargo" id="cargo" class="custom-select"
+            oninvalid="this.setCustomValidity('Seleccione una de las opciones de la lista')"
+            oninput="this.setCustomValidity('')" required>
+                <option value="" selected disabled>Cargo</option>
+                <option value="Directivo">Directivo</option>
+                <option value="Empleado">Empleado</option>
+            </select>
+        </div>
+        <label for="estado" class="col-sm-1 col-form-label">Estado:</label>
+        <div class="col-sm-3">
+            <select name="estado" id="estado" class="custom-select"
+            oninvalid="this.setCustomValidity('Seleccione una de las opciones de la lista')"
+            oninput="this.setCustomValidity('')" required>
+                <option value="" selected disabled>Estado</option>
+                <option value="Titular">Titular</option>
+                <option value="Asistente">Asistente</option>
+            </select>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="custom-file">
+            <label for="imgUsuario" class="custom-file-label">Imagen del Usuario</label>
+            <input type="file" name="imagen" class="custom-file-input" id="imgUsuario" accept=".png, .jpg, .jpeg"
+                oninvalid="this.setCustomValidity('Ingrese una imagen para el usuario')"
+                oninput="this.setCustomValidity('')">
+        </div>
+    </div>
+    <div class="img-holder" style="margin: 20px;overflow:hidden">
+        <img id="preview" src="{% static 'img/user.png' %}" style="max-width: 25%;max-height: 25%" >
+    </div>
+    <hr>
+    <div class="form-group">
+        <h4><span class="darkgreen-text">Privilegios:</span></h4>
+        <div id="componente_roles">
+            <roles></roles>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="user" class="col-sm-1 col-form-label">Observaciones</label>
+        <div class="col-sm-12">
+            <textarea id="user" name="observaciones" class="form-control" oninput="this.setCustomValidity('')" rows=2></textarea>
+        </div>
+    </div>
+    <hr>
+    <button type="submit" class="btn btn-success btn-lg submit"><i class="fas fa-plus-circle"></i> Registrar</button>
+
+</form>
+{% endblock %}
+{% block specific_scripts %}
+<script>
+    function previewImg(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function (data) {
+                $('#preview').attr('src', data.target.result);
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    $('#imgUsuario').change(function () {
+        previewImg(this);
+    })
+
+    
+const Roles=  {
+    data () {
+      return {
+        roles:[],
+      }
+    },
+    methods:{
+      agregarRegistro(){
+        this.roles.push({'rol': null,'modulo': null})
+      },
+      eliminarRegistro(indice){
+        this.roles.splice(indice,1)
+      },
+      verificarRol(e,indice){
+        this.roles[indice].rol= e.target.value
+        // this.roles[indice].esOtra= (this.roles[indice].nombre == "Otra")
+        // alert(e.target.value)
+      },
+      verificarModulo(e,indice){
+        this.roles[indice].modulo= e.target.value
+      },
+    },
+    mounted () {
+      this.agregarRegistro();
+    },
+    template:/*html*/`
+    <div>
+      <div v-for="(rol,index) in roles" v-bind:key="index" class="form-row">
+        <div class="form-group col-md-4">
+            <select @change="verificarRol($event,index)" class="custom-select form-control" v-bind:name="'rol'" required>
+                <option disabled selected value="">Rol</option>
+                <option value="Analista">Analista</option>
+                <option value="Coordinador">Coordinador</option>
+                <option value="Observador">Observador</option>
+                <option value="Docente">Docente</option>
+                <option value="Administrador">Administrador</option>
+            </select>
+        </div>
+        <div v-if="rol.rol != 'Administrador' && rol.rol != 'Docente'" class="form-group col-md-4">
+            <select @change="verificarModulo($event,index)" class="custom-select form-control" v-bind:name="'modulo'" required>
+                <option disabled selected value="">Módulo</option>
+                <option value="Academico">Académico</option>
+                <option value="Administrativo">Administrativo</option>
+                <option value="Financiero">Financiero</option>
+                <option value="Comercial">Comercial</option>
+                <option value="Encuestas">Encuestas</option>
+                <option value="Todos">Todos</option>
+            </select>
+        </div>
+        <div v-if="index != 0" class="form-group col-md-2">
+            <button type="button" class="btn btn-success" @click="eliminarRegistro(index)" >Eliminar</button>
+        </div>
+        <div class="form-group col-md-2">
+            <button v-if="index == roles.length - 1" type="button" class="btn btn-success" @click="agregarRegistro" ><span class="fas fa-plus" ></span></button>
+        </div>
+      </div>
+    </div>
+    `
+  }
+  
+  /* Variable contenedora de la instancia del componente telefono*/
+  var contenedorRedesSociales = new Vue({
+    el: '#componente_roles',
+    components: {
+      'roles' : Roles
+    }
+  })
+</script>
+{% endblock %}

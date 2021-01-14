@@ -1,0 +1,255 @@
+{% extends "orden_facturacion_auth.html" %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block editar%}
+{% load my_tags %}
+<div class="row mb-2">
+    <div class="col-12 row">
+        <h2 class="darkgreen-text text-uppercase pr-2 pl-3">Autorizar ORDEN DE FACTURACIÓN</h2><h2 class="text-dark">Nº{{form.cod_orden_fact.value}}</h2>
+    </div>
+</div>
+{% if form.estado.value == "ACPF" or form.estado.value == "PNDP" %}
+<div class="form-row darkwhite-bg">
+    <div class="col-6 mb-0">
+        <div id="div_id_n_tramite" class="form-group">
+            <label for="id_n_tramite" class="col-form-label requiredField">
+                N° de trámite<span class="asteriskField">*</span>
+            </label>
+            <div class="">
+                {{form.n_tramite}}
+            </div>
+        </div>
+    </div>
+    <div class="col-6 mb-0">
+        <div id="div_id_n_factura" class="form-group">
+
+            <label for="id_n_factura" class="col-form-label requiredField">
+                N° de factura<span class="asteriskField">*</span>
+            </label>
+            <div class="">
+                {{form.n_factura}}
+            </div>
+        </div>
+    </div>
+    <div class="col-12 mb-0">
+        <div id="div_id_anexo_factura" class="form-group">
+            <label for="id_anexo_factura" class="col-form-label requiredField">
+                Anexo de factura<span class="asteriskField">*</span>
+            </label>
+            <div class="">
+                {% if form.anexo_factura.value %}
+                <a class="btn btn-secondary btn-sm" href="{{form.anexo_factura.value.url}}" target="_blank">
+                    Descargar
+                </a>
+                {% else %}
+                {{form.anexo_factura}}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+<hr>
+
+{% endif %}
+<input type="hidden" id='cont' value="{{form.contacto.value}}">
+<input type="hidden" id='rc' value="{{form.ruc_ci.value}}">
+<input type="hidden" id='rn' value="{{form.razon_nombres.value}}">
+<input type="hidden" id='as' value="{{form.asesor.value}}">
+{% endblock editar%}
+
+{% block tablas %}
+
+<div class="row">
+    <div class="col-12">
+        <div class="row">
+            <h2 class="col-12 my-3">Participantes</h2>
+        </div>
+        {% if form.estado.value == "ACTV" %}
+        <div class="row mb-2">
+            <div class="col-12">
+                <a id="add" class="btn btn-secondary green-bg btn-sm" href="{% url 'participante_nuevo' orden_id %}"><i
+                        class="fas fa-plus"></i>Agregar Participante</a>
+            </div>
+        </div>
+        {% endif %}
+        <div class="row">
+            <div id="tabla" class="col-12">
+                <table id="participantes-table" class="table table-responsive-md border-bottom">
+                    <thead class="darkgreen-bg white-text">
+                        <tr>
+                            <th>Participante</th>
+                            <th>Código del evento</th>
+                            <th>Nombre del evento</th>
+                            <th>Valor Evento</th>
+                            <th>%Descuento</th>
+                            <th>$Descuento</th>
+                            <th>Valor total</th>
+                        </tr>
+                    </thead>
+                    {% if participantes %}
+
+                    <tbody id="descmeme">
+
+                        {% for p in participantes %}
+                        <tr >
+                            <td class="text-center">{{ p.participante }}</td>
+                            <td class="text-center">{{ p.cod_evento }}</td>
+                            <td class="text-center">{{ p.nombre_evento }}</td>
+                            <td class="sum text-right">
+                                {{ p.valor_evento|currency}}
+                            </td>
+                            <td class="text-center">{{ p.descuento|porcentaje }}</td>
+                            <td class="text-right desc"></td>
+                            <td class="sum text-right">{{ p.valor|currency }}</td>
+                        </tr>
+                        {% endfor%}
+                    </tbody>
+                    {% endif %}
+                </table>
+
+            </div>
+        </div>
+
+        <!-- <div id="summary" class="form-row">
+            <div class="col-6 col-md-3">{{ form.subtotal|as_crispy_field }}</div>
+            <div class="col-6 col-md-3">{{ form.descuento_fact|as_crispy_field }}</div>
+            <div class="col-6 col-md-3">{{ form.descuento_total|as_crispy_field }}</div>
+            <div class="col-6 col-md-3">{{ form.valor_total|as_crispy_field }}</div>
+        </div> -->
+        <div id="summary" class="form-row">
+            <div class="col-6 col-md-3">
+                {{ form.subtotal|as_crispy_field }}
+                <label for="subtotal">Subtotal</label>
+                <input type="text" id="subtotal" class="form-control-plaintext form-control" readonly>
+            </div>
+            <div class="col-6 col-md-3">
+                {{ form.descuento_fact|as_crispy_field }}
+                <label for="descuento_fact">% Descuentos</label>
+                <input type="text" id="descuento_fact" class="form-control-plaintext form-control" readonly>
+
+            </div>
+            <div class="col-6 col-md-3">
+                {{ form.descuento_total|as_crispy_field }}
+                <label for="descuento_total">$ Descuento total</label>
+                <input type="text" id="descuento_total" class="form-control-plaintext form-control" readonly>
+
+            </div>
+            <div class="col-6 col-md-3">
+                {{ form.valor_total|as_crispy_field }}
+                <label for="valor_total">$ Valor total</label>
+                <input type="text" id="valor_total" class="form-control-plaintext form-control" readonly>
+            </div>
+        </div>
+        <div class="row my-3">
+            <div class="mt-2 campo p-2 pl-3 col-12">
+                <h5 class="black-text text-uppercase mb-0">Autorizar orden de facturación</h5>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+
+                <a class="btn btn-secondary green-bg" data-toggle='modal' data-target="#orden-AP" href='#'>Aprobar</a>
+                <a class="btn btn-secondary " data-toggle='modal' data-target="#orden-RP" href='#'>Anular</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock tablas %}
+
+{% block confirmar%}
+<div class="modal fade" id="orden-AP" tabindex="-1" role="dialog" aria-labelledby="ordenTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="ordenTitle">Confirmación de Aprobación</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form method="POST" action="{% url 'orden_facturacion_aprobar' orden.id %}">
+                {% csrf_token %}
+                <div class="modal-body" id="modal-confirmacion">
+                    ¿Está seguro/a que desea continuar? Verifíque los datos antes de proceder a la Aprobación.
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+
+                    <button class="btn btn-secondary green-bg" >Aprobar <i
+                            class="fas fa-check"></i></button>
+                </div>
+                </form>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="orden-RP" tabindex="-1" role="dialog" aria-labelledby="ordenTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="ordenTitle">Confirmación de Anulación</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form method="POST" action="{% url 'orden_facturacion_anular' orden.id %}">
+                {% csrf_token %}
+                <div class="modal-body" id="modal-confirmacion">
+                    ¿Está seguro/a que desea continuar? Verifíque los datos antes de proceder a la Anulación.
+                    <br>
+                    <br>
+                    {{ form.motivo_anular|as_crispy_field }}
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                    <button id="anular" class="btn btn-secondary green-bg" type="submit" disabled><i class="fas fa-check"></i> Anular </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock confirmar%}
+
+{% block n_par %}
+{% if form.estado.value != "ACTV" %}
+<div class="col-6 col-md-1">{{ form.n_participantes|as_crispy_field}}</div>
+{%else%}
+{{block.super}}
+{% endif %}
+{% endblock n_par %}
+
+{% block anexos %}
+<script>
+
+    function eliminar(id) {
+        $.ajax({
+            url: "{% url 'participante_confirmar_eliminar' %}",
+            data: {
+                'pk': id,
+                'fk': "{{orden_id}}"
+            },
+            success: function (data) {
+                $("#participante-confirmacion").html(data)
+            }
+        });
+    };
+</script>
+<script src="{% static 'js/calcular_valores_tabla.js' %}"></script>
+
+{% if form.estado.value == "ACPF" %}
+<script src="{% static 'js/verificar_tramite_fact_doc.js' %}"></script>
+{% endif %}
+<script>
+    $(document).on("change",'#id_motivo_anular', function(){
+        if ($(this).val().length>20){
+            $('#anular').attr('disabled',false);
+        }
+        else{
+            $('#anular').attr('disabled',true);
+        }
+    })
+</script>
+{% endblock anexos%}

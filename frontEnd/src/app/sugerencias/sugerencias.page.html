@@ -1,0 +1,46 @@
+<ion-header>
+  <ion-toolbar class="toolhead">
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Sugerencias y Reclamos</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <ion-grid>
+    <ion-row>
+      <ion-col size="2">
+      </ion-col>
+      <ion-col size="12">
+        <ion-text color="primary" class="ion-text-center">
+          <h4>¿Has encontrado fallos o tienes reclamos? Nos encantaría escuchar tus sugerencias</h4>
+        </ion-text>
+        <ion-list lines="full" class="ion-no-margin">
+            <ion-item>
+              <ion-label position="fixed">Asunto:</ion-label>
+              <ion-input [(ngModel)]="asunto"></ion-input>
+            </ion-item>
+          </ion-list>
+          <ion-item>
+            <ion-label position="fixed">Mensaje:</ion-label>
+            <ion-textarea [(ngModel)]="mensaje" rows="6" cols="20" placeholder="Ingrese su sugerencia"></ion-textarea>
+          </ion-item>
+          <ion-item>
+            <ion-col text-center>
+              <ion-input type="file" class="form-control input-lg" accept="image/*" (change)="uploadImage($event)" name="imagen"></ion-input>
+            </ion-col>
+          </ion-item>
+          <ion-progress-bar [type]="'indeterminate'" *ngIf="showLoader"></ion-progress-bar>
+          <div class="enviar_sugerencia">
+            <ion-button type="button" (click)="enviarSugerencia()" style="width: 100%;">Enviar</ion-button>
+          </div>
+          <div class="img_sugerencia">
+            <ion-img src="assets/images/LogoCEC.png" style="width: 100%;" ></ion-img>
+          </div>
+    </ion-col>
+      <ion-col size="2">
+      </ion-col>
+    </ion-row>
+    
+  </ion-grid>
+</ion-content>

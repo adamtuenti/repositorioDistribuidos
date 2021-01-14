@@ -1,0 +1,116 @@
+{% extends "base_ventas.html" %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% load humanize %}
+{% load l10n %}
+{% block content %}
+<div class="row mb-2 d-flex white-bg">
+    <div class="col-9 v-align">
+        <h2>CONSULTAS <span class="darkgreen-text">PROFORMAS</span></h2>
+    </div>
+    <div class="col-3 col-xl-3 v-align">
+        <a class="btn btn-secondary green-bg float-right" href="{% url 'proforma_nuevo' %}"><i class="fas fa-plus"></i>
+            Agregar
+            nuevo</a>
+    </div>
+</div>
+<div class="row darkwhite-bg py-2">
+    <div class="col-12">
+        <form action="" method="get">
+            {% csrf_token %}
+            <div class="form-row ">
+                <div class="col-4">
+                    {{ filter.form.codigo|as_crispy_field }}
+                </div>
+
+                <div class="col-6 col-md-4 mb-0 ">
+                    {{ filter.form.ruc_ci|as_crispy_field }}
+                </div>
+                <div class="col-6 col-md-4 mb-0 ">
+                    {{ filter.form.razon_nombres|as_crispy_field }}
+                </div>
+            </div>
+
+            <div class="form-row ">
+                <div class="col-3">
+                    {{ filter.form.fechaSolicitud|as_crispy_field }}
+                    
+                </div>
+                <div class="col-3">
+                    {{ filter.form.fechaEnvio|as_crispy_field }}
+                    
+                </div>
+                <div class="col-3">
+                    {{ filter.form.estado|as_crispy_field }}
+                </div>
+                <div class="col-3">
+                    {{ filter.form.asesor|as_crispy_field }}
+                </div>
+            </div>
+
+            <div>
+                <button type="submit" class="btn btn-secondary green-bg float-right">
+                    <span class="fas fa-search"></span> Buscar</button>
+            </div>
+        </form>
+
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <table id="dtBasicExample" class="table table-responsive-md border-bottom">
+            <thead class="white-text darkgreen-bg">
+                <tr>
+                    <th scope="col">Código</th>
+                    <th scope="col">Versión</th>
+                    <th scope="col">Ruc</th>
+                    <th scope="col">Empresa</th>
+                    <th scope="col">Asesor</th>
+                    <th scope="col">Fecha Solicitud</th>
+                    <th scope="col">Fecha Envío</th>
+                    <th scope="col">Fecha Respuesta</th>
+                    <th scope="col">Monto</th>
+                    <th scope="col">Estado</th>
+                    <th scope="col">Acciones</th>
+                </tr>
+            </thead>
+            {% if filter.qs %}
+
+            <tbody>
+
+
+                {% for proforma in filter.qs %}
+                <tr class="text-center">
+                    <td scope="row">{{proforma.codigo}}</td>
+                    <td scope="row">{{proforma.version}}</td>
+                    <td scope="row"> {{proforma.ruc_ci}}</td>
+                    <td scope="row">{{proforma.razon_nombres| upper}}</td>
+                    
+                    <td scope="row">{{proforma.asesor}}</td>
+                    <td scope="row">{{proforma.fechaSolicitud}}</td>
+                    <td scope="row">{{proforma.fechaEnvio}}</td>
+                    <td scope="row">{{proforma.fechaRespuesta}}</td>
+                    <td scope="row">{{proforma.montoProforma|floatformat:2|intcomma}}</td>
+                    <td scope="row">{{proforma.estado}}</td>
+                    <td scope="row">
+                        <a class="btn btn-secondary btn-sm" href="{% url 'proforma_editar' proforma.id%}"><i
+                                class="fas fa-edit"></i></a>
+                       <!-- <a class="btn btn-danger btn-sm" href="{% url 'proforma_eliminar' proforma.id%}"><i
+                                class="fas fa-trash"></i></a>-->
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            {% else %}
+            <h2>No hay elementos que mostrar</h2>
+            {% endif %}
+        </table>
+
+    </div>
+</div>
+{% endblock content %}
+{% block extrafooter%}
+<script src="{% static 'js/table.js' %}"></script>
+<script src="{% static 'js/proforma_fecha.js' %}"></script>
+{% endblock extrafooter %}

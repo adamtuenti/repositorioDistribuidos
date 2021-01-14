@@ -1,0 +1,5 @@
+<option value="">---------</option>
+{% for producto in productos %}
+<option value="{{ producto.pk }}" data-unidad="{{producto.unidad_medida}}"
+ data-unitario="{{producto.costo_unitario}}" data-iva="{{producto.iva}}">{{producto.cod_producto}} - {{ producto.nombre }}</option>
+{% endfor %}

@@ -1,0 +1,103 @@
+{% load crispy_forms_tags %}
+
+<div class="modal-header">
+	<h5 class="modal-title" id="productoUpdateModalCenterTitle">Producto/Servicio/Suministro</h5>
+	<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		<span aria-hidden="true">&times;</span>
+	</button>
+</div>
+<form method="post" id="form-partida" action="{% url 'partida_aprobar_editar' pk fk %}">
+	{% csrf_token %}
+	<div class="modal-body">
+		<div class="form-row">
+			{{form.egreso}}
+			<div class="col-6 col-xl-3">
+				<label for="codigo" class="col-form-label  requiredField">Código</label>
+				<select class="select2 form-control {%if form.egreso.errors %}is-invalid {%endif%}" id="codigo" {%if form.egreso.value %}  value="{{form.egreso.value}}"{%endif%}></select>
+			</div>
+			{% for error in form.egreso.errors%}
+				<p id="error_{{forloop.counter}}_id_egreso" class="invalid-feedback">
+					<strong>{{error}}</strong>
+				</p>
+			{%endfor%}
+			<div class="col-6 col-xl-9">
+				<label for="partida" class="col-form-label  requiredField">Partida Presupuestaria</label>
+				<select class="select2 form-control {%if form.egreso.errors %}is-invalid {%endif%}" id="partida"></select>
+			</div>
+		</div>
+		<div class="form-row">
+			<div class="col-4 col-xl-3">
+				{{ form.tipo_compra|as_crispy_field }}
+			</div>
+			<div class="col col-xl-6">
+				{{ form.periodo|as_crispy_field }}
+			</div>
+		</div>
+		<div class="form-row">
+			<div class="col-12 col-xl-9">
+				{{ form.producto }}
+				<label for="id_descripcion" class="col-form-label  requiredField">Descripción <span class="asteriskField">*</span></label>
+				<input type="text" class="form-control {%if form.descripcion.errors %}is-invalid {%endif%}" id="id_descripcion" name="descripcion" {%if form.descripcion.value %}  value="{{form.descripcion.value}}"{%endif%}>
+				<div class="d-none" id="select-descripcion">
+					<select class="form-control {%if form.descripcion.errors %}is-invalid {%endif%}"></select>
+				</div>
+				{% for error in form.descripcion.errors%}
+					<p id="error_{{forloop.counter}}_id_descripcion" class="invalid-feedback">
+						<strong>{{error}}</strong>
+					</p>
+				{%endfor%}
+			</div>
+
+		</div>
+		<div class="row">
+			<div class="col-12 col-xl-8">
+				<div class="form-row">
+					<div class="col-4 col-xl-4">
+						<input type="hidden" id="unidad_medida" name="unidad_medida" value="{{form.unidad_medida.value}}">
+						{{ form.unidad_medida|as_crispy_field }}
+					</div>
+					<div class="col-4 col-xl-4">
+						{{ form.cantidad_anual|as_crispy_field }}
+					</div>
+					<div class="col-4 col-xl-4">
+						<label for="id_costo_unitario" class="col-form-label ">Costo Unitario</label>
+
+						<div class="currency-wrap money"><span class="currency-code">$</span>
+							{{form.costo_unitario | as_crispy_field}}
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-12 col-xl-8">
+				<div class="form-row">
+					<div class="col">
+						<label for="id_subtotal" class="col-form-label ">Subtotal</label>
+						<div class="currency-wrap">
+							<span class="currency-code">$</span>
+							{{form.subtotal | as_crispy_field}}
+						</div>
+					</div>
+					<div class="col-auto">
+						<label for="id_iva" class="col-form-label">IVA</label>
+						<input type="hidden" id="iva" name="iva" value={{form.iva.value}}>
+						<input type="checkbox" id="id_iva" name="iva" class="form-control" readonly>
+					</div>
+					<div class="col">
+						<label for="id_total" class="col-form-label ">Valor Total</label>
+						<div class="currency-wrap">
+							<span class="currency-code">$</span>
+							{{ form.total|as_crispy_field }}
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="modal-footer">
+		<button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+		<button type="submit" id="enviar" class="btn btn-secondary green-bg">Guardar</button>
+	</div>
+</form>

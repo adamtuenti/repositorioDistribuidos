@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<network-security-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <domain>157.230.227.213</domain>
+        <domain includeSubdomains="true">https://prueba-63695.web.app</domain>
+        <domain includeSubdomains="true">www.cec.espol.edu.ec</domain>
+    </domain-config>
+</network-security-config>

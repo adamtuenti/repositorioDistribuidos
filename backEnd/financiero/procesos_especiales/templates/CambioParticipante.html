@@ -1,0 +1,151 @@
+{% load crispy_forms_tags %}
+{% load static %}
+
+<div class="modal-header">
+    <h2 class="modal-title" id="ordenTitle"> Cambio de Participante </h2>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<form method="post" novalidate id="form-part" enctype="multipart/form-data" action="{% url 'cambiarParticipanteCreate'%}"
+data-eventos-url="{% url 'ajax_load_eventosPE' %}" data-eventosInd-url="{% url 'ajax_load_eventosIndPE' %}"
+data-participantesEvento-url="{% url 'ajax_load_participantes_eventosPE' %}"
+data-personarNaturalesNoenEvento-url="{% url 'ajax_load_naturales_no_eventoPE' %}"
+data-verAs-url="{% url 'ajax_verificar_asistenciaCP' %}">
+    {% csrf_token %}
+
+    <div class="modal-body">
+        <div class="row darkwhite-bg py-2 pb-3">
+            <div class="col-12">
+              <div class="form-row">
+                {{form.participante_origen_cedula}}
+                {{form.participante_origen_nombre}}
+                {{form.participante_destino_cedula}}
+                {{form.participante_destino_nombre}}
+                <div class="col-3 col-md-3 mb-0 " >
+                    {{form.codigo_evento|as_crispy_field}}
+                </div>
+                <div class="col-9 col-md-9 mb-0 " >
+                    {{form.nombre_evento|as_crispy_field}}
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="col-6 col-md-3 mb-0 " >
+                    {{form.fecha_inicio|as_crispy_field}}
+                </div>
+                <div class="col-6 col-md-3 mb-0 " >
+                    {{form.fecha_fin|as_crispy_field}}
+                </div>
+                <div class="col-6 col-md-6 mb-0 " >
+                    {{form.lugar_evento|as_crispy_field}}
+                </div>
+              </div>
+            </div>
+        </div>
+        <h4>Origen</h3>
+            <div class="form-row">
+                <div class="col-12 col-md-3">
+                <label for="cedulaO" class="col-form-label">CI</label>
+                <select type="text" id="cedulaO" class="form-control select3" disabled></select>
+                    {% if form.participante_origen_cedula.errors %}
+                        {% for error in form.participante_origen_cedula.errors %}
+                                <p class="invalid-feedback d-block">
+                                    <strong>{{ error }}</strong>
+                                </p>
+                        {% endfor %}
+                    {% endif %}                                                
+            </div>
+            <div class="col-12 col-md-9">
+                <label for="nombreO" class="col-form-label">Nombre</label>
+                <select type="text" id="nombreO" class="form-control select3" disabled></select>
+            </div>
+        </div>
+        <br>
+            <div class="form-row">
+                <div id="tabla" class="col-12">
+                    <table id="participante-origen" class="table table-responsive-md border-bottom">
+                        <thead class="darkgreen-bg white-text">
+                            <tr>
+                                <th>Cédula Participante</th>
+                                <th>Nombre Participante</th>
+                                <th>Código Evento</th>
+                                <th>Valor Evento</th>
+                                <th>Accion</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                               <td id="cedtO" class="text-center"></td>
+                               <td id="nomtO" class="text-center"></td>
+                               <td id="codtO" class="text-center"></td>
+                               <td id="valtO" class="text-right"></td>
+                               <td class="text-center"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+    
+                </div>
+            </div>
+        <h4>Destino</h3>
+            <div class="form-row">
+                <div class="col-12 col-md-3">
+                <label for="cedulaD" class="col-form-label">CI</label>
+                <select type="text" id="cedulaD" class="form-control select3" disabled></select>
+                {% if form.participante_destino_cedula.errors %}
+                    {% for error in form.participante_destino_cedula.errors %}
+                        <p class="invalid-feedback d-block">
+                            <strong>{{ error }}</strong>
+                        </p>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            <div class="col-12 col-md-9">
+                <label for="nombreD" class="col-form-label">Nombre</label>
+                <select type="text" id="nombreD" class="form-control select3" disabled></select>
+            </div>
+        </div>
+        <br>
+            <div class="row">
+                <div id="tabla" class="col-12">
+                    <table id="participante-destino" class="table table-responsive-md border-bottom">
+                        <thead class="darkgreen-bg white-text">
+                            <tr>
+                                <th>Cédula Participante</th>
+                                <th>Nombre Participante</th>
+                                <th>Código Evento</th>
+                                <th>Valor Evento</th>
+                                <th>Accion</th>
+                            </tr>
+                        </thead>
+                        <tbody >
+                            <tr>
+                                <td id="cedtD" class="text-center"></td>
+                                <td id="nomtD" class="text-center"></td>
+                                <td id="codtD" class="text-center"></td>
+                                <td id="valtD" class="text-right"></td>
+                               <td class="text-center"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+    
+                </div>
+            </div>
+        
+        
+       
+    </div>
+            <div class="modal-footer">
+                <button id= "hack"  class="btn btn-secondary green-bg mr-3" type="submit"> Guardar </button>
+                <button class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+            </div>
+    
+        {{ form.media }}
+</form>
+<script>
+    $.getScript( "{% static 'js/modal_errores_procesp.js' %}" );
+</script>
+<!-- <script src="{% static 'js/cambio_participante.js' %}"></script> -->
+<!-- <script src="{% static 'js/cambio_parte.js' %}"></script> -->
+<!-- <script src="{% static 'js/modal_errores_procesp.js' %}"></script> -->
+
+

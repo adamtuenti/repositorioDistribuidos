@@ -1,0 +1,18 @@
+[
+    {
+      "model":"proveedores.TipoProveedor",
+      "pk": 1,
+      "fields": {
+        "nombre":"Natural"
+      }
+    },
+  
+    {
+      "model":"proveedores.TipoProveedor",
+      "pk": 2,
+      "fields": {
+        "nombre":"Jurídica"
+      }
+    }
+      
+]

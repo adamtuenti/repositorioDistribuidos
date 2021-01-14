@@ -1,0 +1,646 @@
+{% extends 'base_administrativo.html' %}
+
+{% load crispy_forms_tags %}
+{% load static %}
+{% load staticfiles %}
+
+{% block content %}
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" />
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/select2-bootstrap-theme/0.1.0-beta.10/select2-bootstrap.css" />
+<div class="row mb-2">
+	<div class="col-xl-5 col-12 v-align">
+		<h2 class="text-uppercase darkgreen-text">
+			{% block regedit %}
+			Registro Calificación de Proveedor
+			{% endblock regedit %}
+		</h2>
+	</div>
+	<div class="col-12 col-xl-7">
+		<div class="form-row">
+			<div class="col-6">
+				{{ form.cod_calificacion |as_crispy_field}}
+			</div>
+			<div class="col-6">
+				{{ form.fecha |as_crispy_field}}
+			</div>
+		</div>
+	</div>
+</div>
+
+
+
+<div class="row">
+	<div class="campo col-12 mt-2 p-2 pl-3">
+		<h5 class="black-text mb-0 text-uppercase">Información</h5>
+	</div>
+</div>
+
+<form method="post" id="Calificacion_proveedorForm"
+data-evento-url="{% url 'ajax_load_all_eventos_presupuestos' %}" data-proveedor-url="{% url 'ajax_load_proveedor' %}" data-tipo-url="{% url 'ajax_load_partida'%}"
+data-producto-url="{% url 'load_productosS'%}" data-info-url="{% url 'ajax_info_id' %}" data-productoInd-url="{% url 'load_producto_datalleS'%}" 
+enctype="multipart/form-data" novalidate  >
+	{% csrf_token %}
+
+	{% if error %}
+		<h2>{{error}}</h2>
+
+	{% else %}
+	<div class="row darkwhite-bg py-2">
+        <div class="col-12">
+
+
+			<div class="form-row">
+				<div class="col-3 col-xl-2">
+					{{ form.tipo_proveedor|as_crispy_field }}
+				</div>
+				{{form.proveedor}}
+				<div class="col-xl-3 col-3" id="div_ruc-ci">
+					<label for="ruc_ci" class="col-form-label requiredField">RUC/CI</label>
+					<span class="asteriskField">*</span>
+					<select class="select2 form-control {%if form.proveedor.errors %}is-invalid {%endif%}"
+						id="ruc_ci"></select>
+					{% for error in form.proveedor.errors %}
+					<p class="invalid-feedback d-block">
+						<strong>{{ error }}</strong>
+					</p>
+					{% endfor %}
+				</div>
+				<div class="col" id="div_razon-nombre">
+					<label for="razon_nombre" class="col-form-label requiredField">Razón Social/Nombre</label>
+					<span class="asteriskField">*</span>
+					<select class="select2 form-control {%if form.proveedor.errors %}is-invalid {%endif%}"
+						id="razon_nombre"></select>
+					{% for error in form.proveedor.errors %}
+					<p class="invalid-feedback d-block">
+						<strong>{{ error }}</strong>
+					</p>
+					{% endfor %}
+				</div>
+			</div>
+	
+			
+			
+
+
+            <div class=" form-row">
+				<div class="col-4 col-xl-3">
+					<label for="codigo_evento" class="col-form-label requiredField">Código del Evento</label>
+					<span class="asteriskField">*</span>
+					<select class="select2 form-control {%if form.evento.errors %}is-invalid {%endif%}"
+						id="codigo_evento"></select>
+					{% for error in form.evento.errors %}
+					<p class="invalid-feedback d-block">
+						<strong>{{ error }}</strong>
+					</p>
+					{% endfor %}
+				</div>
+
+
+				
+				<div class="col">
+					<div class="form-group">
+						<label for="nombre_evento" class="col-form-label requiredField">Nombre del Evento</label>
+						<span class="asteriskField">*</span>
+						<select class="select2 form-control {%if form.evento.errors %}is-invalid{%endif%}"
+							id="nombre_evento"></select>
+						{% for error in form.evento.errors %}
+						<p class="invalid-feedback d-block">
+							<strong>{{ error }}</strong>
+						</p>
+						{% endfor %}
+					</div>
+				</div>
+				{{form.evento}}
+				
+
+
+
+
+
+
+				<div class="col-3">
+					{{ form.tipo_rubro|as_crispy_field}}
+				</div>
+			</div>
+			<div class="form-row">
+
+				<div class="col-3 col-xl-3">
+					{{ form.responsable|as_crispy_field}}
+				</div>
+				<div class="col-3 col-xl-3">
+					{{ form.cargo|as_crispy_field}}
+				</div>
+
+				<div class="col-3 col-xl-3">
+					{{ form.orden_compra|as_crispy_field}}
+				</div>
+				<div class="col-3 col-xl-3">
+					{{ form.numero_orden|as_crispy_field}}
+				</div>
+			</div>
+
+
+        </div>
+		
+		
+
+
+
+
+
+
+		
+        <div class="col-12">
+
+            <br>
+            
+            <div class="campo row mt-2 p-2 pl-3">
+                <div class="col-6">
+                    <h5 class="text-uppercase darkgreen-text"><u>Calidad del producto y/o servicio que presta</u></h5>
+                </div>
+
+                <!-- <div class="col-2 pl-2"> <input type="number" style="text-align: center" name="puntaje_producto_determ" id="puntaje_producto_determ" value="25" readonly="True">
+				</div> -->
+				
+				<div class="col-2 pl-4" style="text-align: center" readonly='True'>
+                    {{ form.determ_prod|as_crispy_field}}
+				</div>
+
+                <!-- <div class="col-2 pl-4"> 
+					<input type="number" style="text-align: center" name="puntaje_producto_total" id="puntaje_producto_total" readonly="True">
+				</div> -->
+				
+				<div class="col-2 ml-2 pl-4" readonly='True'>
+                    {{ form.total_prod|as_crispy_field}}
+				</div>
+				
+			</div>
+
+			<div class="row mt-2 p-2 pl-3">
+                <div class="col-6">
+                    <p class="black-text mb-0">Producto/Servicio de acuerdo a lo solicitado en la orden de compra</p>
+                </div>
+                
+                <!-- <div class="col-2 pl-2">
+					<input type="number" style="text-align: center" name="puntaje_producto_veinticinco" id="puntaje_producto_veinticinco" value="25" readonly="True">
+				</div> -->
+
+				<div class="col-2 pl-4" readonly='True'>
+                    {{ form.veinticinco|as_crispy_field}}
+				</div>
+
+				<div class="col-1 ml-5 pt-2 pl-5">
+                    <input id='veinticinco_primero' type='checkbox' zoom=1.5 onclick='puntaje_calidad_veinticinco()'>
+                </div>
+			</div>
+
+			<div class="row mt-2 p-2 pl-3">
+                <div class="col-6">
+                    <p class="black-text mb-0">Producto/Servicio parcialmente deficiente o de menor calidad a la requerida</p>
+                </div>
+                
+                <!-- <div class="col-2 pl-2">
+					<input type="number" style="text-align: center" name="puntaje_producto_diez" id="puntaje_producto_diez" value="10" readonly="True">
+				</div> -->
+
+				<div class="col-2 pl-4" readonly='True'>
+                    {{ form.diez|as_crispy_field}}
+				</div>
+
+				<div class="col-1 ml-5 pt-2  pl-5">
+                    <input id='diez_primero' type='checkbox' zoom=1.5 onclick='puntaje_calidad_diez()'>
+                </div>
+			</div>
+
+			<div class="row mt-2 p-2 pl-3">
+                <div class="col-6">
+                    <p class="black-text mb-0">Producto/Servicio no conforme a lo solicitado o especificado en la orden de compra</p>
+                </div>
+                
+                <!-- <div class="col-2 pl-2">
+					<input type="number" style="text-align: center" name="puntaje_producto_cero" id="puntaje_producto_cero" value="0" readonly="True">
+				</div> -->
+
+				<div class="col-2 pl-4" readonly='True'>
+                    {{ form.cero|as_crispy_field}}
+				</div>
+
+				<div class="col-1 ml-5 pt-2  pl-5">
+                    <input id='cero_primero' type='checkbox' zoom=1.5 onclick='puntaje_calidad_cero()'>
+                </div>
+			</div>
+
+
+
+			<br>
+
+			<div class="campo row mt-2 p-2 pl-3">
+                <div class="col-6">
+                    <h5 class="text-uppercase darkgreen-text"><u>Tiempos de entrega de cotizaciones/menú</u></h5>
+                </div>
+
+                <!-- <div class="col-2 pl-2"> <input type="number" style="text-align: center" name="puntaje_tiempo_determ" id="puntaje_tiempo_determ" value="25" readonly="True">
+                </div>
+
+                <div class="col-2 pl-4"> <input type="number" style="text-align: center" name="puntaje_tiempo_total" id="puntaje_tiempo_total" readonly="True">
+				</div> -->
+				
+
+				<div class="col-2 pl-4" readonly='True'>
+                    {{ form.determ_tiempo|as_crispy_field}}
+				</div>
+				<div class="col-2  ml-2 pl-4" readonly='True'>
+                    {{ form.total_tiempo|as_crispy_field}}
+				</div>
+
+			</div>
+
+			<div class="row mt-2 p-2 pl-3">
+                <div class="col-6">
+                    <p class="black-text mb-0">Excelente (1 dia) </p>
+                </div>
+                
+                <!-- <div class="col-2 pl-2">
+					<input type="number" style="text-align: center" id="puntaje_veinticinco_tiempo" value="25" readonly="True">
+				</div> -->
+				<div class="col-2 pl-4" readonly='True'>
+                    {{ form.veinticinco|as_crispy_field}}
+				</div>
+
+				<div class="col-1 ml-5 pt-2 pl-5">
+                    <input id='veinticinco_segundo' type='checkbox' zoom=1.5 onclick='puntaje_tiempo_veinticinco()'>
+                </div>
+			</div>
+
+			<div class="row mt-2 p-2 pl-3">
+                <div class="col-6">
+                    <p class="black-text mb-0">Muy Bueno (2-3 dias) </p>
+                </div>
+                
+                <!-- <div class="col-2 pl-2">
+					<input type="number" style="text-align: center" id="puntaje_veinte_tiempo" value="20" readonly="True">
+				</div> -->
+				<div class="col-2 pl-4" readonly='True'>
+                    {{ form.veinte|as_crispy_field}}
+				</div>
+
+				<div class="col-1 ml-5 pt-2 pl-5">
+                    <input id='veinte_segundo' type='checkbox' zoom=1.5 onclick='puntaje_tiempo_veinte()'>
+                </div>
+			</div>
+
+			<div class="row mt-2 p-2 pl-3">
+                <div class="col-6">
+                    <p class="black-text mb-0">Bueno (4-7 dias) </p>
+                </div>
+                
+                <!-- <div class="col-2 pl-2">
+					<input type="number" style="text-align: center" id="puntaje_quince_tiempo" value="15" readonly="True">
+				</div> -->
+				<div class="col-2 pl-4" readonly='True'>
+                    {{ form.quince|as_crispy_field}}
+				</div>
+
+				<div class="col-1 ml-5 pt-2 pl-5">
+                    <input id='quince_segundo' type='checkbox' zoom=1.5 onclick='puntaje_tiempo_quince()'>
+                </div>
+			</div>
+
+			<div class="row mt-2 p-2 pl-3">
+                <div class="col-6">
+                    <p class="black-text mb-0">Regular (8-14 dias) </p>
+                </div>
+                
+                <!-- <div class="col-2 pl-2">
+					<input type="number" style="text-align: center" id="puntaje_diez_tiempo" value="10" readonly="True">
+				</div> -->
+				<div class="col-2 pl-4" readonly='True'>
+                    {{ form.diez|as_crispy_field}}
+				</div>
+
+				<div class="col-1 ml-5 pt-2 pl-5">
+                    <input id='diez_segundo' type='checkbox' zoom=1.5 onclick='puntaje_tiempo_diez()'>
+                </div>
+			</div>
+
+			<div class="row mt-2 p-2 pl-3">
+                <div class="col-6">
+                    <p class="black-text mb-0">Pésimos (15 dias en adelante) </p>
+                </div>
+                
+                <!-- <div class="col-2 pl-2">
+					<input type="number" style="text-align: center" id="puntaje_cero_tiempo" value="0" readonly="True">
+				</div> -->
+				<div class="col-2 pl-4" readonly='True'>
+                    {{ form.cero|as_crispy_field}}
+				</div>
+
+				<div class="col-1 ml-5 pt-2 pl-5">
+                    <input id='cero_segundo' type='checkbox' zoom=1.5 onclick='puntaje_tiempo_cero()'>
+                </div>
+			</div>
+
+
+			<br>
+
+			<div class="campo row mt-2 p-2 pl-3">
+                <div class="col-6">
+                    <h5 class="text-uppercase darkgreen-text"><u>Tiempos de entrega del pedido</u></h5>
+                </div>
+
+                <!-- <div class="col-2 pl-2"> <input type="number" style="text-align: center" name="puntaje_entrega_determ" id="puntaje_entrega_determ" value="30" readonly="True">
+                </div>
+
+                <div class="col-2 pl-4"> <input type="number" style="text-align: center" name="puntaje_entrega_total" id="puntaje_entrega_total" readonly="True">
+				</div> -->
+				<div class="col-2 pl-4" readonly='True'>
+                    {{ form.determ_tiempopedido|as_crispy_field}}
+				</div>
+				<div class="col-2  ml-2 pl-4" readonly='True'>
+                    {{ form.total_tiempopedido|as_crispy_field}}
+				</div>
+				
+				
+			</div>
+
+			<div class="row mt-2 p-2 pl-3">
+                <div class="col-6">
+                    <p class="black-text mb-0">Entregó el producto o servicio de acuerdo al tiempo establecido </p>
+                </div>
+                
+                <!-- <div class="col-2 pl-2">
+					<input type="number" style="text-align: center" id="puntaje_treinta_entrega" value="30" readonly="True">
+				</div> -->
+				<div class="col-2 pl-4" readonly='True'>
+                    {{ form.treinta|as_crispy_field}}
+				</div>
+
+				<div class="col-1 ml-5 pt-2 pl-5">
+                    <input id='treinta_tercero' type='checkbox' zoom=1.5 onclick='puntaje_entrega_treinta()'>
+                </div>
+			</div>
+
+			<div class="row mt-2 p-2 pl-3">
+                <div class="col-6">
+                    <p class="black-text mb-0">No entregó el producto o servicio dentro del tiempo indicado en la orden de compra o contrato </p>
+                </div>
+                
+                <!-- <div class="col-2 pl-2">
+					<input type="number" style="text-align: center" id="puntaje_cero_entrega" value="0" readonly="True">
+				</div> -->
+				<div class="col-2 pl-4" readonly='True'>
+                    {{ form.cero|as_crispy_field}}
+				</div>
+
+				<div class="col-1 ml-5 pt-2 pl-5">
+                    <input id='cero_tercero' type='checkbox' zoom=1.5 onclick='puntaje_entrega_cero()'>
+                </div>
+			</div>
+
+
+			<br>
+
+			<div class="campo row mt-2 p-2 pl-3">
+                <div class="col-6">
+                    <h5 class="text-uppercase darkgreen-text"><u>Servicio al cliente</u></h5>
+                </div>
+
+                <!-- <div class="col-2 pl-2"> <input type="number" style="text-align: center" name="puntaje_servicio_determ" id="puntaje_servicio_determ" value="20" readonly="True">
+                </div>
+
+                <div class="col-2 pl-4"> <input type="number" style="text-align: center" name="puntaje_servicio_total" id="puntaje_servicio_total" readonly="True">
+                </div> -->
+				<div class="col-2 pl-4" readonly='True'>
+                    {{ form.determ_servicio|as_crispy_field}}
+				</div>
+				<div class="col-2  ml-2 pl-4" readonly='True'>
+                    {{ form.total_servicio|as_crispy_field}}
+				</div>
+			</div>
+
+			<div class="row mt-2 p-2 pl-3">
+                <div class="col-6">
+                    <p class="black-text mb-0">Excelente (Cordialidad, disposición a servir, respuesta inmediata y eficaz) </p>
+                </div>
+                
+                <!-- <div class="col-2 pl-2">
+					<input type="number" style="text-align: center" id="puntaje_veinte_servicio" value="20" readonly="True">
+				</div> -->
+				<div class="col-2 pl-4" readonly='True'>
+                    {{ form.veinte|as_crispy_field}}
+				</div>
+
+				<div class="col-1 ml-5 pt-2 pl-5">
+                    <input id='veinte_cuarto' type='checkbox' zoom=1.5 onclick='puntaje_servicio_veinte()'>
+				</div>
+				
+			</div>
+
+			<div class="row mt-2 p-2 pl-3">
+                <div class="col-6">
+                    <p class="black-text mb-0">Muy Bueno (Disposición a servir, respuesta inmediata y eficaz) </p>
+                </div>
+                
+                <!-- <div class="col-2 pl-2">
+					<input type="number" style="text-align: center" id="puntaje_quince-servicio" value="15" readonly="True">
+				</div> -->
+				<div class="col-2 pl-4" readonly='True'>
+                    {{ form.quince|as_crispy_field}}
+				</div>
+
+				<div class="col-1 ml-5 pt-2 pl-5">
+                    <input id='quince_cuarto' type='checkbox' zoom=1.5 onclick='puntaje_servicio_quince()'>
+                </div>
+			</div>
+
+			<div class="row mt-2 p-2 pl-3">
+                <div class="col-6">
+                    <p class="black-text mb-0">Bueno (Disposición a servir y respuesta eficaz) </p>
+                </div>
+                
+                <!-- <div class="col-2 pl-2">
+					<input type="number" style="text-align: center" id="puntaje_diez_servicio" value="10" readonly="True">
+				</div> -->
+				<div class="col-2 pl-4" readonly='True'>
+                    {{ form.diez|as_crispy_field}}
+				</div>
+
+				<div class="col-1 ml-5 pt-2 pl-5">
+                    <input id='diez_cuarto' type='checkbox' zoom=1.5 onclick='puntaje_servicio_diez()'>
+                </div>
+			</div>
+
+			<div class="row mt-2 p-2 pl-3">
+                <div class="col-6">
+                    <p class="black-text mb-0">Regular (Disposición a servir, pero con respuesta eficaz) </p>
+                </div>
+                
+                <!-- <div class="col-2 pl-2">
+					<input type="number" style="text-align: center" id="puntaje_cinco_servicio" value="5" readonly="True">
+				</div> -->
+				<div class="col-2 pl-4" readonly='True'>
+                    {{ form.cinco|as_crispy_field}}
+				</div>
+
+				<div class="col-1 ml-5 pt-2 pl-5">
+                    <input id='cinco_cuarto' type='checkbox' zoom=1.5 onclick='puntaje_servicio_cinco()'>
+                </div>
+			</div>
+
+			<div class="row mt-2 p-2 pl-3">
+                <div class="col-6">
+                    <p class="black-text mb-0">Pésimos (No hay disposición a servir y no hay respuesta) </p>
+                </div>
+                
+                <!-- <div class="col-2 pl-2">
+					<input type="number" style="text-align: center" id="puntaje_cero_servicio" value="0" readonly="True">
+				</div> -->
+				<div class="col-2 pl-4" style="text-align: center" readonly='True'>
+                    {{ form.cero|as_crispy_field}}
+				</div>
+
+				<div class="col-1 ml-5 pt-2 pl-5">
+                    <input id='cero_cuarto' type='checkbox' zoom=1.5 onclick='puntaje_servicio_cero()'>
+                </div>
+			</div>
+
+			<br>
+
+			<div class="campo row mt-2 p-2 pl-3 pt-2">
+                <div class="col-6">
+                    <h5 class="text-uppercase"><u>Total Calificación</u></h5>
+                </div>
+
+                <!-- <div class="col-2 pl-2">
+					<input type="number" style="text-align: center" id="puntaje_subtotal" value="100" readonly="True">
+				</div>
+
+                <div class="col-2 pl-4">
+					<input type="number" style="text-align: center" id="puntaje_total" readonly="True">
+				</div> -->
+				<div class="col-2 pl-4" readonly='True'>
+                    {{ form.subtotal|as_crispy_field}}
+				</div>
+				<div class="col-2  ml-2 pl-4" readonly='True'>
+                    {{ form.total|as_crispy_field}}
+				</div>
+
+			</div>
+
+			<br>
+			<br>
+
+
+			<div class="row mt-2 p-2 pl-3 pt-2">
+                <div class="col-6 ml-6">
+                    <h5 class="darkgreen-text">Calificación mínima a obtener ≥ 80</h5>
+				</div>
+				
+				<p style="color:#FF0000" "text-align:center">Esta salificación se basa en la encuesta de satisfacción del evento.
+					<br>
+					 <b>Calificación del proveedor de alimentación</b>.</p>
+			</div>
+
+
+			<div class="campo row mt-2 p-2 pl-3 pt-2">
+                <div class="col-6">
+                    <h5 class="text-uppercase"><u>Calificación otorgada por el participante al proveedor</u></h5>
+                </div>
+
+                <div class="col-2 pl-4">
+                    {{ form.subtotal_participante|as_crispy_field}}
+                </div>
+
+                <div class="col-2  ml-2 pl-4" readonly='True'>
+                    {{ form.total_participante|as_crispy_field}}
+                </div>
+			</div>
+
+			<br>
+
+		</div>
+		
+		<div class="col-12">
+			<div class="form-row">
+				<div class="col-12">
+					{{ form.descripcion |as_crispy_field}}
+				</div>
+			</div>
+		</div>
+
+
+	</div>
+
+
+
+    {% endif %}
+
+    {{ form.media }}
+    {% if form.errors %}
+    <ul>
+        {% for error in form.errors %}
+        <li>{{ error }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    <br>
+    <br>
+
+        <div class="row mt-3 crear">
+            <div class="col-12">
+            <a class="btn btn-secondary green-bg" data-toggle='modal' data-target="#proveedor_confirmar"
+            href='#'>Siguiente</a>
+            <a class="btn btn-secondary" href="{% url 'index_calificacion_proveedores' %}"> Cancelar </a>
+            </div>
+        </div>
+
+	
+	
+	    <div class="modal fade" id="proveedor_confirmar" tabindex="-1" role="dialog" aria-labelledby="ordenTitle"
+					aria-hidden="true">
+						<div class="modal-dialog modal-dialog-centered" role="document">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="reporteTitle">Confirmación</h5>
+										<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+											<span aria-hidden="true">&times;</span>
+									</button>
+								</div>
+								<div class="modal-body" id="modal-confirmacion">
+									¿Está seguro/a que desea continuar? Verifíque los datos ingresados antes de proceder.
+								</div>
+								<div class="modal-footer">
+									<button class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+									<button type="submit" class="btn btn-secondary green-bg mr-3 hack">Confirmar</button>
+								</div>
+							</div>
+						</div>
+					</div>
+</form>
+
+
+
+
+{% endblock %}
+
+
+
+
+
+
+
+{% block extrafooter %}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
+<script src="{% static 'js/select2.min.js' %}"></script>
+<script src="{% static 'js/listaProveedores.js' %}"></script>
+<script src="{% static 'js/puntajes2.js' %}"></script>
+
+{% endblock extrafooter %}
+
+
+
+

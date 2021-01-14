@@ -1,0 +1,53 @@
+{% load crispy_forms_tags %}
+{% load static %}
+
+
+<div class="modal-header">
+    <h2 class="modal-title" id="ordenTitle"> Agregar Participantes </h2>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+
+    {% csrf_token %}
+    <div id="codigoEasy" hidden >{{ cod }}</div>
+    <div class="modal-body">
+        <div class="form-row">
+            <div id="tabla" class="col-12">
+                <table id="participantesTabla" class="table table-responsive border-bottom">
+                    <thead class="darkgreen-bg white-text">
+                        <tr>
+                            <th>Cédula participante</th>
+                            <th>Nombre Participante</th>
+                            <th>Código Evento</th>
+                            <th>Valor evento</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    {% if participantes %}
+                    <tbody id="BodyNumberPart">
+                        {% for p in participantes %}
+                        <tr class="text-center">
+                           <td>{{ p.participante.cedula }}</td>
+                           <td>{{ p.participante.nombres }}</td>
+                           <td>{{ cod }}</td>
+                           <td>{{ p.valor_evento }}</td>
+                           <td><input type="checkbox" id="{{p.id}}" value="{{p.id}}" class="checkB"></td>
+                        </tr>
+                        {% endfor%}
+                    </tbody>
+                    {% endif %}
+                </table>
+
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+            <button id="agregar" class="btn btn-secondary green-bg mr-3" data-dismiss="modal"> Guardar </button>
+            <button id="hackDev" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+    </div>
+    
+        {{ form.media }}
+</form>
+
+<script src="{% static 'js/modal_agregar_p.js' %}"></script>

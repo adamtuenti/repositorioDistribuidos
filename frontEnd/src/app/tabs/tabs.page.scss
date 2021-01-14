@@ -1,0 +1,12 @@
+ion-tab-bar {
+    --background: var(--ion-tab-bar-background, var(--ion-background-color, #ECECEC));
+    --border: none;
+}
+
+#notifications-badge {
+    background-color: red;
+    position: absolute;
+    top: -3px;
+    right: -3px;
+    border-radius: 100%;
+}

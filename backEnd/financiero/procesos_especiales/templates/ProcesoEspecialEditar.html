@@ -1,0 +1,294 @@
+{% extends "base_financiero.html" %} {% load crispy_forms_tags %} {% load static %} {% load index %} {% block title %}{{ "EC - Nuevo Proceso Especial" }}{% endblock title %} {% block extraheader %}
+<link rel="stylesheet" href="{% static 'css/select2.min.css' %}" />
+<link rel="stylesheet" href="{% static 'css/select2-bootstrap.min.css' %}" /> {% endblock extraheader %} {% block content %}
+<form method="POST" novalidate id="form-pe" enctype="multipart/form-data" data-eventos-url="{% url 'ajax_load_eventosPE' %}" data-eventosInd-url="{% url 'ajax_load_eventosIndPE' %}" data-partList-url="{% url 'ajax_load_partListPE' %}" data-verAs-url="{% url 'ajax_verificar_asistenciaPE' %}">
+    {% csrf_token %} {% block editar %}
+
+    <div class="row mb-2">
+        <div class="col-6 col-xl-4 ml-0 v-align">
+            <h2 class="darkgreen-text text-uppercase mb-0">Nuevo Proceso Especial</h2>
+        </div>
+        <div class="col-6 ml-0">
+            <div class="form-row">
+                <label for="id_categoria" class="col-xl-2 col-auto col-form-label">Categoría</label>
+                <div class="col-xl-5 col">
+                    {{form.categoria|as_crispy_field}}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endblock editar %} {% if cat %}
+    <input type="hidden" id="catLazy" value="{{cat}}"> {% endif %}
+
+
+
+    <div class="row darkwhite-bg py-2">
+        <div class="col-12">
+            <div class="form-row">
+                <div class="col-6 col-md-3 mb-0">
+                    {{ form.cod_proceso|as_crispy_field }}
+                </div>
+                <div class="col-6 col-md-3 mb-0">
+                    {{ form.fecha_emision|as_crispy_field }}
+                </div>
+                <div class="col-6 col-md-3 mb-0">
+                    {{ form.estado|as_crispy_field }}
+                </div>
+                <div class="col-6 col-md-3 mb-0">
+                    {{ form.tipo_nota|as_crispy_field }}
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="col-12 col-md-12 mb-0">
+                    {{ form.concepto|as_crispy_field }}
+                </div>
+            </div>
+            <a hidden id="MEGAHACK"></a>
+            <div class="form-row">
+                <div class="col-12 col-md-2">
+                    <label for="codigoEvento" class="col-form-label">Código Evento</label>
+                    <select type="text" id="codigoEvento" class="form-control select4"></select>
+                </div>
+                <div class="col-12 col-md-4">
+                    <label for="nombreEvento" class="col-form-label">Nombre Evento</label>
+                    <input type="text" name="valor_evento" readonly class="form-control-plaintext textinput textInput form-control" maxlength="40" id="nombreEvento" />
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="col-6 col-md-2 mb-0">
+                    <div id="div_id_valor_eventoC" class="form-group">
+                        <label for="id_valor_eventoC" class="col-form-label requiredField">
+                            Valor Evento
+                        </label>
+                        <div class="currency-wrap">
+                            <span class="currency-code">$</span>
+                            <input type="text" name="valor_evento" readonly class="form-control-plaintext text-right textInput form-control" maxlength="40" id="id_valor_eventoC" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-6 col-md-2 mb-0">
+                    <div id="div_id_descuentoC" class="form-group">
+                        <label for="id_descuentoC" class="col-form-label requiredField">
+                            ND Nº
+                        </label>
+                        <div class="currency-wrap money">
+                            <span class="currency-code">%</span>
+                            <input type="text" name="descuentoC" class="textinput text-right form-control" maxlength="40" id="id_descuentoC" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-6 col-md-2 mb-0">
+                    <div id="div_id_valor_totalC" class="form-group">
+                        <label for="id_valor_totalC" class="col-form-label requiredField">Valor Total</label>
+                        <div class="currency-wrap">
+                            <span class="currency-code">$</span>
+                            <input type="text" name="valor_total" readonly class="form-control-plaintext text-right form-control" maxlength="40" id="id_valor_totalC" />
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <br>
+            <div class="form-row">
+                <div class="col-2">
+                    <a id="add" onclick='mostrarParticipantes();' class="btn btn-secondary green-bg btn-sm" data-toggle='modal' data-target="#ParticipantesModal" href="#"><i class="fas fa-plus"></i>
+                        Agregar Participante</a>
+                </div>
+
+                <div class="col">
+                    <div class="form-row float-right">
+                        <div class="col-auto v-align ml-auto">
+                            <label for="id_n_participantes"></label>Total Participantes</div>
+                        <div class="col-2">
+                            <input type="text" class="form-control" readonly id="id_n_participantes">
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <br>
+            <div class="form-row">
+                <div id="tabla" class="col-12">
+                    <table id="participantes-table" class="table table-responsive-md border-bottom">
+                        <thead class="darkgreen-bg white-text">
+                            <tr>
+                                <th>Participante</th>
+                                <th>Nombre del evento</th>
+                                <th>Código</th>
+                                <th>Descuento</th>
+                                <th>Valor total</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbodyPart">
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div id="summary" class="form-row">
+                <div class="col-6 col-md-3">
+                    {{ form.subtotal|as_crispy_field }}
+                    <label for="subtotal">Subtotal</label>
+                    <div class="currency-wrap">
+                        <span class="currency-code" class="col-form-label">$</span>
+                        <input type="text" id="subtotal" class="form-control-plaintext text-right form-control" readonly>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    {{ form.descuento_fact|as_crispy_field }}
+                    <label for="descuento_fact" class="col-form-label">Descuentos</label>
+                    <div class="currency-wrap">
+                        <span class="currency-code">%</span>
+                        <input type="text" id="descuento_fact" class="form-control-plaintext text-right form-control" readonly>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    {{ form.descuento_total|as_crispy_field }}
+                    <label for="descuento_total" class="col-form-label">Descuento total</label>
+                    <div class="currency-wrap">
+                        <span class="currency-code">$</span>
+                        <input type="text" id="descuento_total" class="form-control-plaintext text-right form-control" readonly>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    {{ form.valor_total|as_crispy_field }}
+                    <label for="valor_total" class="col-form-label">Valor total</label>
+                    <div class="currency-wrap">
+                        <span class="currency-code">$</span>
+                        <input type="text" id="valor_total" class="form-control-plaintext text-right form-control" readonly>
+                    </div>
+                </div>
+            </div>
+
+            {% if form.estado.value == "ANLD" %}
+            <hr> {{form.motivo|as_crispy_field}} {% endif %}
+
+
+            <div class="form-row py-2">
+                <table id="tablefile" class="table border-bottom">
+                    {{ formset.management_form|crispy }} {% for form in formset.forms %}
+                    <tr class="{% cycle 'row1' 'row2' %} prueba formset_row-{{ formset.prefix }}">
+                        {% for field in form.visible_fields %}
+                        <td scope="row">
+                            {# Include the hidden fields in the form #} {% if forloop.first %} {% for hidden in form.hidden_fields %} {{ hidden }} {% endfor %} {% endif %} {{ field.errors.as_ul }} {{ field|as_crispy_field }}
+                        </td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-3">
+        <button id="hackTipoNota" type="submit" class="btn btn-secondary green-bg">Guardar</button>
+        <a class="btn btn-secondary" href="{% url 'procesos_especiales_index' %}">Cancelar</a>
+        <button id="env-sol" class="btn btn-success darkgreen-bg float-right">Enviar
+            solicitud</button>
+    </div>
+
+    <div class="modal fade" id="ParticipantesModal" role="dialog" aria-labelledby="ordenTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+
+            <div class="modal-content">
+            </div>
+        </div>
+    </div>
+
+    <table id="tablePart" class="table table-responsive-md border-bottom " hidden>
+        {{ participantesPE.management_form|crispy }} {% for form in participantesPE.forms %}
+        <tr class="{% cycle 'row1' 'row2' %} form-control pt form-row participantesPE_row-{{ participantesPE.prefix }}">
+            {% for field in form.visible_fields %}
+            <td scope="row">
+                {# Include the hidden fields in the form #} {% if forloop.first %} {% for hidden in form.hidden_fields %} {{ hidden }} {% endfor %} {% endif %} {{ field.errors.as_ul }} {{ field|as_crispy_field }}
+            </td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+
+    </table>
+
+
+
+    {% if form.errors %}
+    <ul>
+        {% for error in form.errors %}
+        <li>{{ error }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %} {{ form.media }}
+</form>
+
+
+{% endblock content %} {% block extrafooter %}
+<script src="{% static 'js/select2.min.js' %}"></script>
+<script src="{% static 'js/money_formater.js' %}"></script>
+<script src="{% static 'js/proceso_especial_participante.js' %}"></script>
+<script src="{% static 'js/proceso_especial_file.js' %}"></script>
+<script src="{% static 'js/proceso_especial_edit.js' %}"></script>
+<script>
+    $(document).ready(function(e) {
+        if ("{{form.cod_proceso.value}}" !== "None") {
+            LimitForms();
+        }
+    });
+
+    function mostrarParticipantes() {
+
+        
+        var categoria = $("#id_categoria").val();
+        var nota = $("#id_tipo_nota").val();
+        if (nota == "Crédito" && $("#codigoEvento").val()!="") {
+            $.ajax({
+                url: "{% url 'ajax_load_personasPE' %}",
+                data: {
+                    'codigo': $("#codigoEvento").val(),
+                },
+                success: function(data) {
+                    $(".modal-content").html(data);
+                }
+            });
+        } else if(nota == "Débito" && $("#codigoEvento").val()!=""){
+            if($("#id_valor_eventoC").val()==$("#id_valor_totalC").val() && categoria=="Dev"){
+                alert("Revise el valor y considere si aplica el cobro por gastos administrativos");
+            }
+            var tipo = $("#id_categoria").val();
+            if (tipo == "") {
+                tipo = $("#catLazy").val();
+            }
+            $.ajax({
+                url: "{% url 'ajax_load_participantesEditPE' %}",
+                data: {
+                    'codigo': $("#codigoEvento").val(),
+                    'valor': $("#id_valor_eventoC").val(),
+                    'tipo': tipo,
+                },
+                success: function(data) {
+                    $(".modal-content").html(data);
+                }
+            });
+        }
+
+    };
+</script>
+<script>
+    $('#env-sol').click(function(e) {
+        e.preventDefault();
+        $("#id_estado").prop("disabled", false);
+        $("#id_estado").val("SOLI");
+        $("#id_tipo_nota").prop("disabled", false);
+        $("#id_categoria").prop("disabled", false);
+        $("#form-pe").trigger("submit");
+    });
+</script>
+<script src="{% static 'js/eventoDoc_Dev.js' %}"></script>
+{% endblock extrafooter %}

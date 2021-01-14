@@ -1,0 +1,8 @@
+<option value="">---------</option>
+<!-- <option value="Ikaros">Ikaros</option>
+<option value="Nymph">Nymph</option>
+<option value="Aestrea">Aestrea</option>
+<option value="Chaos">Chaos</option> -->
+{% for usuario in usuariosv %}
+<option value="{{ usuario.pk }}" >{{ usuario }}</option>
+{% endfor %}

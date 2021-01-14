@@ -1,0 +1,194 @@
+{% load static %}
+<meta http-equiv="content-type" content="text/html; charset=utf-8"> 
+<html>
+<head>
+<style>
+.tdbreak {
+  word-break: break-all
+}
+@page {
+size: A4;
+@frame header_frame { 
+/* Cabecera estilos  */  
+-pdf-frame-content: header_content;
+left: 10pt; width: 580pt; top: 10pt; height:100pt;
+/*-pdf-frame-border = 1;*/
+}
+
+@frame imagen {
+    -pdf-frame-content: imagen;
+    left: 10pt; width:230pt; top: 10pt; height: 155pt;
+    /*-pdf-frame-border = 1;*/
+}
+
+@frame contenido_head {
+    -pdf-frame-content: content_head;
+    left: 390pt; width: 200pt; top: 30pt; height: 50pt;
+    font-size: 14px;
+    /* -pdf-frame-border = 1;*/
+}
+
+
+@frame codigo {
+    -pdf-frame-content: content_codigo;
+    left: 495pt; width: 95pt; margin-left: 10pt; top: 50pt; height: 20pt;
+    font-size: 14px;
+    /*-pdf-frame-border = 1;*/
+}
+
+
+/* Contenido estilos */
+
+@frame content_frame { 
+left: 5pt; width: 580pt; top: 120pt; height: 500pt;
+ /*-pdf-frame-border = 1;*/
+}
+@frame tabla1 {
+    -pdf-frame-content: tabla_1;
+    left: 10pt; width:590pt; top: 120pt; height: 460pt;
+
+     /*-pdf-frame-border = 1;*/
+}
+
+@frame detalle_eventos {
+    -pdf-frame-content: detalle_eventos;
+    left: 5pt; width:550pt; top: 690pt; height: 100pt;
+     /*-pdf-frame-border = 1;*/
+}
+
+@frame standar {
+    -pdf-frame-content: standar;
+    left: 15pt; width:300pt; top: 90pt; height: 150pt;
+}
+
+/* Pie de  Pagina */
+
+@frame footer_frame { /* Another static Frame */
+-pdf-frame-content: footer_content;
+left: 10pt; width: 580pt; top: 790pt; height: 40pt;
+/*-pdf-frame-border = 1;*/
+}
+
+@frame contador { /* Another static Frame */
+-pdf-frame-content: contador;
+left: 510pt; width: 50pt; top: 820pt; height: 20pt;
+}
+
+@frame contenido_del_footer { /* Another static Frame */
+-pdf-frame-content: contenido_del_footer;
+left: 10pt; width: 500pt; top: 810pt; height: 50pt;
+}
+
+}
+</style>
+</head>
+<body>
+<!-- Content for Static Frame 'header_frame' -->
+<div id="header_content">
+    <img src="static/image/logo.png" id="imagen" alt="">
+    <div id="content_head">
+            <label style="font-size: 17px"><strong>Reporte de eventos por género</strong></label>
+            <br>
+    </div>
+
+    <div id="content_codigo">
+      <label style="background-color:yellow; margin-left: 5px; font-size: 15px"><strong>POEC0502 V7</strong></label>
+  </div>
+</div>
+  
+
+
+    <table class="table"  style=" font-size 12px;">
+            <thead style="height: 40px;"> 
+                <tr style="height: 50px; border:0.5px solid white;">
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td style="height: 40px; border:0.5px solid black;" colspan="2"> <strong><center>Participantes</center></strong></td>
+                </tr>
+                <tr style="height: 60px; border:0.5px solid black;">
+                    <td style="width: 35px;"> <strong ><center> N.- </center></strong></td>
+                    <td style="width: 70px"> <strong><center>Codigo evento</center> </strong></td>
+                    <td style="width: 190px"> <strong><center> Nombre del evento </center> </strong></td>
+                    <td style="width: 80px"> <strong><center> F. Inicio </center></strong></td>
+                    <td style="width: 80px;"> <strong><center> F. final </center></strong></td>
+                    <td style="width: 120px;"> <strong><center> Tipo de capacitación </center></strong> </td>
+                    <td style="width: 80px;"> <strong><center> Público </center></strong> </td>
+                    <td style="width: 60px;"> <strong> <center> Hombres </center></strong> </td>
+                    <td style="width: 60px;"> <strong><center> Mujeres </center></strong></td>
+                </tr>
+            </thead>
+            <tbody >
+              {% for row in evento  %}
+
+              <tr style="height: 50px; border:0.5px solid black;">
+                      <td  class="tdbreak"><center>{{ forloop.counter }}</center></td>
+                      <td  class="tdbreak"><center>{{row.codigo_evento}}</center> </td>
+                      <td  class="tdbreak"><center>{{row.nombre}}</center></td>
+                      <td  class="tdbreak"><center>{{row.fecha_inicio}}</center></td>
+                      <td  class="tdbreak"><center>{{row.fecha_fin}}</center></td>
+                      <td  class="tdbreak"><center>{{row.get_design.tipo_evento}}</center></td>
+                      <td  class="tdbreak"><center>{{row.publico}}</center></td>
+                      <td  class="tdbreak"><center>{{row.get_part_hombres}}</center></td>
+                      <td  class="tdbreak"><center>{{row.get_part_mujeres}}</center></td>
+                  </tr>
+
+                
+              {% endfor %}
+                  
+
+            </tbody>
+        </table>
+
+
+   
+
+{% block footer %}
+<div id="footer_content">
+
+   <div id="detalle_eventos">
+        <table id="table_estilos" style="font-size: 14px; font-family:Arial;">
+            <tr style="height: 40px;">
+                  <td class="tdbreak" style="width:100px;"><strong>Total Hombres: </strong></td>
+                  <td class="tdbreak" style="width:200px;">{{total_hombres}}</td>
+                  <td class="tdbreak" style="width:80px;"><strong>Eventos por publico:</strong></td>
+                  <td class="tdbreak" style="width:200px;">{{total_por_publico}}</td>
+            </tr>
+
+            <tr style="">
+                  <td style=" font-family:Arial "><strong>Total Mujeres:</strong></td>
+                  <td style="width:200px;"> {{total_mujeres}}</td>
+                  <td style="width:100px;"><strong></strong></td>
+                  <td style="width:100px;"></td>
+            </tr>
+
+            <tr style="height: 30px; ">
+                <td style="width:150px; font-family:Arial "></td>
+                  <td style="width:150px;"></td>
+                  <td style="width:150px;"><strong></strong></td>
+                  <td style="width:180px;"></td>
+            </tr>
+
+        </table>
+    </div>
+
+  <label style="color: #3c5634">////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////</label>
+  <br>
+  <div id="contador">
+      <label style="font-size: 13px">Pág <pdf:pagenumber> | <pdf:pagecount></label>
+  </div>
+  <div id="contenido_del_footer" style="font-size: 13px">
+      <label>CEC ESPOL,Campus Las Peñas, Campus Gustavo Galindo Velasco | Teléf:042269763 | 0960507588</label>
+      <br>
+      <!-- ESTO: &nbsp sirve para hacer espacioos en tre textos pero si quieres haz un frame aparte y lo mueves q es mas ordenado xD-->
+      <label>Fecha impresión: {{fecha_actual}} &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp  &nbsp  &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp Usuario: Nombre apellido</label>
+  </div>
+</div>
+{% endblock footer %}
+<!-- HTML Content -->
+</body>
+</html>

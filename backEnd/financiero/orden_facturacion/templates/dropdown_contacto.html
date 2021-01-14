@@ -1,0 +1,4 @@
+<option value="">---------</option>
+{% for contacto in contactos %}
+<option value="{{ contacto.cedula }}-{{ contacto.nombres }} {{ contacto.apellidos }}" name="{{ contacto.pk }}">{{ contacto.cedula }}-{{ contacto.nombres }} {{ contacto.apellidos }}</option>
+{% endfor %}

@@ -1,0 +1,285 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<div id="app">
+    <form v-on:submit.prevent="subirCalificaciones">
+        <div class="row">
+            <div class="col-9 col-sm-9 col-xl-9">
+                <h3>NUEVO REGISTRO DE <span class="darkgreen-text">RECTIFICACION DE NOTAS</span></h3>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label for="codigo_evento" class="col-sm-2 col-form-label">Código Evento:</label>
+            <div class="col-sm-3">
+                <input id="codigo_evento" name="codigo_evento" type="text" class="form-control"
+                    oninvalid="this.setCustomValidity('Ingrese un codigo válido')" oninput="this.setCustomValidity('')"
+                    onchange="llenarNombre()" required>
+            </div>
+            <div class="col-sm-7">
+                <input id="nombre_evento" name="nombre_evento" type="text" class="form-control"
+                    oninvalid="this.setCustomValidity('Ingrese un apellido válido')"
+                    oninput="this.setCustomValidity('')" required disabled>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="cedula_part" class="col-sm-2 col-form-label">Participante:</label>
+            <div class="col-sm-3">
+                <input id="cedula_part" name="cedula_part" type="text" class="form-control"
+                    oninvalid="this.setCustomValidity('Ingrese una cedula válido')" oninput="this.setCustomValidity('')"
+                    placeholder="Cedula" required disabled v-on:change="llenarParticipante()">
+            </div>
+            <div class="col-sm-7">
+                <input id="nombre_part" name="nombre_part" type="text" class="form-control"
+                    oninvalid="this.setCustomValidity('Ingrese un apellido válido')"
+                    oninput="this.setCustomValidity('')" required disabled>
+            </div>
+        </div>
+        <h4 class="darkgreen-text">Detalle de evaluacion</h4>
+        <div class="form-group row">
+            <label for="fecha" class="col-sm-3 col-form-label">Fecha de rectificacion:</label>
+            <label for="tipo" class="col-sm-3 col-form-label">Tipo de evento:</label>
+            <label for="inicio" class="col-sm-3 col-form-label">Fecha inicio:</label>
+            <label for="fin" class="col-sm-3 col-form-label">Fecha fin:</label>
+        </div>
+        <div class="form-group row">
+            <div class="col-sm-3">
+                <input id="fecha" name="fecha" type="text" class="form-control"
+                    oninvalid="this.setCustomValidity('Ingrese un codigo válido')" oninput="this.setCustomValidity('')"
+                    required disabled>
+            </div>
+
+            <div class="col-sm-3">
+                <input id="tipo" name="tipo" type="text" class="form-control"
+                    oninvalid="this.setCustomValidity('Ingrese un codigo válido')" oninput="this.setCustomValidity('')"
+                    required disabled>
+            </div>
+
+            <div class="col-sm-3">
+                <input id="inicio" name="inicio" type="text" class="form-control"
+                    oninvalid="this.setCustomValidity('Ingrese un codigo válido')" oninput="this.setCustomValidity('')"
+                    required disabled>
+            </div>
+
+            <div class="col-sm-3">
+                <input id="fin" name="fin" type="text" class="form-control"
+                    oninvalid="this.setCustomValidity('Ingrese un codigo válido')" oninput="this.setCustomValidity('')"
+                    required disabled>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="cedula_fac" class="col-sm-2 col-form-label">Facilitador:</label>
+            <div class="col-sm-3">
+                <input id="cedula_fac" name="cedula_fac" type="text" class="form-control"
+                    oninvalid="this.setCustomValidity('Ingrese un codigo válido')" oninput="this.setCustomValidity('')"
+                    onchange="llenarFacilitador()" placeholder="Cedula">
+            </div>
+            <div class="col-sm-7">
+                <input id="nombre_fac" name="nombre_fac" type="text" class="form-control"
+                    oninvalid="this.setCustomValidity('Ingrese un apellido válido')"
+                    oninput="this.setCustomValidity('')"disabled>
+            </div>
+        </div>
+        <div class="row mt-4">
+            <div class="col-16 col-xl-16 table-container">
+                <table class="table table-responsive table-bordered" id="tablacierre">
+                    <thead class="white-text darkgreen-bg">
+                        <tr scope="col">
+                            <th scope="col">No.</th>
+                            <th scope="col">Cedula</th>
+                            <th scope="col">Participante</th>
+                            <th v-for="(act,index) in actividades">
+                                <span v-for="(instrumentos) in planTrabajo.instrumentos_de_evaluacion">
+                                    <span v-if="instrumentos.nombre == act.instrumento">
+                                        {act.nombre} ({instrumentos.porcentajeAsignado}%)
+                                    </span>
+                                </span>
+                            </th>
+                            <th scope="col">NOTA FINAL (100%)</th>
+                            <th scope="col">Aprobacion (Mayor 70/100)</th>
+                            <th scope="col">Observacion</th>
+                            <th scope="col">Fecha registro</th>
+                            <th scope="col">Fecha edicion</th>
+                        </tr>
+                    </thead>
+                    <tr>
+                        <td scope="col">{participante.id}</td>
+                        <td scope="col">{participante.identificacion}</td>
+                        <td scope="col">{participante.apellidos}, {participante.nombres}</td>
+                        <td v-for="(act,index) in actividades">
+                            <span v-for="calif in detalle_participante.calificaciones.notas">
+                                <span v-for="nota in calif.calificaciones">
+                                    <span v-if="nota.nombre == act.nombre">
+                                        <input type="number" id="notas" class="notas" min=0 max=100 v-model="nota.nota"
+                                            v-on:change="calcular()">
+                                    </span>
+                                </span>
+                            </span>
+                        </td>
+                        <td scope="col"><input id="total" type="number" min=0 max=100 disabled
+                                :value='detalle_participante.nota_final1'></td>
+                        <td scope="col">{detalle_participante.aprobado}</td>
+                        <td scope="col">Observacion</td>
+                        <td scope="col">Fecha registro</td>
+                        <td scope="col">Fecha edicion</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <hr>
+
+        <button id="subir" type="submit" class="btn btn-success btn-lg submit" disabled>Guardar calificaciones</button>
+    </form>
+</div>
+<!-- </form> -->
+{% endblock %}
+{% block specific_scripts %}
+<script>
+    var hoy;
+    function llenarNombre() {
+        let codigo = $("#codigo_evento").val();
+        $.ajax({
+            url: "/academico/api/event/evento/" + codigo + "/",
+            data: {},
+            success: function (data) {
+                console.log(data);
+                $("#nombre_evento").val(data['nombre']);
+                document.getElementById("cedula_part").disabled = false;
+                $("#tipo").val(data['tipo_evento']);
+                hoy = new Date();
+                $("#fecha").val(hoy.getFullYear() + "-" + (hoy.getMonth() + 1) + "-" + hoy.getDate());
+                $("#inicio").val(data['fecha_inicio']);
+                $("#fin").val(data['fecha_fin']);
+
+            },
+            error: function () {
+                $("#nombre_evento").val("");
+            }
+        });
+    }
+    function llenarFacilitador() {
+        let cedula = $("#cedula_fac").val();
+        $.ajax({
+            url: "/academico/api/event/docente/",
+            dataa: {},
+            success: function (data) {
+                for (fac of data) {
+                    if (fac.numero_de_cedula == cedula) {
+                        document.getElementById('nombre_fac').value = fac.nombres + " " + fac.apellidos;
+                        break;
+                    }
+                    else {
+                        document.getElementById('nombre_fac').value = "";
+                    }
+                }
+            }
+        });
+    }
+    const app = new Vue({
+        el: '#app',
+        delimiters: ["{", "}"],
+        data: {
+            planTrabajo: {},
+            actividades: [],
+            detalle_participante: {},
+            participante: {},
+            calificaciones: [],
+
+        },
+        mounted: function () {
+            axios.defaults.xsrfCookieName = 'csrftoken'
+            axios.defaults.xsrfHeaderName = "X-CSRFTOKEN"
+        },
+        methods: {
+            llenarParticipante: function () {
+                let cedula = $("#cedula_part").val();
+                axios.get('/api/participante/').then((response) => {
+                    for (part of response.data) {
+                        if (part.identificacion == cedula) {
+                            document.getElementById('nombre_part').value = part.nombres + " " + part.apellidos;
+                            this.participante = part;
+                            this.getDetalle();
+                            this.getPlan();
+                            break;
+                        }
+                        else {
+                            document.getElementById('nombre_part').value = "";
+                        }
+                    }
+                });
+            },
+            getDetalle: function () {             //CAMBIAR RUTA DE API, SE ESTA USANDO TABLA PARTICIPANTE PROVISIONAL PARA HACER PRUEBAS
+                axios.get('/api/detalleparticipante/').then((response) => {
+                    for (elem of response.data) {
+                        if (elem['id_evento'] == $("#codigo_evento").val() && elem['id_participante'] == this.participante.id) {
+                            this.detalle_participante = elem;
+                        }
+                    }
+                }).catch((err) => {
+                    console.log(err);
+                })
+            },
+            getPlan: function () {
+                axios.get('/api/planTrabajo/').then((response) => {
+                    for (plan of response.data) {
+                        if (plan['evento'] == $("#codigo_evento").val()) {
+                            this.planTrabajo = plan;
+                            break;
+                        }
+                    }
+                    this.getActividades();
+                    document.getElementById("subir").disabled = false;
+                }).catch((err) => {
+                    console.log(err);
+                })
+            },
+            getActividades: function () {
+                this.actividades = []
+                axios.get('/api/actividadPlan/').then((response) => {
+                    for (act of response.data) {
+                        if (act['plan_trabajo'] == this.planTrabajo['id']) {
+                            this.actividades.push(act);
+                        }
+                    }
+                }).catch((err) => {
+                    console.log(err);
+                })
+            },
+            calcular: function () {
+                let total = 0;
+                for (notas of this.detalle_participante.calificaciones.notas) {
+                    let suma = 0;
+                    for (nota of notas.calificaciones) {
+                        suma += nota.nota * nota.porcentaje / 100;
+                    }
+                    console.log(suma);
+                    suma = suma /notas.calificaciones.length;
+                    console.log(suma);
+                    console.log(notas.calificaciones.length);
+
+                    total += suma;
+                }
+                this.detalle_participante.nota_final1 = total;
+                if (total >= 70) {
+                    this.detalle_participante.aprobado = "Si"
+                } else {
+                    this.detalle_participante.aprobado = "No"
+                }
+            },
+            subirCalificaciones: function () {
+                this.detalle_participante.fecha_rectificado = $("#fecha").val();
+                this.detalle_participante.rectificado = "Si";
+                axios.put('/api/detalleparticipante/' + this.detalle_participante.id_detalle_participante + "/", this.detalle_participante).then((response) => {
+                    console.log("Guardado exitoso")
+                }).catch((err) => {
+                    console.log(err.response);
+                })
+            }
+
+        }
+    })
+
+</script>
+{% endblock %}

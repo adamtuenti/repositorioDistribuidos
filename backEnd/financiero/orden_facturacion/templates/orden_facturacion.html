@@ -1,0 +1,222 @@
+{% extends "base_financiero.html" %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% load my_tags %}
+{% block title %}{{ "EC - Orden Facturación" }}{% endblock title %}
+
+{% block extraheader %}
+
+{% endblock extraheader %}
+
+{% block content %}
+<div class="row mb-2 d-flex white-bg">
+    <div class="col-9 v-align">
+        <h2>CONSULTAS <span class="darkgreen-text">ORDEN DE FACTURACION</span></h2>
+    </div>
+    <div class="col-3 v-align">
+        <a class="btn btn-secondary green-bg float-right" href="{% url 'orden_facturacion_nuevo' %}"><i
+                class="fas fa-plus"></i>
+            Nueva Orden</a>
+    </div>
+</div>
+<div class="row darkwhite-bg py-2">
+    <div class="col-12">
+        <form action="" method="get">
+            <div class="form-row ">
+                <div class="col-6 col-md-3">
+                    {{ filter.form.cod_orden_fact|as_crispy_field }}
+                </div>
+                <div class="col-6 col-md-3">
+                    {{ filter.form.ruc_ci|as_crispy_field }}
+                </div>
+                <div class="col-6 col-md-3">
+                    {{ filter.form.razon_nombres|as_crispy_field }}
+                </div>
+                <div class="col-6 col-md-3">
+                    {{ filter.form.fecha|as_crispy_field }}
+                </div>
+                <div class="col-6 col-md-3">
+                    {{ filter.form.estado|as_crispy_field }}
+                </div>
+
+                <div class="col-6 col-md-3">
+                    {{ filter.form.n_tramite|as_crispy_field }}
+                </div>
+                <div class="col-6 col-md-3">
+                    {{ filter.form.n_factura|as_crispy_field }}
+                </div>
+                <div class="col-6 col-md-3">
+                    {{ filter.form.asesor|as_crispy_field}}
+                </div>
+                <div class="col-6 col-md-3">
+                    {{ filter.form.centro_costos|as_crispy_field}}
+                </div>
+
+            </div>
+            <button type="submit" class="btn btn-secondary green-bg float-right">
+                <i class="fas fa-search"></i> Buscar</button>
+        </form>
+
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12 col-xl-12">
+        <a class="btn btn-lg float-right btn-light" href="#"><i class="fas fa-file-pdf" data-toggle="tooltip"
+                data-placement="top" title="Exportar a pdf"></i></a>
+        <a class="btn btn-lg float-right btn-light" href="#"><i class="fas fa-file-excel" data-toggle="tooltip"
+                data-placement="top" title="Exportar a excel"></i></a>
+        <table id="dtBasicExample" class="table border-bottom table-responsive">
+            <thead class="white-text darkgreen-bg ">
+                <tr>
+                    <th scope="col">Código Orden</th>
+                    <th scope="col">Fecha</th>
+                    <th scope="col">Identificación</th>
+                    <th scope="col">Cliente</th>
+                    <th scope="col">Nombre Evento</th>
+                    <th scope="col">Código Evento</th>
+                    <th scope="col">Valor Evento</th>
+                    <th scope="col">Cant. Particip.</th>
+                    <th scope="col">Sub Total</th>
+                    <th scope="col">%Descuento</th>
+                    <th scope="col">$Descuento</th>
+                    <th scope="col">Valor Total</th>
+                    <th scope="col">Estado</th>
+                    <th scope="col">N° trámite</th>
+                    <th scope="col">N° factura</th>
+                    <th scope="col">Asesor Comercial</th>
+                    <th scope="col">Fecha factura</th>
+                    <th scope="col">Fecha trámite</th>
+                    <th scope="col">Centro Costos</th>
+                    <th scope="col">Acciones</th>
+                    
+                </tr>
+            </thead>
+            {% if filter.qs %}
+
+            <tbody>
+
+                {% for orden in filter.qs %}
+                <tr >
+                    <td class="text-center" scope="row">{{orden.cod_orden_fact}}</td>
+                    <td class="text-center" scope="row">{{orden.fecha}}</td>
+                    <td class="text-center" scope="row">{{orden.ruc_ci}}</td>
+                    <td  class="text-center" scope="row">{{orden.razon_nombres | upper}}</td>
+
+                    <td class="text-center" scope="row">
+                    {% for p in orden.ordenfacturacionparticipante_set.all%}
+                        <span class="{{p.cod_evento}}">{{p.nombre_evento}}</span>
+					{% endfor %}
+                    </td>
+                    <td class="text-center" class="cod_evento" scope="row">
+                        {% for p in orden.ordenfacturacionparticipante_set.all%}
+                        <span>{{p.cod_evento}}</span>
+                        <br>
+					{% endfor %}
+                    </td>
+                    
+                    <td class="text-right" scope="row">
+                        {% for p in orden.ordenfacturacionparticipante_set.all%}
+                        <span class="{{p.cod_evento}}">{{p.valor_evento}}</span>
+                        <br>
+					{% endfor %}
+                    </td>
+                    <td class="text-center" scope="row">    
+                    </td>
+                    <td class="text-right" scope="row">    
+                    </td>
+                    <td class="text-center" scope="row">
+                    </td>
+                    <td class="text-center" scope="row">
+                    </td>
+                    <td class="text-right" scope="row">
+                        {% for p in orden.ordenfacturacionparticipante_set.all%}
+                        <span class="{{p.cod_evento}}">{{p.valor}}</span>
+                        <br>
+                        {% endfor %}
+                    </td>
+                    <td class="text-center" scope="row">{{orden.get_estado_display}}</td>
+                    <td class="text-center" scope="row">{{orden.n_tramite}}</td>
+                    <td class="text-center" scope="row">{{orden.n_factura}}</td>
+                    <td class="text-center" scope="row">{{orden.asesor}}</td>
+                    <td class="text-center" scope="row">{{orden.fecha_factura}}</td>
+                    <td class="text-center" scope="row">{{orden.fecha_tramite}}</td>
+                    <td class="text-center" scope="row">{{orden.centro_costos}}</td>
+                    <!-- {% if orden.estado == 'ANLD' %}
+                    <td class="tdmotivo" scope="row">{{orden.motivo_anular}}</td>
+                    {%endif%} -->
+                    <td class="text-center" scope="row">
+                        <div class="col-auto text-truncate">
+                        <a class="btn btn-secondary btn-blo btn-sm" href="{% url 'orden_facturacion_editar' orden.id %}">
+                            <i class="fas fa-edit"></i></a>
+                        {% if orden.estado == 'ACTV' %}
+                        <a onclick='eliminar({{ orden.id }});' class="btn btn-danger btn-blok btn-sm" data-toggle='modal'
+                            data-target="#ordenEliminarCenter" href='#'>
+                            <i class="fas fa-trash"></i></a>
+                        {% endif%}
+                        
+                        <a class="btn btn-secondary btn-sm btn-blck" href="#" data-toggle="tooltip" data-placement="top"
+                            title="Imprimir">
+                            <i class="fas fa-print"></i></a>
+                        </div>
+                    </td>
+                    
+                </tr>
+                {% endfor %}
+
+
+            </tbody>
+            {% else %}
+            <h2>No hay elementos que mostrar</h2>
+            {% endif %}
+        </table>
+       
+    </div>
+</div>
+<div class="modal fade" id="ordenEliminarCenter" tabindex="-1" role="dialog" aria-labelledby="ordenTitle"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
+
+{% block extrafooter %}
+
+<script src="{% static 'js/table.js' %}"></script>
+<script src="{% static 'js/orden_tabla.js' %}"></script>
+<script src="{% static 'js/ordenfact_fecha.js' %}"></script>
+<script>
+
+    function eliminar(id) {
+        $.ajax({
+            url: "{% url 'orden_facturacion_confirmar_eliminar' %}",
+            data: {
+                'pk': id
+            },
+            success: function (data) {
+                $(".modal-content").html(data)
+            }
+        });
+    };
+</script>
+<!-- <script>
+
+    
+    if(!($(".tdmotivo").length>0)){
+        $("#motivo").remove();
+    }
+</script> -->
+<script>
+    $(document).on("change",'#id_motivo_anular', function(){
+        if ($(this).val().length>20){
+            $('#anular').prop('disabled',false);
+        }
+        else{
+            $('#anular').prop('disabled',true);
+        }
+    })
+</script>
+{% endblock extrafooter %}

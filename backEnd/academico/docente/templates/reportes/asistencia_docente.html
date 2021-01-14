@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<meta http-equiv="content-type" content="text/html; charset=utf-8"> 
+<html>
+<head>
+    <title>Reporte de asistencia</title>
+     <style>
+
+        @page{
+         size: A4;
+             @frame header_frame {
+                   -pdf-frame-content:header_content;
+                   left:0pt;
+                   width:100%;
+                   top:0pt;
+                   height:100pt;
+                   /*-pdf-frame-border = 1;*/
+             }
+
+             @frame img_content {
+                   -pdf-frame-content:img_content;
+                   left:10pt;
+                   width:300pt;
+                   top:10pt;
+                   height:100pt;
+                   
+             }
+
+             @frame footer_frame {
+                   -pdf-frame-content:footer_content;
+                   left:10pt;
+                   width:820pt;
+                   top:800pt;
+                   height:30pt;
+
+             }
+
+             @frame contenido_del_footer {
+                   -pdf-frame-content:contenido_del_footer;
+                   left:10pt;
+                   width:550pt;
+                   top:810pt;
+                   height:40pt;
+
+             }
+
+            @frame paginacion {
+                   -pdf-frame-content:paginacion;
+                   left:540pt;
+                   width:200pt;
+                   top:820pt;
+                   height:40pt;
+             }
+
+
+             @frame content_frame {
+                left:5pt;
+                width:585pt;
+                top:225pt;
+                height:530pt;
+             }
+
+             @frame imagen {
+                -pdf-frame-content: imagen;
+                left: 0pt; width:250pt; top: 5pt; height: 165pt;
+                /*-pdf-frame-border = 1;*/
+            }
+
+            @frame titulo {
+                -pdf-frame-content: titulo;
+                left: 380pt; width:250pt; top: 15pt; height: 165pt;
+                /*-pdf-frame-border = 1;*/
+            }
+
+            @frame codigo {
+                -pdf-frame-content: codigo;
+                left: 494pt; width:250pt; top: 35pt; height: 165pt;
+                /*-pdf-frame-border = 1;*/
+            }
+
+             @frame estandar {
+                -pdf-frame-content: estandar;
+                left: 10pt; width:800pt; top: 80pt; height: 140pt;
+               
+            }
+
+            @frame firma_responsable {
+                -pdf-frame-content: firma_responsable;
+                left: 10pt; width:800pt; top: 777pt; height: 900pt;
+               
+            }
+
+        }
+    </style>
+</head>
+<body>
+    <div id="header_content">
+            <img src="static/image/logo.png" id="imagen" alt="">
+
+            <div id="titulo">
+                <label style=" font-size:18px;font-family: serif;"> <strong>Resgistros de asistencia del docente</strong></label><br>
+            </div>
+            
+            <div id="codigo">
+                 <label style=" background-color:yellow; font-size: 16px;font-family: serif;"><strong>POEC0502 V7/B</strong></label>
+            </div>
+
+            <div id="estandar">
+        
+     <table>
+            <tr >
+                <td style=" height: 30px; font-size: 14px;"><Strong>Programa: {{designEvento.cod_programa}}</Strong></td>
+                <td style=" height: 30px; font-size: 14px;"><strong>Empresa: {{evento.asesor_comercial_responsable}}</strong> </td>
+            </tr>
+            <tr style="height: 30px;font-size: 14px;">
+                <td><strong>Evento:</strong> {{evento.nombre}}</td>
+                <td style="width: 150px;"><strong>Aulas:</strong> {% for a in aulas %}{% ifchanged  %}{{a.nombre}}{% endifchanged %} {% endfor %}
+               </td>
+            </tr>
+
+            <tr style="height: 30px; font-size: 14px;">
+                <td><strong>Promoción:</strong> {{evento.promocion}}</td>
+                <td style="width: 300px;"><strong>Fecha inicio:</strong> {{evento.fecha_inicio}}</td>
+            </tr>
+            
+            <tr style="height: 30px; font-size: 14px;">
+                <td style=""><strong>Tipo de capacitación:</strong> {{designEvento.tipo_evento}}</td>
+                <td style="width:300px;"><strong>Fecha Final:</strong> {{evento.fecha_fin}}</td>
+            </tr>
+
+            <tr style=" height: 30px; font-size: 14px;">
+                <td style=" width: 400px;"><strong>Publico:</strong> {{designEvento.dirigido_participante}}</td>
+                <td style=" "><strong>Duracion:</strong> {{evento.duracion}}</td>
+            </tr>
+
+            <tr style=" height: 30px; font-size: 14px;">
+                <td style=" width: 400px;"><strong>Docente:</strong> {{evento.docente.nombres}} {{evento.docente.apellidos}}</td>
+            </tr>
+
+       </table> 
+    </div>
+
+    </div>
+
+
+
+       <table class="table" style="">
+            <thead>
+                <tr style="width: 20pt;font-size: 25px; height: 30px;">
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td colspan="2" style="border:0.5px solid black; font-size 13px;"> <center><strong>Planificada</strong></center></td>
+                    <td colspan="2" style="border:0.5px solid black; font-size 13px;"> <center><strong> Ejecutada</strong></center></td>
+                </tr>
+                <tr style="border:0.5px solid black; font-size 13px;">
+                    <td style="width: 22pt; height: 30px;"> <strong><center>N.- </center></strong></td>
+                    <td style="width: 120px"> <strong><center>N° Sesión</center> </strong></td>
+                    <td style="width: 120px"> <strong><center>Fecha</center></strong></td>
+                    <td style="width:190px"> <strong><center>Firma</center></strong></td>
+                    <td style="width: 80px"> <strong><center>H.Entrada</center></strong></td>
+                    <td style="width: 80px"> <strong><center>H.Salida</center></strong> </td>
+                    <td style="width: 80px"> <strong> <center>H.Entrada</center></strong> </td>
+                    <td style="width: 80px"> <strong><center>H.Salida</center></strong></td>
+                </tr>
+            </thead>
+            <tbody>
+
+            {% for d in calendario %}
+                  <tr style="border:0.5px solid black; height: 30px; font-size 13px;">
+                      <td><center>{{d.id}}</center></td>
+                      <td><center>{{d.id}}</center> </td>
+                      <td><center>{{d.fecha}}</center></td>
+                      <td><center></center></td>
+                      <td><center>{{d.hora_inicio}}</center></td>
+                      <td><center>{{d.hora_fin}}</center></td>
+                      <td><center></center></td>
+                      <td><center></center></td>
+                  </tr>
+            {% endfor %}
+
+                   
+            </tbody>
+        </table>
+
+
+
+
+
+
+    
+
+    <div id="footer_content">
+
+        <div id="firma_responsable" style="font-size: 13px;">
+            <label><strong>Responsable logístico:</strong>______________________________________</label>
+        </div>
+
+        <div id="separador">
+             <label style="color: #3c5634">//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////</label>
+        </div>
+
+        <div id="contenido_del_footer" style="font-size: 13px">
+            <label>CEC ESPOL,Campus Las Peñas, Campus Gustavo Galindo Velasco | Teléf:042269763 | 0960507588</label>
+            <br>
+            <label>Fecha impresión: {{fecha_impresion}} &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp  &nbsp  &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp Usuario: Nombre apellido</label>
+        </div>
+    
+        <div id="paginacion">
+            <label style="font-size: 13px">Pág <pdf:pagenumber> | <pdf:pagecount></label>
+        </div>
+    </div>
+
+        
+</body>
+</html>

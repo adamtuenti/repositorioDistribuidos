@@ -1,0 +1,24 @@
+{% extends 'base_administrativo.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% load staticfiles %}
+{% block title %}{{ "EC - ORDENES COMPRA" }}{% endblock title %}
+
+{% block content %}
+<div class="row mb-2 d-flex white-bg">
+	<div class="col-9 v-align">
+		<h2>NUEVA <span class="darkgreen-text"> ORDEN DE COMPRA</span></h2>
+	</div>
+</div>
+
+{% block extrafooter %}
+    <script type="text/javascript">
+        window.onload = function () {
+        document.getElementById("id_fecha").readOnly = true;
+        };
+    </script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
+{% endblock extrafooter %}
+
+{% endblock content %}

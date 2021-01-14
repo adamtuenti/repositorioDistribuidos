@@ -1,0 +1,193 @@
+[
+    {
+      "model":"proveedores.Provincia",
+      "pk": 1,
+      "fields": {
+        "nombre":"Guayas"
+      }
+    },
+  
+    {
+      "model":"proveedores.Provincia",
+      "pk": 2,
+      "fields": {
+        "nombre":"Pichincha"
+      }
+    },
+  
+    {
+      "model":"proveedores.Provincia",
+      "pk": 3,
+      "fields": {
+        "nombre":"Azuay"
+      }
+    },
+  
+    {
+      "model":"proveedores.Provincia",
+      "pk": 4,
+      "fields": {
+        "nombre":"Santo Domingo de los Tsáchilas"
+      }
+    },
+  
+    {
+      "model":"proveedores.Provincia",
+      "pk": 5,
+      "fields": {
+        "nombre":"El Oro"
+      }
+    },
+  
+    {
+      "model":"proveedores.Provincia",
+      "pk": 6,
+      "fields": {
+        "nombre":"Manabí"
+      }
+    },
+  
+    {
+      "model":"proveedores.Provincia",
+      "pk": 7,
+      "fields": {
+        "nombre":"Loja"
+      }
+    },
+  
+    {
+      "model":"proveedores.Provincia",
+      "pk": 8,
+      "fields": {
+        "nombre":"Tungurahua"
+      }
+    },
+  
+    {
+      "model":"proveedores.Provincia",
+      "pk": 9,
+      "fields": {
+        "nombre":"Esmeraldas"
+      }
+    },
+  
+    {
+      "model":"proveedores.Provincia",
+      "pk": 10,
+      "fields": {
+        "nombre":"Los Ríos"
+      }
+    },
+  
+    {
+      "model":"proveedores.Provincia",
+      "pk": 11,
+      "fields": {
+        "nombre":"Chimborazo"
+      }
+    },
+  
+    {
+      "model":"proveedores.Provincia",
+      "pk": 12,
+      "fields": {
+        "nombre":"Imbabura"
+      }
+    },
+  
+    {
+      "model":"proveedores.Provincia",
+      "pk": 13,
+      "fields": {
+        "nombre":"Santa Elena"
+      }
+    },
+  
+    {
+      "model":"proveedores.Provincia",
+      "pk": 14,
+      "fields": {
+        "nombre":"Cotopaxi"
+      }
+    },
+  
+    {
+      "model":"proveedores.Provincia",
+      "pk": 15,
+      "fields": {
+        "nombre":"Carchi"
+      }
+    },
+  
+    {
+      "model":"proveedores.Provincia",
+      "pk": 16,
+      "fields": {
+        "nombre":"Sucumbíos"
+      }
+    },
+  
+    {
+      "model":"proveedores.Provincia",
+      "pk": 17,
+      "fields": {
+        "nombre":"Orellana"
+      }
+    },
+  
+    {
+      "model":"proveedores.Provincia",
+      "pk": 18,
+      "fields": {
+        "nombre":"Cañar"
+      }
+    },
+  
+    {
+      "model":"proveedores.Provincia",
+      "pk": 19,
+      "fields": {
+        "nombre":"Pastaza"
+      }
+    },
+  
+    {
+      "model":"proveedores.Provincia",
+      "pk": 20,
+      "fields": {
+        "nombre":"Bolívar"
+      }
+    },
+  
+    {
+      "model":"proveedores.Provincia",
+      "pk": 21,
+      "fields": {
+        "nombre":"Napo"
+      }
+    },
+  
+    {
+      "model":"proveedores.Provincia",
+      "pk": 22,
+      "fields": {
+        "nombre":"Morona Santiago"
+      }
+    },
+  
+    {
+      "model":"proveedores.Provincia",
+      "pk": 23,
+      "fields": {
+        "nombre":"Zamora Chinchipe"
+      }
+    },
+  
+    {
+      "model":"proveedores.Provincia",
+      "pk": 24,
+      "fields": {
+        "nombre":"Galápagos"
+      }
+    }
+  ]

@@ -1,0 +1,105 @@
+{% extends "base_ventas.html" %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block content %}
+<div class="row mb-2 d-flex white-bg">
+    <div class="col-9 v-align">
+        <h2>CONSULTAS <span class="darkgreen-text">PROPUESTA CORPORATIVA</span></h2>
+    </div>
+    <div class="col-3 col-xl-3 v-align">
+        <a class="btn btn-secondary green-bg float-right" href="{% url 'propuesta_nuevo' %}"><i class="fas fa-plus"></i>
+            Agregar
+            nuevo</a>
+    </div>
+</div>
+
+
+<div class="row darkwhite-bg py-2">
+    <div class="col-12">
+        <form action="" method="get">
+            <div class="form-row ">
+                
+                <div class="col-6">
+                    {{ filter.form.cod_propuesta|as_crispy_field }}
+                </div>
+                <div class="col-6">
+                    {{ filter.form.estado|as_crispy_field }}
+                </div>
+                <div class="col-6">
+                    {{ filter.form.ruc_ci|as_crispy_field }}
+                </div>
+                <div class="col-6">
+                    {{ filter.form.razon_nombres|as_crispy_field }}
+                </div>
+                <div class="col-6">
+                    {{ filter.form.area_capacitacion|as_crispy_field }}
+                </div>
+                <div class="col-6">
+                    {{ filter.form.asesor|as_crispy_field }}
+                </div>
+                
+            </div>
+            
+                <div class="form-group">
+                    <button type="submit" class="btn btn-secondary green-bg float-right"><i class="fas fa-search"></i>
+                        Buscar</button>
+                </div>
+            
+        </form>
+
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12 col-xl-12 table-container">
+
+        <table id="dtBasicExample" class="table table-responsive-md border-bottom">
+            <thead class="white-text darkgreen-bg">
+                <tr>
+                    <th scope="col">Código propuesta</th>
+                    <th scope="col">Versión</th>
+                    <th scope="col">RUC</th>
+                    <th scope="col">Empresa</th>
+                    <th scope="col">Estado</th>
+                    <th scope="col">Fecha Solicitud</th>
+                    <th scope="col">Fecha Envio</th>
+                    <th scope="col">Fecha Respuesta</th>
+                    <th scope="col">Acciones</th>
+                </tr>
+            </thead>
+            {% if filter.qs %}
+            
+            <tbody>
+                {% for propuesta in filter.qs %}
+                <tr class="text-center">
+                    <td scope="row">{{propuesta.cod_propuesta}}</td>
+                    <td scope="row">{{propuesta.version}}</td>
+                    <td scope="row">{{propuesta.ruc_ci}}</td>
+                    <td scope="row">{{propuesta.razon_nombres| upper}}</td>
+                    <td scope="row">{{propuesta.get_estado_display}}</td>
+                    <td scope="row">{{propuesta.fecha_solicitud}}</td>
+                    <td scope="row">{{propuesta.fecha_envio}}</td>
+                    <td scope="row">{{propuesta.fecha_respuesta}}</td>
+                    
+                    <td scope="row">
+                        <a class="btn btn-secondary btn-sm" href="{% url 'propuesta_editar' propuesta.pk %}"><i
+                                class="fas fa-edit"></i></a>
+                        
+                    </td>
+                </tr>
+                {% endfor %}
+
+
+            </tbody>
+            {% else %}
+            <h2>No hay elementos que mostrar</h2>
+            {% endif %}
+        </table>
+
+    </div>
+</div>
+{% endblock content %}
+{% block extrafooter%}
+<script src="{% static 'js/table.js' %}"></script>
+{% endblock extrafooter %}

@@ -1,0 +1,82 @@
+
+<ion-content padding='true'>
+  <div class="vertical-center">
+    <img src="assets/images/LogoCEC.png" class="smallLogo" />
+  </div>
+  <ion-text color="primary" class="color-h3">
+    <h3>Crear Cuenta</h3>
+  </ion-text>
+    <ion-list>
+      <ion-item>
+        <ion-label required position="stacked">N° Cédula</ion-label>
+        <ion-input id="cedula" [(ngModel)]="id" name="id"  type="text"><ion-icon name="finger-print-outline"></ion-icon></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label required position="stacked">Nombres</ion-label>
+        <ion-input [(ngModel)]="name" name="nombre" type="text"><ion-icon name="person-outline"></ion-icon></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label required position="stacked">Apellidos</ion-label>
+        <ion-input [(ngModel)]="apellidos"  name="apellidos" type="text"><ion-icon name="people-outline"></ion-icon></ion-input>
+      </ion-item>
+      
+      <ion-item>
+        <ion-label required position="stacked">Correo electrónico</ion-label>
+        <ion-input [(ngModel)]="email"  name="email" type="email"><ion-icon name="mail-outline"></ion-icon></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Correo alternativo</ion-label>
+        <ion-input [(ngModel)]="email2"  name="email2" type="email"><ion-icon name="mail-outline"></ion-icon></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Dirección</ion-label>
+        <ion-input [(ngModel)]="direccion"  name="direccion" type="text"><ion-icon name="globe-outline"></ion-icon></ion-input>
+      </ion-item>
+
+      <ion-item *ngIf="showpassword">
+        <ion-label position="stacked">Contraseña</ion-label>
+        <ion-icon slot="end" color="primary" name="eye" (click)="togglePasswordText()"></ion-icon>
+        <ion-input [(ngModel)]="pass1" type="text" required></ion-input>
+      </ion-item>
+
+      <ion-item *ngIf="!showpassword">
+        <ion-label position="stacked" >Contraseña</ion-label>
+        <ion-input [(ngModel)]="pass1" type="password"  required></ion-input>
+        <ion-icon slot="end" color="medium" name="eye-off" (click)="togglePasswordText()"></ion-icon>
+      </ion-item>
+
+      <ion-item *ngIf="showpassword2">
+        <ion-label position="stacked">Repetir Contraseña</ion-label>
+        <ion-icon slot="end" color="primary" name="eye" (click)="togglePasswordText2()"></ion-icon>
+        <ion-input [(ngModel)]="pass2" type="text" required></ion-input>
+      </ion-item>
+
+      <ion-item *ngIf="!showpassword2">
+        <ion-label position="stacked" >Repetir Contraseña</ion-label>
+        <ion-input [(ngModel)]="pass2" type="password"  required></ion-input>
+        <ion-icon slot="end" color="medium" name="eye-off" (click)="togglePasswordText2()"></ion-icon>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">N° Celular</ion-label>
+        <ion-input [(ngModel)]="celular" name="celular" type="text"><ion-icon name="call-outline"></ion-icon></ion-input>
+      </ion-item>
+      <ion-item>
+      <ion-label position="stacked">Género</ion-label>
+      <ion-select [(ngModel)]="genero" placeholder="Seleccione su género" interface="popover" name="genero">
+        <ion-select-option value="M">Masculino</ion-select-option>
+        <ion-select-option value="F">Femenino</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+      <ion-item lines='none'>
+        ¿Ya tienes una cuenta?<a routerLink='/login' slot="end">Inicia Sesión</a>
+      </ion-item>
+    </ion-list>
+    <ion-button expand="block" share="round" color="primary" class="ion-padding-horizontal" (click)="registrar()">Registrar</ion-button>
+    <ion-button expand="block" share="round" color="medium" class="ion-padding-horizontal" routerLink="/login">Cancelar</ion-button>
+</ion-content>

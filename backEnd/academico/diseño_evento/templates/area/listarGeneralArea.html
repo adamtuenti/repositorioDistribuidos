@@ -1,0 +1,182 @@
+{% extends "base.html" %} {% load static %}
+<!---->
+{% block content %} {% include "modal/modal.html" %}
+<div class="row p-2">
+  <div class="col-10 col-sm-10 col-xl-10">
+    <h3 class="text-left">CONSULTAR ÁREA</h3>
+  </div>
+
+  <div class="col-2 col-sm-2 col-xl-2">
+    <button class="btn btn-success m-1 text-left crear-area">
+      Área <span class="fas fa-plus-circle"></span>
+    </button>
+  </div>
+</div>
+
+<div class="container-fluid">
+  <div class="row mt-4">
+    <div class="col-12 col-xl-12 table-container">
+      <div class="align-items-center">
+        <table class="table table-hover table-bordered table-sm" id="tablaArea">
+          <thead>
+            <tr class="text-left">
+              <th>Código</th>
+              <th>Área</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% if areas %} {% for area in areas %}
+            <tr>
+              <td class="text-center">{{area.codigo}}</td>
+              <td class="text-justify">{{area.area}}</td>
+              <td class="text-center">
+                <button
+                  class="update-area btn btn-primary"
+                  data-id="{% url 'updateArea' area.pk %}"
+                >
+                  <span class="fas fa-edit"></span>
+                </button>
+                <button
+                  class="btn btn-danger" data-toggle="modal" data-target="#eliminarArea{{area.id}}" 
+                >
+                  <span class="fas fa-times"></span>
+                </button>
+              </td>
+            </tr>
+            <div class="modal fade" id="eliminarArea{{area.id}}" tabindex="-1" role="dialog" data-backdrop="static" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content eliminar">
+                  <div class="modal-header">
+                    <h5 class="modal-title" >Eliminar Área</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    Seguro que desea eliminar el área {{area.area}}?
+                  </div>
+                  <div class="modal-footer">
+
+                          <button type="button" class="btn btn-danger" onclick="location.href=('/academico/area/{{area.id}}/eliminar')">Si, eliminar</button>
+
+                    <a href="#" class="btn btn-primary" data-dismiss="modal">Cancelar</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {% endfor %} {% else %}
+            <h3>No hay registros de areas</h3>
+            {% endif %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row p-2">
+  <div class="col-9 col-sm-9 col-xl-9">
+    <h3 class="text-left">CONSULTAR ESPECIALIDAD</h3>
+  </div>
+
+  <div class="col-3 col-sm-3 col-xl-3">
+    <button href="#" class="btn btn-success m-1 text-left crear-especialidad">
+      Especialidad <span class="fas fa-plus-circle"></span>
+    </button>
+  </div>
+</div>
+
+<div class="container-fluid">
+  <div class="row justify-content-center">
+    <div class="col-12 col-xl-12 ">
+      <div class="align-items-center">
+        <table class="table table-hover table-bordered table-sm" id="tablaEspecialidad">
+          <thead>
+            <tr class="text-left">
+              <th>Código</th>
+              <th>Especialidad</th>
+              <th>Área</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% if especialidades %} {% for especialidad in especialidades %}
+            <tr>
+              <td class="text-center">{{especialidad.codigo}}</td>
+              <td class="text-justify">{{especialidad.especialidades}}</td>
+              <td>{{especialidad.area}}</td>
+              <td class="text-center">
+                <button
+                  class="update-especialidad btn btn-primary"
+                  data-id="{% url 'updateEspecialidad' especialidad.pk %}"
+                >
+                  <span class="fas fa-edit"></span>
+                </button>
+                <button
+                  class="btn btn-danger" data-toggle="modal" data-target="#eliminarEsp{{especialidad.id}}"
+                >
+                  <span class="fas fa-times"></span>
+                </button>
+              
+              </td>
+            </tr>
+            <div class="modal fade" id="eliminarEsp{{especialidad.id}}" tabindex="-1" role="dialog" data-backdrop="static" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content eliminar">
+                  <div class="modal-header">
+                    <h5 class="modal-title" >Eliminar Especialidad</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    Seguro que desea eliminar la especialidad {{especialidad.especialidades}}?
+                  </div>
+                  <div class="modal-footer">
+
+                          <button type="button" class="btn btn-danger" onclick="location.href=('/academico/especialidad/{{especialidad.id}}/eliminar')">Si, eliminar</button>
+
+                    <a href="#" class="btn btn-primary" data-dismiss="modal">Cancelar</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {% endfor %} {% else%}
+            <h3>no hay registros de especialidades</h3>
+            {% endif %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %} {% block specific_scripts %}
+<script src="{% static 'js\tablesFiltro.js' %}"></script>
+<script type="text/javascript">
+  // $("#modalExito").modal();
+  $(function() {
+    $(".crear-area").modalForm({
+      formURL: "{% url 'crearArea' %}",
+      modalContent: "#forms",
+    });
+    $(".update-area").each(function() {
+      $(this).modalForm({
+        formURL: $(this).data("id"),
+        modalContent: "#forms",
+      });
+    });
+    $(".crear-especialidad").modalForm({
+      formURL: "{% url 'crearEspecialidad' %}",
+      modalContent: "#forms",
+    });
+    $(".update-especialidad").each(function() {
+      $(this).modalForm({
+        formURL: $(this).data("id"),
+        modalContent: "#forms",
+      });
+    });
+  });
+</script>
+{% endblock %}

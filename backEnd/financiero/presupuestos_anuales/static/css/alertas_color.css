@@ -1,0 +1,15 @@
+.tooltip-inner{
+    background-color:  rgb(216, 217, 221);
+    color: black;
+}
+
+input#id_vb_curs_sem_maes_ejec,input#id_cta_x_cobrar_ejec,
+div#g_personal_div input.ejec,div#bs_consumo_div input.ejec,
+div#otros_gastos_corr_div input.ejec,
+div#transf_corrientes_div input.ejec,
+div#act_fijos_div input.ejec{
+    background-color: #e9ecef;
+    opacity: 1;
+    border: 1px solid #ced4da;
+    border-radius: .25rem;
+  }

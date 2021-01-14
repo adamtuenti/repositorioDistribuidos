@@ -1,0 +1,93 @@
+{% load static %}
+<head>
+	
+    <link href="{% static 'bootstrap-4.3.1\css\bootstrap.min.css' %}" rel="stylesheet" />
+    <link href="{% static 'css\base.css' %}" rel="stylesheet" />
+</head>
+{% block login %}
+<div class="container">
+    <div class="main-div">
+            <form name="loginForm" method="post">
+                {% csrf_token %}
+                {% for message in messages %}
+                <small><i class="fas fa-exclamation-triangle"></i>{{ message }}</small>
+                {% endfor %}
+                <!-- Tiene que mostrarse solo si el login falla -->
+                <div class="login-header">
+                    <div class="img-container">
+                        <img style="width:50%;height:50%;" src="{% static 'img/Logo CEC blanco.png' %}">
+                        
+                    </div>
+                    <hr>
+                    <h4 class="login-title">FÉNIX 4.0</h4>
+                
+                <div class="login-container">
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Usuario" id="username" name="username">
+                    </div>
+                    <div class="form-group">
+                        <input type="password" class="form-control" placeholder="Contraseña" id="password" name="password">
+                    </div>
+                    <div class="btn-login">
+                        <button type="submit" class="btn btn-success">Ingresar</button>
+
+                    </div>
+                    <div class="link-pass">
+                        <a href="{% url 'reestablecer_contrasena' %}"><span class="text-light">Reestablecer la contraseña</span></a>
+                    </div>
+                </div>
+                    {% if request.GET.next %}
+                        <input type="hidden" name="next" value="{{ request.GET.next }}">
+                    {% endif %}
+                </div>
+            </form>
+    </div>
+</div>
+{% endblock %}
+<style>
+    body {background-color: #292929;}
+    .main-div {
+    margin: 10rem auto 30px;
+    max-width: 38%;
+}
+hr {background-color: #32CD32}
+
+.img-container {
+    display: flex;
+    justify-content: center;
+}
+
+.login-header { 
+    padding: 3rem;
+    border: 1px solid white;
+    border-radius: 15px;
+}
+.link-pass{
+    text-align: right;
+}
+.text-light{
+    font-size: small;
+}
+.login-title {
+    text-align: center;
+    color: white;
+}
+.btn-success{
+    width: 100%;
+}
+.login-container {
+    padding: 1rem;
+}
+
+.btn-login {
+    text-align: center;
+}
+
+.form-control {
+    background-color: white;
+}
+
+.form-control:focus {
+    background-color: white;
+}
+</style>

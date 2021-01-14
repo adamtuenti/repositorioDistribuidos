@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% load static %}
+<!-- <head>
+    <link href="{% static 'bootstrap-4.3.1\css\bootstrap.min.css' %}" rel="stylesheet" />
+    <link href="{% static 'css\base.css' %}" rel="stylesheet" />
+    <link href="{% static 'css\navMenu\menu.css' %}" rel="stylesheet" />
+	<script src="{% static 'bootstrap-4.3.1\js\bootstrap.bundle.min.js' %}"></script>
+</head> -->
+{% block content %}
+{% if usuario.username == user.username %}
+<h4><b>Cambio de contraseña</b></h4>
+<form id="cambiarContrasena" onsubmit="return validate()" action="{% url 'confirmar_contrasena' usuario.username %}"
+    method="POST">
+    {% csrf_token %}
+
+    <!-- Primera contrasena -->
+    <div class="form-group">
+        <label for="pass1">Ingrese la nueva contraseña</label>
+        <input id="pass1" name="password1" type="password" class="form-control"
+            oninvalid="this.setCustomValidity('Ingrese una contraseña')" oninput="this.setCustomValidity('')" required>
+    </div>
+
+    <!-- Primera contrasena -->
+    <div class="form-group">
+        <label for="pass2">Confirme la nueva contraseña</label>
+        <input id="pass2" name="password2" type="password" class="form-control"
+            oninvalid="this.setCustomValidity('Ingrese nuevamente la contraseña')" oninput="this.setCustomValidity('')"
+            required>
+    </div>
+
+    <div style="display:none">
+        <div class="form-group row">
+            <label for="user" class="col-sm-1 col-form-label">Username</label>
+            <div class="col-sm-11">
+                <input id="user" name="username" type="text" class="form-control" value="{{ usuario.username }}"
+                    oninvalid="this.setCustomValidity('Ingrese un user válido')" oninput="this.setCustomValidity('')"
+                    required>
+            </div>
+        </div>
+    </div>
+
+    <!--Boton de confirmacion-->
+    <button type="submit" class="btn btn-success btn-lg submit"><i class="fas fa-plus-circle"></i>Guardar
+        contraseña</button>
+</form>
+{% else %}
+<h1><b>SIN AUTORIZACION</b></h1>
+{% endif %}
+{% endblock %}

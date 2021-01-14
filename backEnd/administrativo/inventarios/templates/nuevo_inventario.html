@@ -1,0 +1,251 @@
+{% extends 'base_administrativo.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% load staticfiles %}
+{% block title %}{{ "EC - INVENTARIOS" }}{% endblock title %}
+
+{% block content %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" />
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/select2-bootstrap-theme/0.1.0-beta.10/select2-bootstrap.css" />
+<div class="row mb-2">
+	<div class="col-xl-5 col-12 v-align">
+		<h2 class="text-uppercase darkgreen-text">
+			{% block regedit %}
+			Nueva Inventario de Bienes
+			{% endblock regedit %}
+		</h2>
+	</div>
+
+	<div class="col-12 col-xl-7">
+		<div class="form-row">
+			<div class="col-6">
+				{{ form.cod_inventario |as_crispy_field}}
+			</div>
+			<div class="col-6">
+				{{ form.fecha |as_crispy_field}}
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="row">
+	<div class="campo col-12 mt-2 p-2 pl-3">
+		<h5 class="black-text mb-0 text-uppercase">Motivo Movimiento</h5>
+	</div>
+</div>
+
+<form method="post" id="Calificacion_proveedorForm"  
+	data-evento-url="{% url 'ajax_load_eventos_presupuestos' %}"
+	data-bien-url="{% url 'ajax_load_bien' %}" data-bienInd-url="{% url 'ajax_load_bien_detalles'%}"
+	data-select-url="{% url 'load_selectores' %}"
+	enctype="multipart/form-data" novalidate  >
+	{% csrf_token %}
+
+	{% if error %}
+		<h2>{{error}}</h2>
+
+	{% else %}
+		<div class="row darkwhite-bg py-2">
+			<div class="col-12">
+				<div class="form-row">
+					<div class="col-4">
+						{{ form.tipo_inventario|as_crispy_field }}
+					</div>
+					<div class="col-4">
+						{{ form.fecha_inicio|as_crispy_field }}					
+					</div>
+					<div class="col-4">
+						{{ form.fecha_fin|as_crispy_field }}
+					</div>
+				</div>
+
+				<div class="form-row">
+					<div class="col-4">
+						{{ form.tipo_bienes|as_crispy_field }}
+					</div>				
+					<div class="col-4">
+						{{ form.categoria_bien|as_crispy_field }}
+					</div>
+					<div class="col-4">
+						{{ form.centro_costos|as_crispy_field }}
+					</div>								
+				</div>	
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-6">
+				<div class="row pl-3 pr-3">
+					<div class="campo col-12 mt-2 p-2 pl-3">
+						<h5 class="darkgreen-text mb-0 text-uppercase">RESPONSABLE DEL CEC</h5>
+					</div>        
+				</div>
+			</div>
+
+			<div class="col-6">
+				<div class="row pl-3 pr-3">
+					<div class="campo col-12 mt-2 p-2 pl-3">
+						<h5 class="darkgreen-text mb-0 text-uppercase">RESPONSABLE DE LA UNIDAD</h5>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="row darkwhite-bg py-2">
+			<div class="col-6">
+				<div class="form-row">
+					<div class="col-12">
+						{{ form.nombre_responsable_cec|as_crispy_field }}
+					</div>
+					<div class="col-12">
+						{{ form.cargo_responsable_entrega|as_crispy_field }}
+					</div>
+					<div class="col-12">
+						{{ form.area_departamento_cec|as_crispy_field }}
+					</div>
+				</div>
+			</div>
+
+			<div class="col-6">
+				<div class="form-row">
+					<div class="col-12">
+						{{ form.unidad_responsable|as_crispy_field }}
+					</div>
+					<div class="col-12">
+						{{ form.nombre_responsable_unidad|as_crispy_field }}
+					</div>
+					<div class="col-12">
+						{{ form.area_departamento_unidad|as_crispy_field }}
+					</div>
+					<div class="col-12">
+						{{ form.cargo_responsable_unidad|as_crispy_field }}
+					</div>
+					<div class="col-12">
+						{{ form.mail_responsable_unidad|as_crispy_field }}
+					</div>
+					<div class="col-6">
+						{{ form.telefono_responsable_unidad|as_crispy_field }}
+					</div>
+					<div class="col-6">
+						{{ form.celular_responsable_unidad|as_crispy_field }}
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="container">
+			<div class="row mb-2">
+				<div class="col">
+					<div class="form-row float-right">
+						<div class="col-auto v-align ml-auto">
+					<a id="add" class="text-white btn btn-secondary green-bg btn-sm disabled"><i
+						class="fas fa-plus"></i>   Agregar Ítem</a>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="form-row">
+			<div id="tabla" class="col-12">
+				<table id="productos-table" class="table table-responsive-md border-bottom">
+					<thead class="darkgreen-bg white-text">
+						<tr>
+							<th>Código inventario bien</th>
+							<th>Código ESPOLTECH</th>
+							<th>Nombre del bien</th>
+							<th>Características</th>
+							<th>Marca</th>
+							<th>Modelo</th>
+							<th>Serie</th>
+							<th>Fecha inventario</th>
+							<th>Constatación</th>
+							<th>Observación</th>
+							<th>Usuario responsable</th>
+							<th>Sede</th>
+							<th>Ubicación a la fecha</th>
+							<th>Estado del bien</th>
+							<th>Acciónes</th>
+						</tr>
+					</thead>
+					
+					<tbody id="productoTableBody">
+						
+					</tbody>
+				</table>
+			</div>
+		</div>		
+
+		<div class="form-row">
+			<div class="col-12">
+				{{ form.observaciones|as_crispy_field}}
+			</div>
+		</div>
+		
+		<div class="form-row">
+			<div class="col-12">
+				{{ form.anexo|as_crispy_field}}
+			</div>
+		</div>
+	
+	{% endif %}
+
+    {{ form.media }}
+    {% if form.errors %}
+    <ul>
+        {% for error in form.errors %}
+        <li>{{ error }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    <br>
+    <br>
+
+	<div class="row mt-3 crear">
+		<div class="col-12">
+		<a class="btn btn-secondary green-bg" data-toggle='modal' data-target="#inventario_confirmar"
+		href='#'>Siguiente</a>
+		<a class="btn btn-secondary" href="{% url 'index_inventarios' %}"> Cancelar </a>
+		</div>
+	</div>
+
+
+
+	<div class="modal fade" id="inventario_confirmar" tabindex="-1" role="dialog" aria-labelledby="ordenTitle"
+				aria-hidden="true">
+					<div class="modal-dialog modal-dialog-centered" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title" id="reporteTitle">Confirmación</h5>
+									<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+										<span aria-hidden="true">&times;</span>
+								</button>
+							</div>
+							<div class="modal-body" id="modal-confirmacion">
+								¿Está seguro/a que desea continuar? Verifíque los datos ingresados antes de proceder.
+							</div>
+							<div class="modal-footer">
+								<button class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+								<button type="submit" class="btn btn-secondary green-bg mr-3 hack">Confirmar</button>
+							</div>
+						</div>
+					</div>
+				</div>
+</form>
+
+ {% endblock content %}
+
+{% block extrafooter %}
+    <script type="text/javascript">
+        window.onload = function () {
+        document.getElementById("id_fecha").readOnly = true;
+        };
+    </script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
+<script src="{% static 'js/listaItems.js' %}"></script>
+
+<script src="{% static 'js/tabla_bienes.js' %}"></script>
+<script src="{% static 'js/inventarios_form.js' %}"></script>
+{% endblock extrafooter %}
+

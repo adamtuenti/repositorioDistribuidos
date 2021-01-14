@@ -1,0 +1,207 @@
+{% extends "base.html" %} {% load static %} 
+{% block content %}
+
+  <style type="text/css">
+  
+  #consulta {
+        background-color: lightgray;
+    }
+
+</style>
+
+  <div class="row p-2">
+
+
+    <div class="col-2 col-sm-2 col-xl-2">
+      <a href="{% url 'crearDesign' %}" class="btn btn-success m-1 text-left"
+        >Nuevo<span class="fas fa-plus-circle"></span
+      ></a>
+    </div>
+  </div>
+
+  <div class="row p-2 mb-3" id="consulta">
+    <h4>Consultas</h4>
+  </div>
+
+<form method="POST" action="{% url 'Eventos_Ejecutados' %}">{% csrf_token %}
+<div class="row">
+     <div class="col-sm-3 col-md-3 col-xl-3">
+        <select class="form-control" id="areas" name="areas">
+            <option selected disabled>Buscar por areas</option>
+            {% for a in areas %}
+                <option value="{{a.id}}">{{a.area}}</option>    
+            {% endfor %}
+        </select>
+    </div>
+
+     <div class="col-sm-3 col-md-3 col-xl-3">
+        <select class="form-control" id="tipoCertificado" name="tipoCertificado">
+            <option selected disabled>Tipo de certificado</option>
+            <option value="Abierto">Aprobacion</option>   
+            <option value="Corporativo">Participacion</option>    
+        </select>
+    </div>
+
+    <div class="col-sm-3 col-md-3 col-xl-3">
+        <select class="form-control" id="estado" name="estado">
+            <option value="todo" selected disabled>Estado</option>
+            <option value="Ejecutado">Ejecutado</option>
+            <option value="No ejecutado">No ejecutado</option>
+            <option value="Por iniciar">Por iniciar</option>
+        </select>
+    </div>
+
+      <div class="col-sm-3 col-md-3 col-xl-3">
+        <input type="number" min="0" max="999" name="horas" id="horas" class="form-control" placeholder="Nº Horas totales">
+        </select>
+    </div>
+
+</div>
+
+
+
+<div class="row">
+    <p></p>
+</div>
+
+<div class="row">
+  <div class="col-sm-3 col-md-3 col-xl-3">
+        <select class="form-control" id="tipo" name="tipo">
+            <option value="todo" selected disabled>Tipo</option>
+            <option value="Diplomado">Diplomado</option>
+            <option value="Programa">Programa</option>
+            <option value="Curso">Curso</option>
+            <option value="Taller">Taller</option>
+            <option value="Conferencia">Conferencia</option>
+            <option value="Seminario">Seminario</option>
+            <option value="Webinario">Webinario</option>
+            <option value="Charla">Charla</option>
+            <option value="Modulo">Módulo</option>
+        </select>
+    </div>
+
+     <div class="col-sm-3 col-md-3 col-xl-3">
+            <select name="modalidades" id="modalidad" required="required" class="form-control">
+              <option value="todo" selected disabled>Modalidad</option>
+              <option value="Presencial">Presencial</option>
+              <option value="Semi-Presencial">Semi-Presencial</option>
+              <option value="Virtual">Virtual</option>
+            </select>
+    </div>
+
+
+
+</div>
+
+
+<div class="d-flex justify-content-end">  
+    <button type="submit" id="btnReporte" name="btnReporte" class="btn darkgreen-bg text-light mx-2 my-2">Generar lista de diseños</button>   
+</div>
+
+</form>
+
+
+<div class="row">
+    <p></p>
+</div>
+  
+<div class="container-fluid">
+  <div class="row mt-4">
+    <div class="col-16 col-xl-16 table-container">
+      <table class="table table-responsive table-bordered" id="tablaDisenos">
+        <thead class="white-text darkgreen-bg">
+          <tr>
+            <th scope="col">Codigo</th>
+            <th scope="col">Versión</th>
+            <th scope="col">Nombre</th>
+            <th scope="col">Tipo</th>
+            <th scope="col">Modalidad</th>
+            <th scope="col">Duración</th>
+            <th scope="col">Area de Capacitacion</th>
+            <th scope="col">Fecha emisión</th>
+            <th scope="col">Estado</th>
+            <th scope="col">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% if designs %} {% for design in designs %}
+          {% if not design.estado == "En espera de aprobación" %}
+          <tr class="text-center">
+            <td scope="rol">{{design.codigo}}</td>
+            <td scope="rol">{{design.version}}</td>
+            <td scope="rol">{{design.nombre}}</td>
+            <td scope="rol">{{design.tipo_evento}}</td>
+            <td scope="rol">{{design.modalidad}}</td>
+            <td scope="rol">{{design.horas_totales}} horas</td>
+            <td scope="rol">{{design.area}}</td>
+            <td scope="rol">{{design.fecha}}</td>
+            <td scope="rol">{{design.estado}}</td>
+            <td class="text-center" scope="rol">
+              <a href="" data-toggle="modal" data-target="#clonar{{design.id}}"><span class="fas fa-plus-circle text-secondary"></span></a>
+              <a href="{% url 'verDesign' design.id %}"><span class="fas fa-search text-warning"></span></a>
+              <a href="{% url 'editarDesign' design.id %}"><span class="fas fa-edit text-primary"></span></a>
+              {% if design.estado == "En proceso" %}
+              <a href="" onclick="mandarAprobar('{{design.id}}')"><span class="fas fa-chevron-right text-success"></span></a>
+              {% elif design.estado == "Rechazado" %}
+              <a href="" data-toggle="modal" data-target="#rechazo"><span class="fas fa-eye text-danger"></span></a>
+              {% endif %}
+            </td>
+          </tr>
+          <div class="modal fade" id="rechazo" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <!-- CUSTOM TITLE -->
+                        <h5 class="modal-title"> Motivo de rechazo </h5>
+                    </div>
+                    <div class="modal-body">
+                        <!-- CUSTOM FORM -->
+                        <textarea placeholder="{{design.motivo_rechazo}}" class="form-control" name="editor1" id="motivo_rechazo" disabled></textarea>
+                    </div>
+                    <div class="modal-footer"><button type="button" class="btn close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">Aceptar</span></button></div>
+                </div>
+            </div>
+          </div>
+          <div class="modal fade" id="clonar{{design.id}}" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <!-- CUSTOM TITLE -->
+                        <h5 class="modal-title"> Clonación de diseño </h5>
+                    </div>
+                    <div class="modal-body">
+                        <!-- CUSTOM FORM -->
+                        <label>Desea clonar el diseño {{design.codigo}}?</label>
+                    </div>
+                    <div class="modal-footer">
+                      <button class="btn btn-danger" data-dismiss="modal" aria-label="Close">Cancelar</button>
+                      <a class="btn btn-success" href="{% url 'clonarDesign' design.id %}">Si, clonar</a>
+                </div>
+            </div>
+          </div>
+          {% endif %}
+          {% endfor %} {% else %}
+          <h3>No hay registros de diseño para presentar</h3>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+{% endblock %} {% block specific_scripts %} 
+<script src="{% static  'js\tablesFiltro.js' %}"></script>
+<script>
+  function mandarAprobar(id){
+    axios.defaults.xsrfCookieName = 'csrftoken'
+    axios.defaults.xsrfHeaderName = "X-CSRFTOKEN"
+    axios.patch('/academico/api/design/'+id+'/',
+                    {estado:"En espera de aprobación"}).then((response)=>{
+                      console.log(response.data)
+                }).catch((err)=>{
+                    console.log(err.response)
+                })
+  }
+</script>
+
+{% endblock %}

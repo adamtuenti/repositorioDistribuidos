@@ -1,0 +1,460 @@
+{% extends 'base_coordinador.html' %}
+{% load static %}
+{% load bootstrap4 %}
+{% load my_tags %}
+{% load humanize %}
+{% load l10n %}
+{% block title %}{{ "EC - Pendientes de Aprobación" }}{% endblock title %}
+
+{% block extraheader %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/por_aprobar.css' %}">
+{% endblock extraheader %}
+
+{% block content %}
+<h2 class="text-uppercase darkgreen-text">Listado de Autorizaciones</h2>
+<select class="form-control col-xl-4 col-6">
+	<option value="orden-facturacion">Orden de Facturación</option>
+	<option value="orden-pago">Orden de Pago</option>
+	<option value="presupuesto">Presupuesto de Evento</option>
+	<option value="presupuesto-anual">Presupuesto Anual</option>
+	<option value="plan-anual">Plan Anual de Compras</option>
+	<option value="proceso_especial">Proceso Especial</option>
+</select>
+
+<div id="orden-facturacion">
+	<div class="campo mt-2 p-2">
+		<h5 class="text-uppercase black-text mb-0">Órdenes de Facturación</h5>
+	</div>
+	<div class="row">
+		<div class="col-12 col-xl-12">
+			<div class="row">
+				<div class="col-12 col-xl-12">
+					<table class="table table-responsive border-bottom">
+						<thead class="white-text darkgreen-bg">
+							<tr>
+								<th scope="col">Ver Detalles</th>
+								<th scope="col">Código Orden</th>
+								<th scope="col">Fecha</th>
+								<th scope="col">Identificación</th>
+								<th scope="col">Cliente</th>
+								<th scope="col">Nombre Evento</th>
+								<th scope="col">Código Evento</th>
+								<th scope="col">Valor Evento</th>
+								<th scope="col">Cant. Particip.</th>
+								<th scope="col">Sub Total</th>
+								<th scope="col">%Descuento</th>
+								<th scope="col">$Descuento</th>
+								<th scope="col">Valor Total</th>
+								<th scope="col">Estado</th>
+								<th scope="col">N° trámite</th>
+								<th scope="col">N° factura</th>
+								<th scope="col">Asesor Comercial</th>
+								<th scope="col">Fecha factura</th>
+								<th scope="col">Fecha trámite</th>
+								<th scope="col">Centro Costos</th>
+							</tr>
+						</thead>
+						{% if orden_fact %}
+						<tbody id="tordenfact">
+							{% for orden in orden_fact %}
+							<tr>
+								<td class="text-center" scope="row"><a class="btn btn-secondary btn-sm"
+										href="{% url 'orden_facturacion_aprobar' orden.pk %}"><i
+											class="fas fa-eye"></i></a>
+								</td>
+								<td class="text-center" scope="row">{{orden.cod_orden_fact}}</td>
+								<td class="text-center" scope="row">{{orden.fecha}}</td>
+								<td class="text-center" scope="row">{{orden.ruc_ci}}</td>
+								<td class="text-center" scope="row">{{orden.razon_nombres | upper}}</td>
+
+								<td class="text-center" scope="row">
+									{% for p in orden.ordenfacturacionparticipante_set.all%}
+									<span class={{p.cod_evento}}>{{p.nombre_evento}}</span>
+									<br>
+									{% endfor %}
+								</td>
+								<td class="text-center" class="cod_evento" scope="row">
+									{% for p in orden.ordenfacturacionparticipante_set.all%}
+									<span>{{p.cod_evento}}</span>
+									<br>
+									{% endfor %}
+								</td>
+
+								<td class="text-right" scope="row">
+									{% for p in orden.ordenfacturacionparticipante_set.all%}
+									<span class="{{p.cod_evento}}">{{p.valor_evento}}</span>
+									<br>
+									{% endfor %}
+								</td>
+								<td class="text-center" scope="row">
+								</td>
+								<td class="text-right" scope="row">
+								</td>
+								<td class="text-center" scope="row">
+								</td>
+								<td class="text-right" scope="row">
+								</td>
+								<td class="text-right" scope="row">
+									{% for p in orden.ordenfacturacionparticipante_set.all%}
+									<span class="{{p.cod_evento}}">{{p.valor}}</span>
+									<br>
+									{% endfor %}
+								</td>
+								<td class="text-center" scope="row">{{orden.get_estado_display}}</td>
+								<td class="text-center" scope="row">{{orden.n_tramite}}</td>
+								<td class="text-center" scope="row">{{orden.n_factura}}</td>
+								<td class="text-center" scope="row">{{orden.asesor}}</td>
+								<td class="text-center" scope="row">{{orden.fecha_factura}}</td>
+								<td class="text-center" scope="row">{{orden.fecha_tramite}}</td>
+								<td class="text-center" scope="row">{{orden.centro_costos}}</td>
+							</tr>
+							{% endfor %}
+						</tbody>
+						{% else %}
+						<h2>No hay órdenes de facturación por aprobar</h2>
+						{% endif %}
+					</table>
+				</div>
+			</div>
+
+		</div>
+	</div>
+	<br>
+</div>
+
+<div id="orden-pago" class="d-none">
+	<div class="campo mt-2 p-2">
+		<h5 class="black-text text-uppercase mb-0">Órdenes de Pago</h5>
+	</div>
+	<div class="row">
+		<div class="col-12 col-xl-12">
+			<div class="row">
+				<div class="col-12 col-xl-12">
+					<table class="table table-responsive border-bottom">
+						<thead class="white-text darkgreen-bg">
+							<tr>
+								<th scope="col">Ver Detalles</th>
+								<th scope="col">Código</th>
+								<th scope="col">Fecha Elaboración</th>
+								<th scope="col">Código Evento</th>
+								<th scope="col">Nombre Evento</th>
+								<th scope="col">RUC/CI</th>
+								<th scope="col">Beneficiario</th>
+								<th scope="col">Centro de Costos</th>
+								<th scope="col">Partida Presupuestaria</th>
+								<th scope="col">Fecha Comprobante</th>
+								<th scope="col">Tipo Comprobante</th>
+								<th scope="col">N° Comprobante</th>
+								<th scope="col">Subtotal</th>
+								<th scope="col">IVA</th>
+								<th scope="col">Otros Cargos</th>
+								<th scope="col">Valor Total</th>
+								<th scope="col">Estado</th>
+								<th scope="col">Fecha Aprobación</th>
+								<th scope="col">N° de Trámite</th>
+								<th scope="col">Fecha Trámite</th>
+								<th scope="col">Fecha Pago</th>
+							</tr>
+						</thead>
+						{% if orden_pago %}
+
+						<tbody>
+							{% for p in orden_pago %}
+							<tr class="text-center">
+								<td scope="row"><a class="btn btn-secondary btn-sm"
+										href="{% url 'orden_pago_autorizar' p.id %}"><i class="fas fa-eye"></i></a>
+								</td>
+								<td scope="row">{{p.cod_ord_pago}}</td>
+								<td scope="row">{{p.fecha}}</td>
+								<td scope="row">{{p.evento.codigo_evento}}</td>
+								<td scope="row">{{p.evento.nombre}}</td>
+								<td scope="row">{{p.proveedor.ruc}}</td>
+								<td scope="row">{{p.proveedor.razon}}</td>
+								<td scope="row">{{p.centro_costos}}</td>
+								<td scope="row">{{p.egreso.nombre}}</td>
+								<td scope="row">{{p.fecha_comprobante}}</td>
+								<td scope="row">{{p.forma_pago}}</td>
+								<td scope="row">{{p.n_comprobante}}</td>
+								<td scope="row">${{p.subtotal|floatformat:2|intcomma}}</td>
+								<td scope="row">${{p.valor_iva|floatformat:2|intcomma}}</td>
+								<td scope="row">${{p.otros_cargos|floatformat:2|intcomma}}</td>
+								<td scope="row">${{p.total|floatformat:2|intcomma}}</td>
+								<td scope="row">{{p.estado}}</td>
+								<td scope="row">{{p.fecha_aprobacion|default_if_none:""}}</td>
+								<td scope="row">{{p.n_tramite|default_if_none:""}}</td>
+								<td scope="row">{{p.fecha_tramite|default_if_none:""}}</td>
+								<td scope="row">{{p.fecha_pago|default_if_none:""}}</td>
+							</tr>
+							{% endfor %}
+						</tbody>
+						{% else %}
+						<h2>No hay órdenes de pago por aprobar</h2>
+						{% endif %}
+					</table>
+				</div>
+			</div>
+
+		</div>
+	</div>
+	<br>
+</div>
+
+<div id="presupuesto" class="d-none">
+	<div class="campo mt-2 p-2">
+		<h5 class="black-text text-uppercase mb-0">Presupuestos de Eventos</h5>
+	</div>
+	<div class="row">
+		<div class="col-12 col-xl-12">
+			<div class="row">
+				<div class="col-12 col-xl-12">
+					<table class="table table-responsive border-bottom">
+						<thead class="white-text darkgreen-bg">
+							<tr>
+								<th scope="col">Ver Detalles</th>
+								<th scope="col">Código</th>
+								<th scope="col">Versión</th>
+								<th scope="col">Cod. Evento</th>
+								<th scope="col">Cod. Propuesta</th>
+								<th scope="col">Nombre Evento</th>
+								<th scope="col">Tipo</th>
+								<th scope="col">Fecha Elaboracion</th>
+								<th scope="col">% Margen contrib</th>
+								<th scope="col">Punto equilibrio</th>
+								<th scope="col">No. Participantes</th>
+								<th scope="col">Ingreso Total</th>
+								<th scope="col">Estado</th>
+								<th scope="col">Centro Costos</th>
+								<th scope="col">Fecha Envío Solicitud</th>
+								<th scope="col">Fecha Aprobación sin Evento</th>
+								<th scope="col">Fecha Aprobación con Evento</th>
+							</tr>
+						</thead>
+						{% if presupuestos_ev %}
+
+						<tbody>
+							{% for p in presupuestos_ev %}
+							<tr class="text-center">
+								<td scope="row"><a class="btn btn-secondary"
+										href="{% url 'presupuesto_aprobar' pk=p.id %}"><i class="fas fa-eye"></i></a>
+								</td>
+								<td scope="row">{{p.codigo}}</td>
+								<td scope="row">{{p.version}}</td>
+								<td scope="row">{{p.evento.codigo_evento}}</td>
+								<td scope="row">{{p.codigo_propuesta|default_if_none:""}}</td>
+								<td scope="row">{{p.evento.nombre}}</td>
+								<td scope="row">{{p.get_tipo_display}}</td>
+								<td scope="row">{{p.fecha}}</td>
+								<td scope="row">{{p.margen_contribucion|porcentaje}}</td>
+								<td scope="row">{{p.punto_equilibrio}}</td>
+								<td scope="row">{{p.n_participantes}}</td>
+								<td scope="row">${{p.ingreso_neto_total|floatformat:2|intcomma}}</td>
+								<td scope="row">{{p.estado}}</td>
+								<td scope="row">{{p.centro_costos}}</td>
+								<td scope="row">{{p.fecha_envio|default_if_none:""}}</td>
+								<td scope="row">{{p.fecha_aprobada_sin|default_if_none:""}}</td>
+								<td scope="row">{{p.fecha_aprobada_con|default_if_none:""}}</td>
+							</tr>
+							{% endfor %}
+						</tbody>
+						{% else %}
+						<h2>No hay presupuestos de eventos por aprobar</h2>
+						{% endif %}
+					</table>
+				</div>
+			</div>
+
+		</div>
+	</div>
+	<br>
+</div>
+
+<div id="presupuesto-anual" class="d-none">
+	<div class="campo mt-2 p-2">
+		<h5 class="black-text text-uppercase mb-0">Presupuestos Anuales</h5>
+	</div>
+	<div class="row">
+		<div class="col-12 col-xl-12">
+			<div class="row">
+				<div class="col-12 col-xl-12">
+					<table class="table table-responsive-md border-bottom">
+						<thead class="white-text darkgreen-bg">
+							<tr>
+								<th scope="col">Ver Detalles</th>
+								<th scope="col">Año</th>
+								<th scope="col">Centro de Costos</th>
+								<th scope="col">Nombre</th>
+							</tr>
+						</thead>
+						{% if presupuestos_an or presupuestos_an_fundespol %}
+						<tbody>
+							{% for p in presupuestos_an %}
+							<tr class="text-center">
+								<td scope="row"><a class="btn btn-secondary float-right"
+										href="{% url 'presupuesto_anual_editarAUTR' pk=p.id %}"><i
+											class="fas fa-eye"></i></a></td>
+								<td scope="row">{{p.año}}</td>
+								<td scope="row">{{p.centro_costos}}</td>
+								<td scope="row">{{p.nombre}}</td>
+							</tr>
+							{% endfor %}
+							{% for p2 in presupuestos_an_fundespol %}
+							<tr class="text-center">
+								<td scope="row"><a class="btn btn-secondary float-right"
+										href="{% url 'presupuesto_anual_editarAUTR_fundespol' pk=p2.id %}"><i
+											class="fas fa-eye"></i></a></td>
+								<td scope="row">{{p2.año}}</td>
+								<td scope="row">{{p2.centro_costos}}</td>
+								<td scope="row">{{p2.nombre}}</td>
+							</tr>
+							{% endfor %}
+						</tbody>
+						{% else %}
+						<h2>No hay presupuestos anuales por aprobar</h2>
+						{% endif %}
+					</table>
+				</div>
+			</div>
+
+		</div>
+	</div>
+	<br>
+</div>
+
+<div id="plan-anual" class="d-none">
+	<div class="campo mt-2 p-2">
+		<h5 class="black-text text-uppercase mb-0">Plan Anual de Compra</h5>
+	</div>
+	<div class="row">
+		<div class="col-12 col-xl-12">
+			<div class="row">
+				<div class="col-12 col-xl-12">
+					<table class="table table-responsive-md border-bottom">
+						<thead class="white-text darkgreen-bg">
+							<tr>
+								<th scope="col">Ver Detalles</th>
+								<th scope="col">Año</th>
+								<th scope="col">Fecha Elaboración</th>
+								<th scope="col">Nombre</th>
+								<th scope="col">Centro de Costo</th>
+								<th scope="col">Estado</th>
+								<th scope="col">Fecha Envío</th>
+								<th scope="col">Fecha Aprobación</th>
+							</tr>
+						</thead>
+						{% if pac %}
+
+						<tbody>
+							{% for p in pac %}
+							<tr class="text-center">
+								<td scope="row"><a class="btn btn-secondary" href="{% url 'pac_aprobar' pk=p.id %}"><i
+											class="fas fa-eye"></i></a></td>
+								<td scope="row">{{ p.año }}</td>
+								<td scope="row">{{ p.fecha }}</td>
+								<td scope="row">{{ p.nombre }}</td>
+								<td scope="row">{{ p.centro_costos }}</td>
+								<td scope="row">{{ p.estado }}</td>
+								<td scope="row">{{ p.fecha_envio |default_if_none:""}}</td>
+								<td scope="row">{{ p.fecha_aprobado |default_if_none:""}}</td>
+							</tr>
+							{% endfor %}
+						</tbody>
+						{% else %}
+						<h2>No hay cambios de evento por aprobar</h2>
+						{% endif %}
+					</table>
+				</div>
+			</div>
+
+		</div>
+	</div>
+	<br>
+</div>
+
+<div id="proceso_especial" class="d-none">
+	<div class="campo mt-2 p-2">
+		<h5 class="black-text text-uppercase mb-0">Procesos Especiales</h5>
+	</div>
+	<div class="row">
+		<div class="col-12 col-xl-12">
+			<div class="row">
+				<div class="col-12 col-xl-12">
+					<table id="dtBasicExample" class="table border-bottom table-responsive-md">
+						<thead class="white-text darkgreen-bg ">
+									<tr>
+										<th scope="col">Ver Detalles</th>
+										<th scope="col">Nº Orden</th>
+										<th scope="col">Fecha Emisión</th>
+										<th scope="col">Categoría</th>
+										<th scope="col">Tipo de Orden</th>
+										<th scope="col">Concepto</th>
+										<th scope="col">Código Evento</th>
+										<th scope="col">Valor</th>
+										<th scope="col">Estado</th>
+										<th scope="col">Fecha Aprobación</th>
+									</tr>
+								</thead>
+								{% if proceso %}
+								<tbody id="PEtabla">
+									{% for p in proceso %}
+									<tr class="text-center">
+										<td scope="row"><a class="btn btn-secondary" href="{% url 'autorizar_proceso_especial' pk=p.id %}"><i
+											class="fas fa-eye"></i></a></td>
+										<td scope="row">{{p.cod_proceso}}</td>
+										<td scope="row">{{p.fecha_emision}}</td>
+										<td scope="row">{{p.get_categoria_display}}</td>
+										<td scope="row">{{p.get_tipo_nota_display}}</td>
+										<td scope="row">
+											{{p.concepto}}
+										</td>
+										<td scope="row">
+											{% for part in p.procesoparticipante_set.all%}
+											<span class={{p.cod_evento}}>{{part.cod_evento}}</span>
+											<br>
+											{% endfor %}
+										</td>
+										<!-- <td scope="row">
+											{% for part in p.procesoparticipante_set.all%}
+											<span class={{p.cod_evento}}>{{part.valor_evento}}</span>
+											<br>
+											{% endfor %}
+										</td> -->
+										<td scope="row">
+											{% for part in p.procesoparticipante_set.all%}
+											<span class={{part.cod_evento}}>{{part.valor}}</span>
+											<br>
+											{% endfor %}
+										</td>
+										
+										<td scope="row">{{p.get_estado_display}}</td>
+										<td scope="row">{{p.fecha_aprobacion|default_if_none:""}}</td>
+									</tr>
+									{% endfor %}
+								</tbody>
+								{% else %}
+								<h2>No hay Procesos Especiales que mostrar</h2>
+								{% endif %}
+							</table>
+				</div>
+			</div>
+
+		</div>
+	</div>
+	<br>
+</div>
+
+{% endblock %}
+
+{% block extrafooter %}
+
+<script src="{% static 'js/tabla_facturacion_perfil.js' %}"></script>
+<script>
+	$('select').change(function (e) {
+		$(this).children().each(function (e) {
+			if ($(this).val() !== "") {
+				$("#" + $(this).val()).addClass('d-none');
+			}
+		})
+		$("#" + $(this).val()).removeClass('d-none');
+	});
+</script>
+{% endblock extrafooter %}

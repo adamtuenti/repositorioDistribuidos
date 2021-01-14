@@ -1,0 +1,93 @@
+{% load crispy_forms_tags %}
+<div class="modal-header">
+    <h2 class="modal-title darkgreen-text">Nuevo seguimiento a {{empresa.nombre}}</h2>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+
+<form method="POST" data-post-url="{% url 'nuevo_seguimiento_empresa' %}" id="form-seg" 
+    data-reporte-url="{% url 'ajax_load_reportes' %}" data-participante-url="{% url 'ajax_load_n_participantes' %}" 
+    data-oferta-url="{% url 'ajax_load_ofertas' %}"  data-evento-url="{% url 'ajax_load_eventos_tipo' %}" novalidate>
+    {% csrf_token %}
+    <div class="modal-body py-0">
+        <div class="row">
+            <div class="col-12">
+                <div class="form-row">
+                    <input type="hidden" name="juridica" id="id_juridica" value="{{empresa.pk}}">
+                    {{form.n_evento}}
+                    {% block edit%}
+                    <div class="col-xl-2 col-3" id="div_ruc-ci">
+                        <label for="ruc" class="col-form-label requiredField">RUC</label>
+                        <span class="asteriskField">*</span>
+                        <input type="text" id="ruc" class="form-control {%if form.proveedor.errors %}is-invalid {%endif%}" value="{{empresa.ruc}}" readonly>
+                        {% for error in form.juridica.errors %}
+                        <p class="invalid-feedback d-block">
+                            <strong>{{ error }}</strong>
+                        </p>
+                        {% endfor %}
+                    </div>
+                    <div class="col col-xl-5" id="div_razon-nombre">
+                        <label for="razon" class="col-form-label requiredField">Razón Social</label>
+                        <span class="asteriskField">*</span>
+                        <input type="text" id="razon" class="form-control {%if form.proveedor.errors %}is-invalid {%endif%}" value="{{empresa.nombre}}" readonly>
+                        {% for error in form.juridica.errors %}
+                        <p class="invalid-feedback d-block">
+                            <strong>{{ error }}</strong>
+                        </p>
+                        {% endfor %}
+                    </div>
+                    {% endblock edit%}
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="campo col-12 p-2 pl-3 my-3">
+                <h5 class="black-text text-uppercase mb-0">Datos del seguimiento</h5>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <input type="hidden" id="n_oferta" value="{{form.n_oferta.value}}">
+                {% crispy form %}
+                <div class="form-row">
+                    <div class="col-2">
+                        <a id="add-evento" class="btn btn-sm btn-secondary green-bg btn-block white-text"
+                            href="#">Añadir evento <i class="fas fa-plus"></i></a>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <table class="table mb-0">
+                        <tbody>
+                            <input type="hidden" id="reporte_contacto" value="{{form.reporte_contacto.value}}">
+                            {{ formset.management_form }}
+                            {% for f in formset %}
+                            <tr class="formset {%if not forloop.first %}d-none{%endif%}">
+                                <td class="evento form-row">
+                                    {% for hidden in f.hidden_fields %}
+                                    {{ hidden }}
+                                    {% endfor %}
+                                    <div class="col-3">{{f.codigo_evento|as_crispy_field}}</div>
+                                    <div class="col-7">{{f.nombre_evento|as_crispy_field}}</div>
+                                    <div class="col-2 v-align">
+                                        {% if formset.can_delete and f.codigo_evento.value and form.n_evento.value > 1%}
+                                        {{ f.DELETE | as_crispy_field}}
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                            {%endfor%}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer px-0">
+        <div class="col-12">
+            <button class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+            <button type="submit" id="enviar" class="btn btn-secondary green-bg mr-3">Guardar</button>
+        </div>
+    </div>
+</form>
+{{form.media}}
